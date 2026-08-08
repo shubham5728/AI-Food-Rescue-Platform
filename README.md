@@ -38,6 +38,14 @@ npx next start -p 3210          # in one terminal
 npm run verify:demo -- http://localhost:3210
 ```
 
+`NEXT_DIST_DIR` puts the production build somewhere other than `.next`, so you
+can build and verify while `npm run dev` is running against the same checkout:
+
+```bash
+NEXT_DIST_DIR=.next-verify npm run build
+NEXT_DIST_DIR=.next-verify npx next start -p 3210
+```
+
 `npm run calibrate` replays the same scenario directly against the scoring
 engine and prints the factor breakdown behind each score.
 
