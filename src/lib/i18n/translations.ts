@@ -16,6 +16,10 @@ export interface Translations {
   heroTitle1: string;
   heroTitle2: string;
   heroSubtitle: string;
+  heroBadge?: string;
+  heroSub?: string;
+  btnGetStarted?: string;
+  btnViewImpact?: string;
   btnDonate: string;
   btnFind: string;
   btnDashboard: string;
