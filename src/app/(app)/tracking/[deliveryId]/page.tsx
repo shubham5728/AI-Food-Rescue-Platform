@@ -34,6 +34,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { apiRequest } from "@/lib/client-api";
+import { useLanguage } from "@/lib/i18n/context";
 import type { DeliveryStatus, TrackingState } from "@/lib/types";
 
 export default function DriverTrackingPage({
@@ -42,6 +43,7 @@ export default function DriverTrackingPage({
   params: Promise<{ deliveryId: string }>;
 }) {
   const { deliveryId } = use(params);
+  const { t } = useLanguage();
 
   const [trackingState, setTrackingState] = useState<TrackingState | null>(null);
   const [loading, setLoading] = useState(true);
@@ -255,7 +257,7 @@ export default function DriverTrackingPage({
     return (
       <div className="container flex flex-col items-center justify-center min-h-[60vh] gap-3">
         <Loader2 className="size-8 animate-spin text-primary" />
-        <p className="text-sm font-bold text-muted-foreground">Connecting to Live GPS Dispatch Engine...</p>
+        <p className="text-sm font-bold text-muted-foreground">{t("trackingLoading")}</p>
       </div>
     );
   }
@@ -264,7 +266,7 @@ export default function DriverTrackingPage({
     return (
       <div className="container py-12 max-w-md text-center space-y-4">
         <AlertCircle className="size-10 text-destructive mx-auto" />
-        <h1 className="text-xl font-bold">Delivery Record Not Found</h1>
+        <h1 className="text-xl font-bold">{t("trackingNotFound")}</h1>
         <p className="text-sm text-muted-foreground">{error ?? "Could not find tracking payload"}</p>
       </div>
     );
@@ -317,7 +319,7 @@ export default function DriverTrackingPage({
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="font-extrabold text-sm sm:text-base text-foreground">FOODBRIDGE LOGISTICS ENGINE v2.4</span>
+              <span className="font-extrabold text-sm sm:text-base text-foreground">{t("trackingEngine")}</span>
               <Badge className="bg-emerald-600 text-white font-bold text-[10px]">REAL-TIME ACTIVE</Badge>
             </div>
             <p className="text-xs text-muted-foreground">High-frequency GPS Telemetry · 50m Geofencing · AI Delay Alerts</p>
@@ -349,7 +351,7 @@ export default function DriverTrackingPage({
           <div className="flex items-center gap-2 mb-1">
             <Badge variant="outline" className="border-primary/40 text-primary bg-primary-soft/30 font-bold">
               <Truck className="size-3.5 mr-1" />
-              DRIVER TELEMETRY CONSOLE
+              {t("driverTelemetryConsole")}
             </Badge>
             <Badge
               className={
@@ -376,12 +378,12 @@ export default function DriverTrackingPage({
           {!isTrackingGps ? (
             <Button onClick={startGpsTracking} size="sm" className="bg-emerald-600 hover:bg-emerald-700 font-bold shadow">
               <Play className="size-4 mr-1.5" />
-              Start Device GPS
+              {t("startDeviceGPS")}
             </Button>
           ) : (
             <Button onClick={stopGpsTracking} variant="outline" size="sm" className="border-rose-500/50 text-rose-600 font-bold">
               <Square className="size-4 mr-1.5 fill-rose-600" />
-              Pause Device GPS
+              {t("pauseDeviceGPS")}
             </Button>
           )}
 
@@ -389,21 +391,21 @@ export default function DriverTrackingPage({
           {delivery.status === "ASSIGNED" && (
             <Button onClick={() => void updateStatus("GOING_TO_PICKUP", "Driver started journey to donor")} size="sm" className="font-bold">
               <Navigation className="size-4 mr-1.5" />
-              Start Journey
+              {t("startJourney")}
             </Button>
           )}
 
           {(delivery.status === "GOING_TO_PICKUP" || delivery.status === "ARRIVED_AT_DONOR") && (
             <Button onClick={() => setShowOtpModal("PICKUP")} size="sm" className="bg-amber-600 hover:bg-amber-700 text-white font-bold">
               <KeyRound className="size-4 mr-1.5" />
-              Verify Donor Pickup (OTP)
+              {t("verifyDonorPickup")}
             </Button>
           )}
 
           {(delivery.status === "FOOD_PICKED_UP" || delivery.status === "IN_TRANSIT" || delivery.status === "ARRIVED_AT_RECIPIENT") && (
             <Button onClick={() => setShowOtpModal("DELIVERY")} size="sm" className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold">
               <CheckCircle2 className="size-4 mr-1.5" />
-              Verify Handover (OTP)
+              {t("verifyDeliveryHandover")}
             </Button>
           )}
         </div>
@@ -438,7 +440,7 @@ export default function DriverTrackingPage({
       <section className="grid gap-4 sm:grid-cols-4">
         <Card className="p-4 shadow-sm border-border/80 bg-card">
           <div className="flex items-center justify-between text-xs text-muted-foreground font-semibold">
-            <span>Distance Remaining</span>
+            <span>{t("distanceRemaining")}</span>
             <Navigation className="size-4 text-primary" />
           </div>
           <p className="mt-2 text-3xl font-extrabold text-foreground">{distance_remaining_km} <span className="text-sm font-semibold text-muted-foreground">km</span></p>
@@ -449,7 +451,7 @@ export default function DriverTrackingPage({
 
         <Card className="p-4 shadow-sm border-border/80 bg-card">
           <div className="flex items-center justify-between text-xs text-muted-foreground font-semibold">
-            <span>Live Driver Speed</span>
+            <span>{t("liveDriverSpeed")}</span>
             <Gauge className="size-4 text-primary" />
           </div>
           <p className="mt-2 text-3xl font-extrabold text-foreground">{current_location?.speed ?? 24} <span className="text-sm font-semibold text-muted-foreground">km/h</span></p>
@@ -460,7 +462,7 @@ export default function DriverTrackingPage({
 
         <Card className="p-4 shadow-sm border-border/80 bg-card">
           <div className="flex items-center justify-between text-xs text-muted-foreground font-semibold">
-            <span>Food Rescue Deadline</span>
+            <span>{t("foodRescueDeadline")}</span>
             <Clock className="size-4 text-primary" />
           </div>
           <p className="mt-2 text-3xl font-extrabold text-foreground">{rescue_time_remaining_min} <span className="text-sm font-semibold text-muted-foreground">min</span></p>
@@ -474,7 +476,7 @@ export default function DriverTrackingPage({
 
         <Card className="p-4 shadow-sm border-border/80 bg-card">
           <div className="flex items-center justify-between text-xs text-muted-foreground font-semibold">
-            <span>Rescue Risk Assessment</span>
+            <span>{t("rescueRiskAssessment")}</span>
             <ShieldCheck className="size-4 text-primary" />
           </div>
           <div className="mt-2">
@@ -485,7 +487,7 @@ export default function DriverTrackingPage({
                   : "bg-amber-600 text-white font-bold text-xs"
               }
             >
-              {rescue_risk_status === "SAFE" ? "🟢 SAFE / ON TIME" : "🔴 HIGH RISK"}
+              {rescue_risk_status === "SAFE" ? t("safeOnTime") : t("highRisk")}
             </Badge>
           </div>
           <p className="text-[11px] text-muted-foreground mt-1.5">
@@ -505,7 +507,7 @@ export default function DriverTrackingPage({
           </div>
           <Badge variant="outline" className="text-xs text-emerald-600 border-emerald-500/30 font-bold">
             <Radio className="size-3 mr-1 text-emerald-600 animate-pulse" />
-            {isTrackingGps ? "Live GPS Connected" : "GPS Streaming Active"}
+            {isTrackingGps ? t("liveGPSConnected") : "GPS Streaming Active"}
           </Badge>
         </div>
 
@@ -525,12 +527,12 @@ export default function DriverTrackingPage({
         <Card className="p-5 border-border/80 shadow-sm space-y-3">
           <h3 className="font-bold text-base text-foreground flex items-center gap-2">
             <Compass className="size-4 text-primary" />
-            50m Geofence Auto-Detection Engine
+            {t("trackingGeofenceEngine")}
           </h3>
           <div className="space-y-2.5 text-xs">
             <div className="flex items-center justify-between p-3 rounded-xl bg-muted/40 border border-border/50">
               <div>
-                <span className="font-bold text-foreground block">Donor Geofence</span>
+                <span className="font-bold text-foreground block">{t("donorGeofence")}</span>
                 <span className="text-[11px] text-muted-foreground">{delivery.donor_name}</span>
               </div>
               {geofence_status.near_donor ? (
@@ -542,7 +544,7 @@ export default function DriverTrackingPage({
 
             <div className="flex items-center justify-between p-3 rounded-xl bg-muted/40 border border-border/50">
               <div>
-                <span className="font-bold text-foreground block">Recipient Geofence</span>
+                <span className="font-bold text-foreground block">{t("recipientGeofence")}</span>
                 <span className="text-[11px] text-muted-foreground">{delivery.recipient_name}</span>
               </div>
               {geofence_status.near_recipient ? (
@@ -558,7 +560,7 @@ export default function DriverTrackingPage({
         <Card className="p-5 border-border/80 shadow-sm space-y-3">
           <h3 className="font-bold text-base text-foreground flex items-center gap-2">
             <Radio className="size-4 text-primary" />
-            Live Hardware Telemetry Stream
+            {t("trackingTelemetry")}
           </h3>
           <div className="grid grid-cols-2 gap-2 text-xs">
             <div className="p-2.5 rounded-lg bg-muted/50">
@@ -599,7 +601,7 @@ export default function DriverTrackingPage({
             </p>
 
             <div className="space-y-2">
-              <Label htmlFor="otp">4-Digit Security OTP</Label>
+              <Label htmlFor="otp">{t("enterOTP")}</Label>
               <Input
                 id="otp"
                 type="text"
@@ -618,7 +620,7 @@ export default function DriverTrackingPage({
 
             <Button onClick={handleVerifyOtp} className="w-full font-bold" size="lg" disabled={verifyingOtp}>
               {verifyingOtp ? <Loader2 className="size-4 animate-spin mr-2" /> : null}
-              {showOtpModal === "PICKUP" ? "Confirm Food Pickup" : "Confirm Delivery Handover"}
+              {showOtpModal === "PICKUP" ? t("confirmFoodPickup") : t("confirmDeliveryHandover")}
             </Button>
           </div>
         </DialogContent>

@@ -226,6 +226,31 @@ export interface Translations {
   requiresDelivery: string;
   pickupRate: string;
 
+  // Phase 4: Tracking & Shared
+  trackingLoading: string;
+  trackingNotFound: string;
+  trackingEngine: string;
+  trackingGeofenceEngine: string;
+  trackingTelemetry: string;
+  donorGeofence: string;
+  recipientGeofence: string;
+  distanceRemaining: string;
+  liveDriverSpeed: string;
+  foodRescueDeadline: string;
+  rescueRiskAssessment: string;
+  driverTelemetryConsole: string;
+  startDeviceGPS: string;
+  pauseDeviceGPS: string;
+  startJourney: string;
+  verifyDonorPickup: string;
+  verifyDeliveryHandover: string;
+  enterOTP: string;
+  confirmFoodPickup: string;
+  confirmDeliveryHandover: string;
+  safeOnTime: string;
+  highRisk: string;
+  liveGPSConnected: string;
+
   // Common UI
   loading: string;
   close: string;
@@ -442,6 +467,30 @@ export const translations: Record<Language, Translations> = {
     requiresDelivery: "Requires delivery",
     pickupRate: "pickup rate",
 
+    trackingLoading: "Connecting to Live GPS Dispatch Engine...",
+    trackingNotFound: "Delivery Record Not Found",
+    trackingEngine: "FOODBRIDGE LOGISTICS ENGINE v2.4",
+    trackingGeofenceEngine: "50m Geofence Auto-Detection Engine",
+    trackingTelemetry: "Live Hardware Telemetry Stream",
+    donorGeofence: "Donor Geofence",
+    recipientGeofence: "Recipient Geofence",
+    distanceRemaining: "Distance Remaining",
+    liveDriverSpeed: "Live Driver Speed",
+    foodRescueDeadline: "Food Rescue Deadline",
+    rescueRiskAssessment: "Rescue Risk Assessment",
+    driverTelemetryConsole: "DRIVER TELEMETRY CONSOLE",
+    startDeviceGPS: "Start Device GPS",
+    pauseDeviceGPS: "Pause Device GPS",
+    startJourney: "Start Journey",
+    verifyDonorPickup: "Verify Donor Pickup (OTP)",
+    verifyDeliveryHandover: "Verify Handover (OTP)",
+    enterOTP: "4-Digit Security OTP",
+    confirmFoodPickup: "Confirm Food Pickup",
+    confirmDeliveryHandover: "Confirm Delivery Handover",
+    safeOnTime: "🟢 SAFE / ON TIME",
+    highRisk: "🔴 HIGH RISK",
+    liveGPSConnected: "Live GPS Connected",
+
     loading: "Loading...",
     close: "Close",
     save: "Save",
@@ -655,6 +704,30 @@ export const translations: Record<Language, Translations> = {
     requiresDelivery: "वितरण की आवश्यकता है",
     pickupRate: "पिकअप दर",
 
+    trackingLoading: "लाइव जीपीएस डिस्पैच इंजन से कनेक्ट हो रहा है...",
+    trackingNotFound: "डिलीवरी रिकॉर्ड नहीं मिला",
+    trackingEngine: "फ़ूडब्रिज लॉजिस्टिक्स इंजन v2.4",
+    trackingGeofenceEngine: "50 मीटर जियोफ़ेंस ऑटो-डिटेक्शन इंजन",
+    trackingTelemetry: "लाइव हार्डवेयर टेलीमेट्री स्ट्रीम",
+    donorGeofence: "दाता जियोफ़ेंस",
+    recipientGeofence: "प्राप्तकर्ता जियोफ़ेंस",
+    distanceRemaining: "शेष दूरी",
+    liveDriverSpeed: "लाइव ड्राइवर गति",
+    foodRescueDeadline: "भोजन बचाव की समय सीमा",
+    rescueRiskAssessment: "बचाव जोखिम मूल्यांकन",
+    driverTelemetryConsole: "ड्राइवर टेलीमेट्री कंसोल",
+    startDeviceGPS: "डिवाइस GPS प्रारंभ करें",
+    pauseDeviceGPS: "डिवाइस GPS रोकें",
+    startJourney: "यात्रा शुरू करें",
+    verifyDonorPickup: "दाता पिकअप सत्यापित करें (OTP)",
+    verifyDeliveryHandover: "हैंडओवर सत्यापित करें (OTP)",
+    enterOTP: "4-अंकीय सुरक्षा OTP",
+    confirmFoodPickup: "खाद्य पिकअप की पुष्टि करें",
+    confirmDeliveryHandover: "डिलीवरी हैंडओवर की पुष्टि करें",
+    safeOnTime: "🟢 सुरक्षित / समय पर",
+    highRisk: "🔴 उच्च जोखिम",
+    liveGPSConnected: "लाइव जीपीएस कनेक्टेड",
+
     loading: "लोड हो रहा है...",
     close: "बंद करें",
     save: "सहेजें",
@@ -867,6 +940,30 @@ export const translations: Record<Language, Translations> = {
     noticeSuffix: "સૂચના",
     requiresDelivery: "વિતરણ જરૂરી છે",
     pickupRate: "પિકઅપ દર",
+
+    trackingLoading: "લાઇવ જીપીએસ ડિસ્પેચ એન્જિન સાથે કનેક્ટ થઈ રહ્યું છે...",
+    trackingNotFound: "ડિલિવરી રેકોર્ડ મળ્યો નથી",
+    trackingEngine: "ફૂડબ્રિજ લોજિસ્ટિક્સ એન્જિન v2.4",
+    trackingGeofenceEngine: "50 મીટર જિયોફેન્સ ઓટો-ડિટેક્શન એન્જિન",
+    trackingTelemetry: "લાઇવ હાર્ડવેર ટેલિમેટ્રી સ્ટ્રીમ",
+    donorGeofence: "દાતા જિયોફેન્સ",
+    recipientGeofence: "પ્રાપ્તકર્તા જિયોફેન્સ",
+    distanceRemaining: "બાકીનું અંતર",
+    liveDriverSpeed: "લાઇવ ડ્રાઇવરની ગતિ",
+    foodRescueDeadline: "ખોરાક બચાવની સમયમર્યાદા",
+    rescueRiskAssessment: "બચાવ જોખમ મૂલ્યાંકન",
+    driverTelemetryConsole: "ડ્રાઇવર ટેલિમેટ્રી કન્સોલ",
+    startDeviceGPS: "ઉપકરણ GPS પ્રારંભ કરો",
+    pauseDeviceGPS: "ઉપકરણ GPS રોકો",
+    startJourney: "મુસાફરી શરૂ કરો",
+    verifyDonorPickup: "દાતા પિકઅપ ચકાસો (OTP)",
+    verifyDeliveryHandover: "હેન્ડઓવર ચકાસો (OTP)",
+    enterOTP: "4-અંકનો સુરક્ષા OTP",
+    confirmFoodPickup: "ખોરાક પિકઅપની પુષ્ટિ કરો",
+    confirmDeliveryHandover: "ડિલિવરી હેન્ડઓવરની પુષ્ટિ કરો",
+    safeOnTime: "🟢 સુરક્ષિત / સમયસર",
+    highRisk: "🔴 ઉચ્ચ જોખમ",
+    liveGPSConnected: "લાઇવ જીપીએસ કનેક્ટેડ",
 
     loading: "લોડ થઈ રહ્યું છે...",
     close: "બંધ કરો",
