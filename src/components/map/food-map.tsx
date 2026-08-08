@@ -76,9 +76,9 @@ function createPinIcon(color: string, symbol: string, isUrgent = false) {
   });
 }
 
-const DONOR_ICON = createPinIcon("#16a34a", "🏪");
-const RECIPIENT_ICON = createPinIcon("#2563eb", "🏢");
-const URGENT_ICON = createPinIcon("#dc2626", "🔥", true);
+const DONOR_ICON = createPinIcon("#10b981", "🍽️");
+const RECIPIENT_ICON = createPinIcon("#3b82f6", "🛡️");
+const URGENT_ICON = createPinIcon("#ef4444", "🚨", true);
 
 export function FoodMap({
   markers = [],

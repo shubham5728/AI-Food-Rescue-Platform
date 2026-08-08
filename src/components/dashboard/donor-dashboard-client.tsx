@@ -200,7 +200,7 @@ export function DonorDashboardClient({
             hint={`${stats.high_risk_donations} ${t("riskHigh").toLowerCase()}`}
           />
         </div>
-      </section>
+      </motion.section>
 
       {/* Environmental Footprint Cards Grid */}
       <section className="grid gap-4 sm:grid-cols-2">
@@ -265,7 +265,7 @@ export function DonorDashboardClient({
           zoom={13}
           height="420px"
         />
-      </motion.section>
+      </section>
 
       {/* Main Grid: Priority Queue & Recent Listings */}
       <div className="grid gap-8 lg:grid-cols-3">
