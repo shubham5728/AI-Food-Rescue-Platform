@@ -211,15 +211,23 @@ function Orbit3D({
   const size = radius * 2;
 
   return (
+    // Sized and pinned to the scene centre explicitly. An absolutely
+    // positioned wrapper with no dimensions falls back to its static position
+    // instead of being centred by the parent flex, which throws the whole ring
+    // off-axis and pushes items outside the container.
     <div
-      className="fb-orbit-3d absolute"
-      style={{ transform: `rotateX(${ORBIT_TILT_DEG}deg)` }}
+      className="fb-orbit-3d absolute left-1/2 top-1/2"
+      style={{
+        width: size,
+        height: size,
+        marginLeft: -radius,
+        marginTop: -radius,
+        transform: `rotateX(${ORBIT_TILT_DEG}deg)`,
+      }}
     >
       <div
-        className="fb-orbit-3d relative"
+        className="fb-orbit-3d relative w-full h-full"
         style={{
-          width: size,
-          height: size,
           animation: `${reverse ? "fb-orbit-spin-reverse" : "fb-orbit-spin"} ${duration}s linear infinite`,
         }}
       >
@@ -228,6 +236,7 @@ function Orbit3D({
           className={`absolute inset-0 rounded-full border border-dashed ${
             faint ? "border-border/70" : "border-border"
           }`}
+          style={{ transform: "translateZ(-1px)" }}
         />
         {children}
       </div>
@@ -269,8 +278,8 @@ function OrbitItem3D({
         }}
       >
         <div
-          className="w-full h-full hover:scale-110 transition-transform duration-300 cursor-pointer rounded-full overflow-hidden bg-white shadow-md p-1.5 flex items-center justify-center"
-          style={{ transform: `rotateY(${-angle}deg) rotateX(${-ORBIT_TILT_DEG}deg)` }}
+          className="w-full h-full hover:scale-110 transition-transform duration-300 cursor-pointer rounded-full overflow-hidden bg-white shadow-md p-1.5 flex items-center justify-center border border-white/5 outline outline-1 outline-transparent"
+          style={{ transform: `rotateY(${-angle}deg) rotateX(${-ORBIT_TILT_DEG}deg) translateZ(1px)`, WebkitBackfaceVisibility: 'hidden' }}
         >
           {children}
         </div>
