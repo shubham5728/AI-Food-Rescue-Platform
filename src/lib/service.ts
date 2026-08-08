@@ -7,9 +7,12 @@ import { planAllocation } from "@/lib/ai/allocation";
 import { forecastAllDonors } from "@/lib/ai/forecast";
 import { findDemandHotspots, planBestRoute } from "@/lib/ai/route";
 import {
+  FOOD_CATEGORY_LABELS,
   KG_PER_MEAL,
   MEALS_PER_PERSON,
   RESCUED_STATUSES,
+  STATUS_FLOW,
+  STATUS_LABELS,
   STATUS_TRANSITIONS,
   TERMINAL_STATUSES,
 } from "@/lib/constants";
@@ -17,8 +20,12 @@ import { getDb } from "@/lib/db";
 import type {
   AiPerformanceStats,
   AllocationPlan,
+  CategoryShare,
   DemandHotspot,
   Donation,
+  ImpactBreakdown,
+  LifecycleStage,
+  OrganisationContribution,
   DonationStatus,
   DonationWithRelations,
   ImpactStats,
@@ -29,7 +36,7 @@ import type {
   RoutePlan,
   SurplusForecast,
 } from "@/lib/types";
-import { newId } from "@/lib/utils";
+import { localityOf, newId } from "@/lib/utils";
 import type { CreateDonationInput } from "@/lib/validation";
 import { assertVerifiedFor, clearVerifications } from "@/lib/verification";
 
@@ -510,6 +517,140 @@ export async function getAiPerformance(): Promise<AiPerformanceStats> {
     analysed_donations: analysed.length,
     explained_by_llm: analysed.filter((d) => d.ai_source === "openai").length,
     explained_by_engine: analysed.filter((d) => d.ai_source === "engine").length,
+  };
+}
+
+/**
+ * kg CO2e avoided per kg of food kept out of landfill.
+ *
+ * Landfilled food decomposes anaerobically and releases methane; diverting it
+ * avoids that plus the embodied emissions of the wasted production. Published
+ * estimates cluster around 1.9–3.6 depending on food mix and landfill gas
+ * capture, so the midpoint is used and the range is reported alongside it.
+ * The page shows the factor rather than only the product, because a bare
+ * "2,888 kg CO2e avoided" is a number nobody can check.
+ */
+const CO2E_PER_KG_FOOD = 2.5;
+const CO2E_PER_KG_LOW = 1.9;
+const CO2E_PER_KG_HIGH = 3.6;
+
+/**
+ * Everything the impact page reports, computed from stored donations.
+ *
+ * No figure here is invented: each one traces to rows in the database. Where a
+ * number is an estimate rather than a measurement (carbon), it carries its
+ * assumption with it.
+ */
+export async function getImpactBreakdown(): Promise<ImpactBreakdown> {
+  const db = getDb();
+  const [all, organisations] = await Promise.all([
+    db.listDonations(),
+    db.listOrganisations(),
+  ]);
+
+  const byId = new Map(organisations.map((o) => [o.id, o]));
+  const rescued = all.filter((d) => RESCUED_STATUSES.includes(d.status));
+  const totalMeals = rescued.reduce((sum, d) => sum + d.meals, 0);
+
+  /* -- Food categories ---------------------------------------------------- */
+  const categoryTotals = new Map<string, { meals: number; kg: number }>();
+  for (const d of rescued) {
+    const entry = categoryTotals.get(d.food_type) ?? { meals: 0, kg: 0 };
+    entry.meals += d.meals;
+    entry.kg += d.weight_kg;
+    categoryTotals.set(d.food_type, entry);
+  }
+
+  const by_category: CategoryShare[] = [...categoryTotals.entries()]
+    .map(([key, v]) => ({
+      key,
+      label: FOOD_CATEGORY_LABELS[key as keyof typeof FOOD_CATEGORY_LABELS] ?? key,
+      meals: v.meals,
+      kg: Math.round(v.kg),
+      share: totalMeals === 0 ? 0 : Math.round((v.meals / totalMeals) * 100),
+    }))
+    .sort((a, b) => b.meals - a.meals);
+
+  /* -- Contribution by organisation --------------------------------------- */
+  const contribution = (
+    keyOf: (d: Donation) => string | null,
+  ): OrganisationContribution[] => {
+    const totals = new Map<
+      string,
+      { meals: number; donations: number; finished: number }
+    >();
+
+    for (const d of all) {
+      const key = keyOf(d);
+      if (!key) continue;
+      const entry = totals.get(key) ?? { meals: 0, donations: 0, finished: 0 };
+
+      if (RESCUED_STATUSES.includes(d.status)) {
+        entry.meals += d.meals;
+        entry.donations += 1;
+        entry.finished += 1;
+      } else if (d.status === "cancelled") {
+        entry.finished += 1;
+      }
+      totals.set(key, entry);
+    }
+
+    return [...totals.entries()]
+      .map(([id, v]) => {
+        const org = byId.get(id);
+        return {
+          id,
+          name: org?.name ?? id,
+          locality: org ? localityOf(org.address) : "",
+          meals: v.meals,
+          donations: v.donations,
+          completion_rate:
+            v.finished === 0 ? 0 : Math.round((v.donations / v.finished) * 100),
+        };
+      })
+      .filter((c) => c.donations > 0)
+      .sort((a, b) => b.meals - a.meals);
+  };
+
+  const by_donor = contribution((d) => d.donor_id);
+  const by_recipient = contribution((d) => d.matched_recipient_id);
+
+  /* -- Lifecycle ---------------------------------------------------------- */
+  const lifecycle: LifecycleStage[] = STATUS_FLOW.map((status) => {
+    const rows = all.filter((d) => d.status === status);
+    return {
+      status,
+      label: STATUS_LABELS[status],
+      count: rows.length,
+      meals: rows.reduce((sum, d) => sum + d.meals, 0),
+    };
+  });
+
+  /* -- Environmental estimate --------------------------------------------- */
+  const food_kg = rescued.reduce((sum, d) => sum + d.weight_kg, 0);
+
+  return {
+    by_category,
+    by_donor,
+    by_recipient,
+    lifecycle,
+    environmental: {
+      food_kg: Math.round(food_kg),
+      co2e_kg: Math.round(food_kg * CO2E_PER_KG_FOOD),
+      factor: CO2E_PER_KG_FOOD,
+      factor_source:
+        "Midpoint of published estimates for food waste diverted from landfill",
+      factor_low: CO2E_PER_KG_LOW,
+      factor_high: CO2E_PER_KG_HIGH,
+      co2e_low: Math.round(food_kg * CO2E_PER_KG_LOW),
+      co2e_high: Math.round(food_kg * CO2E_PER_KG_HIGH),
+    },
+    first_delivery:
+      rescued.length === 0
+        ? null
+        : rescued
+            .map((d) => d.updated_at)
+            .sort((a, b) => new Date(a).getTime() - new Date(b).getTime())[0],
   };
 }
 

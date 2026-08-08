@@ -322,6 +322,65 @@ export interface DemandHotspot {
   intensity: number;
 }
 
+/* -------------------------------------------------------------------------- */
+/* Impact breakdown                                                           */
+/* -------------------------------------------------------------------------- */
+
+export interface CategoryShare {
+  key: string;
+  label: string;
+  meals: number;
+  kg: number;
+  /** Percentage of rescued meals, 0-100. */
+  share: number;
+}
+
+export interface OrganisationContribution {
+  id: string;
+  name: string;
+  locality: string;
+  meals: number;
+  donations: number;
+  /** Delivered as a share of everything they finished, 0-100. */
+  completion_rate: number;
+}
+
+export interface LifecycleStage {
+  status: DonationStatus;
+  label: string;
+  count: number;
+  meals: number;
+}
+
+/**
+ * Environmental estimate.
+ *
+ * Deliberately carries its own assumption: a single "CO2 avoided" number with
+ * no factor attached is unfalsifiable, and this figure is an estimate derived
+ * from mass, not something the platform measured.
+ */
+export interface EnvironmentalEstimate {
+  food_kg: number;
+  co2e_kg: number;
+  /** kg CO2e avoided per kg of food diverted from landfill. */
+  factor: number;
+  factor_source: string;
+  factor_low: number;
+  factor_high: number;
+  co2e_low: number;
+  co2e_high: number;
+}
+
+export interface ImpactBreakdown {
+  by_category: CategoryShare[];
+  by_donor: OrganisationContribution[];
+  by_recipient: OrganisationContribution[];
+  lifecycle: LifecycleStage[];
+  environmental: EnvironmentalEstimate;
+  /** Oldest delivered donation, so the page can state the reporting period. */
+  first_delivery: string | null;
+}
+
 export interface ImpactTimePoint {
   /** ISO date (YYYY-MM-DD). */
   date: string;

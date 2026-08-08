@@ -90,14 +90,19 @@ export function AiPerformancePanel({
       </CardHeader>
 
       <CardContent className="pt-5">
+        {performance.analysed_donations === 0 ? (
+          <p className="flex items-start gap-2.5 rounded-lg border border-dashed border-border bg-muted/30 p-4 text-sm text-muted-foreground">
+            <Target className="mt-0.5 size-4 shrink-0" aria-hidden />
+            <span>
+              No donations have been through the AI pipeline yet, so there is
+              nothing to measure. These figures fill in as donations are created
+              and analysed — showing zeroes here would imply the engine performed
+              badly rather than that it has not run.
+            </span>
+          </p>
+        ) : (
+        <>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          <Metric
-            label="Rescue success rate"
-            value={stats.rescue_success_rate}
-            suffix="%"
-            tone="good"
-            hint="Delivered as a share of everything that reached an end state, cancellations included."
-          />
           <Metric
             label="Top pick accepted"
             value={performance.top_pick_acceptance}
@@ -173,7 +178,7 @@ export function AiPerformancePanel({
           </p>
         </div>
 
-        {performance.top_pick_acceptance < 60 && performance.analysed_donations > 0 ? (
+        {performance.top_pick_acceptance < 60 ? (
           <p className="mt-4 flex items-start gap-2.5 rounded-lg border border-signal-medium/30 bg-signal-medium/[0.07] p-3.5 text-sm">
             <Target
               className="mt-0.5 size-4 shrink-0 text-signal-medium"
@@ -187,6 +192,8 @@ export function AiPerformancePanel({
             </span>
           </p>
         ) : null}
+        </>
+        )}
       </CardContent>
     </Card>
   );
