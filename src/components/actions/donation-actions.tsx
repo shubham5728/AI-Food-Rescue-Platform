@@ -139,8 +139,11 @@ export function ConfirmRecipientButton({
 
 const NEXT_STEP_LABELS: Partial<Record<DonationStatus, string>> = {
   pickup_scheduled: "Schedule pickup",
-  picked_up: "Mark as picked up",
-  delivered: "Mark as delivered",
+  pickup_assigned: "Assign a collector",
+  picked_up: "Confirm collection",
+  in_transit: "Mark in transit",
+  delivered: "Confirm delivery",
+  completed: "Close this donation",
   available: "Release back to available",
 };
 

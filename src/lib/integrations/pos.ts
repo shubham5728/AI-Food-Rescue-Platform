@@ -187,10 +187,6 @@ export function getPosProvider(): PosProvider {
   return SIMULATED_PROVIDER;
 }
 
-export function isPosSimulated(): boolean {
-  return getPosProvider().mode === "simulated";
-}
-
 /** Fetches signals for every donor that would plausibly be on a platform. */
 export async function fetchPosSignals(
   donors: Organisation[],

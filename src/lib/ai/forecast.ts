@@ -1,4 +1,3 @@
-import { SHELF_LIFE_MINUTES } from "@/lib/constants";
 import type { Donation, Organisation, SurplusForecast } from "@/lib/types";
 import { clamp } from "@/lib/utils";
 
@@ -281,11 +280,3 @@ export function forecastAllDonors(
     );
 }
 
-/** Shelf life is what turns "surplus exists" into "surplus is urgent". */
-export function forecastUrgencyNote(forecast: SurplusForecast): string {
-  const shelf = SHELF_LIFE_MINUTES.cooked_meal / 60;
-  if (forecast.probability === 0) return "No forecast available.";
-  return `If this surplus is cooked food it will hold for roughly ${shelf} hours, so a recipient should be lined up before ${new Date(
-    forecast.window_end,
-  ).toLocaleTimeString("en-IN", { hour: "numeric", minute: "2-digit", hour12: true })}.`;
-}
