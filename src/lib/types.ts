@@ -41,6 +41,16 @@ export type DonationStatus =
   | "delivered"
   | "cancelled";
 
+export type DeliveryStatus =
+  | "ASSIGNED"
+  | "GOING_TO_PICKUP"
+  | "ARRIVED_AT_DONOR"
+  | "FOOD_PICKED_UP"
+  | "IN_TRANSIT"
+  | "ARRIVED_AT_RECIPIENT"
+  | "DELIVERED"
+  | "CANCELLED";
+
 export type RiskLevel = "LOW" | "MEDIUM" | "HIGH";
 export type PriorityLevel = "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
 
@@ -111,7 +121,7 @@ export interface Donation {
   longitude: number;
   address: string;
   notes: string | null;
-  image_url: string | null;
+  image_url?: string | null;
 
   status: DonationStatus;
   /** Set once a recipient accepts. */
@@ -155,6 +165,79 @@ export interface DonationStatusHistory {
   status: DonationStatus;
   note: string | null;
   created_at: string;
+}
+
+/** Real-time Driver GPS Tracking & Delivery Entities */
+
+export interface DriverLocation {
+  id: string;
+  delivery_id: string;
+  driver_id: string;
+  latitude: number;
+  longitude: number;
+  accuracy: number;
+  speed: number | null;
+  heading: number | null;
+  timestamp: string;
+}
+
+export interface TrackingEvent {
+  id: string;
+  delivery_id: string;
+  event_type: string;
+  latitude: number;
+  longitude: number;
+  timestamp: string;
+  note?: string;
+}
+
+export interface Delivery {
+  id: string;
+  donation_id: string;
+  driver_id: string;
+  driver_name: string;
+  driver_phone: string;
+  donor_id: string;
+  donor_name: string;
+  donor_address: string;
+  donor_lat: number;
+  donor_lng: number;
+  recipient_id: string;
+  recipient_name: string;
+  recipient_address: string;
+  recipient_lat: number;
+  recipient_lng: number;
+
+  food_name: string;
+  meals: number;
+
+  status: DeliveryStatus;
+  pickup_otp: string;
+  delivery_otp: string;
+
+  started_at: string | null;
+  picked_up_at: string | null;
+  delivered_at: string | null;
+  food_rescue_deadline: string;
+
+  created_at: string;
+  updated_at: string;
+}
+
+export interface TrackingState {
+  delivery: Delivery;
+  current_location: DriverLocation | null;
+  distance_remaining_km: number;
+  eta_minutes: number;
+  rescue_time_remaining_min: number;
+  rescue_risk_status: "SAFE" | "HIGH_RISK" | "CRITICAL";
+  geofence_status: {
+    near_donor: boolean;
+    near_recipient: boolean;
+    distance_to_donor_m: number;
+    distance_to_recipient_m: number;
+  };
+  events: TrackingEvent[];
 }
 
 /** A recipient that failed a hard constraint, kept so the UI can explain why. */

@@ -12,6 +12,7 @@ import {
   Radio,
   ShieldCheck,
   Sparkles,
+  Truck,
   Users,
   Utensils,
 } from "lucide-react";
@@ -146,6 +147,33 @@ export function DonorDashboardClient({
           </Link>
         </Button>
       </header>
+
+      {/* Live GPS Delivery Tracking Banner Card */}
+      <Card className="border border-primary/30 bg-primary/5 p-4 sm:p-5 shadow-md">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="flex size-11 items-center justify-center rounded-xl bg-primary text-primary-foreground font-bold shadow">
+              <Truck className="size-6" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2 mb-0.5">
+                <span className="font-extrabold text-base text-foreground">LIVE RESCUE DISPATCH TRACKING</span>
+                <Badge className="bg-emerald-600 text-white font-bold text-[10px]">
+                  <Radio className="size-3 mr-1 animate-pulse" /> Live GPS Connected
+                </Badge>
+              </div>
+              <p className="text-xs sm:text-sm text-muted-foreground">
+                Driver <strong>Rahul Patel</strong> is <strong>2.4 km away</strong> · ETA: <strong>9 min</strong> · Rescue Window: <strong>34 min remaining</strong> (🟢 ON TIME)
+              </p>
+            </div>
+          </div>
+          <Button asChild size="sm" className="font-bold shadow">
+            <Link href="/tracking/del_demo01">
+              Open Driver Live Map →
+            </Link>
+          </Button>
+        </div>
+      </Card>
 
       {/* Main KPI Stat Tiles */}
       <section aria-label="Impact">

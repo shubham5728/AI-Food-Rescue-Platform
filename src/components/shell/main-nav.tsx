@@ -3,6 +3,7 @@
 import {
   BarChart3,
   LayoutDashboard,
+  Navigation,
   PackageSearch,
   Users,
   type LucideIcon,
@@ -13,20 +14,20 @@ import { usePathname } from "next/navigation";
 import type { UserRole } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/lib/i18n/context";
-import type { Translations } from "@/lib/i18n/translations";
 
 interface NavItem {
   href: string;
-  translationKey: keyof Translations;
+  label: string;
   icon: LucideIcon;
   roles?: UserRole[];
 }
 
 const ITEMS: NavItem[] = [
-  { href: "/dashboard", translationKey: "navDashboard", icon: LayoutDashboard },
-  { href: "/donations", translationKey: "navDonations", icon: PackageSearch },
-  { href: "/recipients", translationKey: "navRecipients", icon: Users, roles: ["donor"] },
-  { href: "/impact", translationKey: "navImpact", icon: BarChart3 },
+  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/tracking", label: "GPS Dispatch", icon: Navigation },
+  { href: "/donations", label: "Donations", icon: PackageSearch },
+  { href: "/recipients", label: "Recipients", icon: Users, roles: ["donor"] },
+  { href: "/impact", label: "Impact", icon: BarChart3 },
 ];
 
 export function MainNav({
@@ -56,16 +57,15 @@ export function MainNav({
             className={cn(
               "inline-flex shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
               active
-                ? "bg-primary-soft text-primary"
+                ? "bg-primary-soft text-primary font-bold"
                 : "text-muted-foreground hover:bg-muted hover:text-foreground",
             )}
           >
             <item.icon className="size-4" aria-hidden />
-            <span className="hidden md:inline">{t(item.translationKey)}</span>
+            <span className="hidden md:inline">{item.label}</span>
           </Link>
         );
       })}
     </nav>
   );
 }
-
