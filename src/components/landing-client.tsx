@@ -322,37 +322,37 @@ export function LandingClient({ stats, session, demo }: LandingClientProps) {
             
             {/* Inner Orbit */}
             <div className="absolute w-[200px] h-[200px] rounded-full border border-dashed border-border" style={{ animation: 'spin 60s linear infinite', transform: 'translateZ(0)', WebkitBackfaceVisibility: 'hidden' }}>
-              <div style={{ left: '68px', top: '-32px', animation: 'spin 60s linear infinite reverse', transform: 'translateZ(0)' }} className="absolute w-16 h-16 rounded-full overflow-hidden shadow-sm hover:shadow-[0_0_20px_rgba(16,185,129,0.4)] hover:scale-110 transition-all duration-300 cursor-pointer">
-                <img src="/orbit-food-1.png" alt="Fresh salad" className="w-full h-full object-cover" />
+              <div style={{ left: '68px', top: '-32px', animation: 'spin 60s linear infinite reverse', transform: 'translateZ(0)' }} className="absolute w-16 h-16 hover:scale-110 transition-transform duration-300 cursor-pointer">
+                <img src="/orbit-food-1.png" alt="Fresh salad" className="w-full h-full object-contain drop-shadow-md" />
               </div>
             </div>
 
             {/* Middle Orbit */}
             <div className="absolute w-[320px] h-[320px] rounded-full border border-dashed border-border" style={{ animation: 'spin 90s linear infinite reverse', transform: 'translateZ(0)', WebkitBackfaceVisibility: 'hidden' }}>
-              <div style={{ left: '288px', top: '128px', animation: 'spin 90s linear infinite', transform: 'translateZ(0)' }} className="absolute w-16 h-16 rounded-full overflow-hidden shadow-sm hover:shadow-[0_0_20px_rgba(16,185,129,0.4)] hover:scale-110 transition-all duration-300 cursor-pointer">
-                <img src="/orbit-food-2.png" alt="Fresh vegetables" className="w-full h-full object-cover" />
+              <div style={{ left: '288px', top: '128px', animation: 'spin 90s linear infinite', transform: 'translateZ(0)' }} className="absolute w-16 h-16 hover:scale-110 transition-transform duration-300 cursor-pointer">
+                <img src="/orbit-food-2.png" alt="Fresh vegetables" className="w-full h-full object-contain drop-shadow-md" />
               </div>
-              <div style={{ left: '-32px', top: '128px', animation: 'spin 90s linear infinite', transform: 'translateZ(0)' }} className="absolute w-16 h-16 rounded-full overflow-hidden shadow-sm hover:shadow-[0_0_20px_rgba(16,185,129,0.4)] hover:scale-110 transition-all duration-300 cursor-pointer">
-                <img src="/orbit-food-4.png" alt="Gourmet sandwiches" className="w-full h-full object-cover" />
+              <div style={{ left: '-32px', top: '128px', animation: 'spin 90s linear infinite', transform: 'translateZ(0)' }} className="absolute w-16 h-16 hover:scale-110 transition-transform duration-300 cursor-pointer">
+                <img src="/orbit-food-4.png" alt="Gourmet sandwiches" className="w-full h-full object-contain drop-shadow-md" />
               </div>
             </div>
 
             {/* Outer Orbit (5 items) */}
             <div className="absolute w-[440px] h-[440px] rounded-full border border-dashed border-border/70" style={{ animation: 'spin 120s linear infinite', transform: 'translateZ(0)', WebkitBackfaceVisibility: 'hidden' }}>
-              <div style={{ left: '408px', top: '188px', animation: 'spin 120s linear infinite reverse', transform: 'translateZ(0)' }} className="absolute w-16 h-16 rounded-full overflow-hidden shadow-sm hover:shadow-[0_0_20px_rgba(16,185,129,0.4)] hover:scale-110 transition-all duration-300 cursor-pointer">
-                <img src="/orbit-food-5.png" alt="Hot catering meal" className="w-full h-full object-cover" />
+              <div style={{ left: '408px', top: '188px', animation: 'spin 120s linear infinite reverse', transform: 'translateZ(0)' }} className="absolute w-16 h-16 hover:scale-110 transition-transform duration-300 cursor-pointer">
+                <img src="/orbit-food-5.png" alt="Hot catering meal" className="w-full h-full object-contain drop-shadow-md" />
               </div>
-              <div style={{ left: '256px', top: '397px', animation: 'spin 120s linear infinite reverse', transform: 'translateZ(0)' }} className="absolute w-16 h-16 rounded-full overflow-hidden shadow-sm hover:shadow-[0_0_20px_rgba(16,185,129,0.4)] hover:scale-110 transition-all duration-300 cursor-pointer">
-                <img src="/orbit-food-3.png" alt="Artisanal bread" className="w-full h-full object-cover" />
+              <div style={{ left: '256px', top: '397px', animation: 'spin 120s linear infinite reverse', transform: 'translateZ(0)' }} className="absolute w-16 h-16 hover:scale-110 transition-transform duration-300 cursor-pointer">
+                <img src="/orbit-food-3.png" alt="Artisanal bread" className="w-full h-full object-contain drop-shadow-md" />
               </div>
-              <div style={{ left: '10px', top: '317px', animation: 'spin 120s linear infinite reverse', transform: 'translateZ(0)' }} className="absolute w-16 h-16 rounded-full overflow-hidden shadow-sm hover:shadow-[0_0_20px_rgba(16,185,129,0.4)] hover:scale-110 transition-all duration-300 cursor-pointer">
-                <img src="/orbit-food-6.png" alt="Fresh fruits" className="w-full h-full object-cover" />
+              <div style={{ left: '10px', top: '317px', animation: 'spin 120s linear infinite reverse', transform: 'translateZ(0)' }} className="absolute w-16 h-16 hover:scale-110 transition-transform duration-300 cursor-pointer">
+                <img src="/orbit-food-6.png" alt="Fresh fruits" className="w-full h-full object-contain drop-shadow-md" />
               </div>
-              <div style={{ left: '10px', top: '59px', animation: 'spin 120s linear infinite reverse', transform: 'translateZ(0)' }} className="absolute w-16 h-16 rounded-full overflow-hidden shadow-sm hover:shadow-[0_0_20px_rgba(16,185,129,0.4)] hover:scale-110 transition-all duration-300 cursor-pointer">
-                <img src="/orbit-food-7.png" alt="Bakery pastries" className="w-full h-full object-cover" />
+              <div style={{ left: '10px', top: '59px', animation: 'spin 120s linear infinite reverse', transform: 'translateZ(0)' }} className="absolute w-16 h-16 hover:scale-110 transition-transform duration-300 cursor-pointer">
+                <img src="/orbit-food-7.png" alt="Bakery pastries" className="w-full h-full object-contain drop-shadow-md" />
               </div>
-              <div style={{ left: '256px', top: '-21px', animation: 'spin 120s linear infinite reverse', transform: 'translateZ(0)' }} className="absolute w-16 h-16 rounded-full overflow-hidden shadow-sm hover:shadow-[0_0_20px_rgba(16,185,129,0.4)] hover:scale-110 transition-all duration-300 cursor-pointer">
-                <img src="/orbit-food-8.png" alt="Dairy products" className="w-full h-full object-cover" />
+              <div style={{ left: '256px', top: '-21px', animation: 'spin 120s linear infinite reverse', transform: 'translateZ(0)' }} className="absolute w-16 h-16 hover:scale-110 transition-transform duration-300 cursor-pointer">
+                <img src="/orbit-food-8.png" alt="Dairy products" className="w-full h-full object-contain drop-shadow-md" />
               </div>
             </div>
           </motion.div>
