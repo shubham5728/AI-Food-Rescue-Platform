@@ -397,9 +397,9 @@ export function LandingClient({ stats, session, demo }: LandingClientProps) {
         </div>
       </section>
 
-      {/* Video Showcase Section */}
-      <section className="container py-12 sm:py-16 border-t border-border/60">
-        <div className="mx-auto max-w-4xl space-y-4 text-center">
+      {/* Video Showcase Section (Border-Free & Extra Large) */}
+      <section className="container py-10 sm:py-14">
+        <div className="mx-auto max-w-6xl space-y-4 text-center">
           <Badge variant="outline" className="px-3 py-1 text-xs border-primary/30 text-primary">
             <Sparkles className="size-3.5 mr-1" aria-hidden />
             AI Video Showcase
@@ -411,7 +411,7 @@ export function LandingClient({ stats, session, demo }: LandingClientProps) {
             Watch how our intelligent AI algorithm matches surplus meals from restaurants & event caterers to verified shelters in real-time across Ahmedabad.
           </p>
 
-          <div className="relative mt-6 overflow-hidden rounded-2xl border border-primary/20 bg-black/90 shadow-2xl p-2 sm:p-3">
+          <div className="relative mt-6 overflow-hidden rounded-3xl bg-black shadow-2xl">
             <video
               src="/foodbridge-ai-demo.mp4"
               controls
@@ -419,13 +419,14 @@ export function LandingClient({ stats, session, demo }: LandingClientProps) {
               muted
               loop
               playsInline
-              className="w-full aspect-video rounded-xl object-cover shadow-inner"
+              className="w-full aspect-video rounded-3xl object-cover"
             >
               Your browser does not support HTML5 video player.
             </video>
           </div>
         </div>
       </section>
+
 
       {/* Feature Cards Section */}
       <section className="container py-12 sm:py-16">
