@@ -147,8 +147,8 @@ export default async function LandingPage() {
             <div className="relative hidden lg:flex items-center justify-center w-full h-[400px]">
               
               {/* Center Human Element */}
-              <div className="absolute z-10 flex flex-col items-center justify-center w-24 h-24 rounded-full border-4 border-background shadow-[0_0_40px_rgba(var(--primary),0.3)] overflow-hidden">
-                <img src="/orbit-person-1.png" alt="Person in need" className="w-full h-full object-cover" />
+              <div className="absolute z-10 flex flex-col items-center justify-center w-32 h-32 rounded-full shadow-[0_0_50px_rgba(var(--primary),0.2)] overflow-hidden">
+                <img src="/orbit-person-1.png" alt="Person in need" className="w-full h-full object-cover mix-blend-multiply" />
               </div>
               
               {/* Inner Orbit */}
