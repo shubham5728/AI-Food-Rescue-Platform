@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
@@ -89,26 +89,40 @@ export function FoodMap({
   className = "",
 }: FoodMapProps) {
   const { t } = useLanguage();
-  // Default to Satellite HD as requested
   const [tileMode, setTileMode] = useState<"satellite" | "voyager" | "dark">("satellite");
-
-  const mapId = "foodbridge-real-satellite-map";
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const mapInstanceRef = useRef<L.Map | null>(null);
 
   useEffect(() => {
-    const container = L.DomUtil.get(mapId);
-    if (container !== null) {
-      (container as unknown as { _leaflet_id?: number })._leaflet_id = undefined;
+    if (!containerRef.current) return;
+
+    // Reset Leaflet ID on container to prevent _leaflet_id / _leaflet_pos collisions
+    const containerEl = containerRef.current as unknown as { _leaflet_id?: number };
+    if (containerEl._leaflet_id !== undefined) {
+      containerEl._leaflet_id = undefined;
     }
 
-    const map = L.map(mapId, {
+    // Safely cleanup previous instance if any
+    if (mapInstanceRef.current) {
+      try {
+        mapInstanceRef.current.off();
+        mapInstanceRef.current.remove();
+      } catch (e) {
+        console.warn("Leaflet map teardown note:", e);
+      }
+      mapInstanceRef.current = null;
+    }
+
+    const map = L.map(containerRef.current, {
       center: center,
       zoom: zoom,
       zoomControl: false,
     });
+    mapInstanceRef.current = map;
 
     L.control.zoom({ position: "bottomright" }).addTo(map);
 
-    // Default Satellite HD Tile Layer
+    // Tile Layer
     const selectedTile = TILE_LAYERS[tileMode];
     L.tileLayer(selectedTile.url, {
       maxZoom: 19,
@@ -119,6 +133,8 @@ export function FoodMap({
 
     // Add Donors & Recipient NGO Markers
     markers.forEach((m) => {
+      if (!m.lat || !m.lng) return;
+
       let icon = DONOR_ICON;
       if (m.type === "recipient") icon = RECIPIENT_ICON;
       if (m.type === "donation" && m.riskLevel === "HIGH") icon = URGENT_ICON;
@@ -128,7 +144,7 @@ export function FoodMap({
 
       const popupHtml = `
         <div style="padding: 12px; font-family: system-ui; min-width: 220px;">
-          <div style="display: flex; items-center; justify-content: space-between; gap: 8px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
             <h4 style="margin: 0; font-size: 14px; font-weight: 700; color: #0f172a;">${m.title}</h4>
           </div>
           ${m.subtitle ? `<p style="margin: 4px 0 0 0; font-size: 12px; color: #475569;">${m.subtitle}</p>` : ""}
@@ -145,6 +161,8 @@ export function FoodMap({
 
     // Add Active Delivery Polylines
     routes.forEach((r) => {
+      if (!r.fromLat || !r.fromLng || !r.toLat || !r.toLng) return;
+
       const polyline = L.polyline(
         [
           [r.fromLat, r.fromLng],
@@ -166,21 +184,30 @@ export function FoodMap({
       bounds.extend([r.toLat, r.toLng]);
     });
 
-    if (markers.length > 1) {
+    if (markers.length > 1 && bounds.isValid()) {
       map.fitBounds(bounds, { padding: [50, 50] });
     }
 
-    // Fix for Leaflet + React rendering glitches (markers off-center)
     const timeout = setTimeout(() => {
-      map.invalidateSize();
-      if (markers.length > 1) {
-        map.fitBounds(bounds, { padding: [50, 50] });
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.invalidateSize();
+        if (markers.length > 1 && bounds.isValid()) {
+          mapInstanceRef.current.fitBounds(bounds, { padding: [50, 50] });
+        }
       }
-    }, 400);
+    }, 300);
 
     return () => {
       clearTimeout(timeout);
-      map.remove();
+      if (mapInstanceRef.current) {
+        try {
+          mapInstanceRef.current.off();
+          mapInstanceRef.current.remove();
+        } catch (e) {
+          // ignore cleanup timing errors
+        }
+        mapInstanceRef.current = null;
+      }
     };
   }, [markers, routes, center, zoom, tileMode, t]);
 
@@ -224,7 +251,7 @@ export function FoodMap({
       </div>
 
       {/* Map Container */}
-      <div id={mapId} style={{ height }} className="w-full z-10" />
+      <div ref={containerRef} style={{ height }} className="w-full z-10" />
     </div>
   );
 }
