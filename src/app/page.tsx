@@ -156,6 +156,9 @@ export default async function LandingPage() {
                 <div className="absolute -top-8 left-1/2 -translate-x-1/2 w-16 h-16 bg-card border-2 border-background rounded-full overflow-hidden shadow-md animate-[spin_20s_linear_infinite_reverse]">
                   <img src="/orbit-food-1.png" alt="Fresh salad" className="w-full h-full object-cover" />
                 </div>
+                <div className="absolute top-1/2 -right-10 -translate-y-1/2 px-3 py-1.5 bg-background/95 backdrop-blur border border-border rounded-full shadow-sm text-xs font-semibold text-primary animate-[spin_20s_linear_infinite_reverse] whitespace-nowrap flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5" /> 99% Match
+                </div>
               </div>
 
               {/* Middle Orbit */}
@@ -166,6 +169,9 @@ export default async function LandingPage() {
                 <div className="absolute -right-8 top-1/2 -translate-y-1/2 w-16 h-16 bg-card border-2 border-background rounded-full overflow-hidden shadow-md animate-[spin_30s_linear_infinite]">
                   <img src="/orbit-food-4.png" alt="Gourmet sandwiches" className="w-full h-full object-cover" />
                 </div>
+                <div className="absolute -bottom-5 left-1/2 -translate-x-1/2 px-3 py-1.5 bg-background/95 backdrop-blur border border-border rounded-full shadow-sm text-xs font-semibold text-signal-critical animate-[spin_30s_linear_infinite] whitespace-nowrap flex items-center gap-1.5">
+                  <Flame className="w-3.5 h-3.5" /> 20m left
+                </div>
               </div>
 
               {/* Outer Orbit */}
@@ -175,6 +181,12 @@ export default async function LandingPage() {
                 </div>
                 <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-16 h-16 bg-card border-2 border-background rounded-full overflow-hidden shadow-md animate-[spin_40s_linear_infinite_reverse]">
                   <img src="/orbit-food-3.png" alt="Artisanal bread" className="w-full h-full object-cover" />
+                </div>
+                <div className="absolute top-1/2 -left-12 -translate-y-1/2 px-3 py-1.5 bg-background/95 backdrop-blur border border-border rounded-full shadow-sm text-xs font-medium text-muted-foreground animate-[spin_40s_linear_infinite_reverse] whitespace-nowrap flex items-center gap-1.5">
+                  <MapPin className="w-3.5 h-3.5" /> 1.2 km route
+                </div>
+                <div className="absolute top-1/2 -right-12 -translate-y-1/2 px-3 py-1.5 bg-background/95 backdrop-blur border border-border rounded-full shadow-sm text-xs font-medium text-foreground animate-[spin_40s_linear_infinite_reverse] whitespace-nowrap flex items-center gap-1.5">
+                  <Utensils className="w-3.5 h-3.5 text-primary" /> +50 meals
                 </div>
               </div>
 
