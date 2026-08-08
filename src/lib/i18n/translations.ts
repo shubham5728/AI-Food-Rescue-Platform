@@ -208,6 +208,24 @@ export interface Translations {
   yourOrg: string;
   ngoSubtitle: string;
 
+  // Phase 3: Secondary Pages
+  tabDonations: string;
+  tabPending: string;
+  donationsCountSub: string;
+  filterAll: string;
+  impactSubtitle: string;
+  impactExplanation: string;
+  impactDelivered: string;
+  impactAssumption: string;
+  impactCurrentBaseline: string;
+  impactMealsAcross: string;
+  impactCompletedDonations: string;
+  unverified: string;
+  away: string;
+  noticeSuffix: string;
+  requiresDelivery: string;
+  pickupRate: string;
+
   // Common UI
   loading: string;
   close: string;
@@ -407,6 +425,23 @@ export const translations: Record<Language, Translations> = {
     yourOrg: "Your Organisation",
     ngoSubtitle: "Your Verified NGO Shelter",
 
+    tabDonations: "My donations",
+    tabPending: "Pending match",
+    donationsCountSub: "active surplus food listings",
+    filterAll: "All",
+    impactSubtitle: "Every figure below is derived from donations that actually reached",
+    impactExplanation: "Meals donated and food saved sum the meal count and estimated mass of every donation with status Delivered. A donation that is matched but not yet collected contributes nothing.",
+    impactDelivered: "Delivered",
+    impactAssumption: "People served is derived at two meals per person, the working assumption for a single distribution.",
+    impactCurrentBaseline: "Current baseline:",
+    impactMealsAcross: "meals across",
+    impactCompletedDonations: "completed donations.",
+    unverified: "Unverified",
+    away: "away",
+    noticeSuffix: "notice",
+    requiresDelivery: "Requires delivery",
+    pickupRate: "pickup rate",
+
     loading: "Loading...",
     close: "Close",
     save: "Save",
@@ -603,6 +638,23 @@ export const translations: Record<Language, Translations> = {
     yourOrg: "आपका संगठन",
     ngoSubtitle: "आपका सत्यापित एनजीओ आश्रय",
 
+    tabDonations: "मेरे दान",
+    tabPending: "मिलान लंबित",
+    donationsCountSub: "सक्रिय अतिरिक्त भोजन सूची",
+    filterAll: "सभी",
+    impactSubtitle: "नीचे दिया गया हर आंकड़ा उन दानों से लिया गया है जो वास्तव में पहुंचे हैं",
+    impactExplanation: "दान किए गए भोजन और बचाए गए भोजन को 'वितरित' स्थिति वाले प्रत्येक दान के भोजन की संख्या और अनुमानित द्रव्यमान का योग माना जाता है। एक दान जिसका मिलान हो गया है लेकिन अभी तक एकत्र नहीं किया गया है, वह कुछ भी योगदान नहीं देता है।",
+    impactDelivered: "वितरित (Delivered)",
+    impactAssumption: "परोसे गए लोगों की गणना प्रति व्यक्ति दो भोजन के आधार पर की जाती है, जो एकल वितरण के लिए एक कार्यकारी धारणा है।",
+    impactCurrentBaseline: "वर्तमान आधार रेखा:",
+    impactMealsAcross: "भोजन",
+    impactCompletedDonations: "पूर्ण दानों में।",
+    unverified: "असत्यापित",
+    away: "दूर",
+    noticeSuffix: "सूचना",
+    requiresDelivery: "वितरण की आवश्यकता है",
+    pickupRate: "पिकअप दर",
+
     loading: "लोड हो रहा है...",
     close: "बंद करें",
     save: "सहेजें",
@@ -798,6 +850,23 @@ export const translations: Record<Language, Translations> = {
     bufferSuffix: "બફર",
     yourOrg: "તમારી સંસ્થા",
     ngoSubtitle: "તમારો ચકાસાયેલ NGO આશ્રય",
+
+    tabDonations: "મારા દાન",
+    tabPending: "મેચિંગ બાકી",
+    donationsCountSub: "સક્રિય ખોરાક લિસ્ટિંગ",
+    filterAll: "બધા",
+    impactSubtitle: "નીચેનો દરેક આંકડો એવા દાનમાંથી લેવામાં આવ્યો છે જે ખરેખર પહોંચ્યા છે",
+    impactExplanation: "દાન કરેલ ભોજન અને બચાવેલ ખોરાક 'વિતરિત' સ્થિતિ ધરાવતા દરેક દાનના ભોજનની ગણતરી અને અંદાજિત વજનનો સરવાળો છે. એક દાન જે મેળ ખાતું હોય પરંતુ હજુ સુધી એકત્રિત કરવામાં આવ્યું ન હોય તે કંઈપણ ફાળો આપતું નથી.",
+    impactDelivered: "વિતરિત (Delivered)",
+    impactAssumption: "પીરસવામાં આવતા લોકોની ગણતરી વ્યક્તિ દીઠ બે ભોજનના આધારે કરવામાં આવે છે, જે સિંગલ વિતરણ માટે કામ કરવાની ધારણા છે.",
+    impactCurrentBaseline: "વર્તમાન આધારરેખા:",
+    impactMealsAcross: "ભોજન",
+    impactCompletedDonations: "પૂર્ણ થયેલા દાનમાં.",
+    unverified: "ચકાસાયેલ નથી",
+    away: "દૂર",
+    noticeSuffix: "સૂચના",
+    requiresDelivery: "વિતરણ જરૂરી છે",
+    pickupRate: "પિકઅપ દર",
 
     loading: "લોડ થઈ રહ્યું છે...",
     close: "બંધ કરો",

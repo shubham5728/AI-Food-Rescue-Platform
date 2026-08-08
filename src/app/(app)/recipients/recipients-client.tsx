@@ -31,7 +31,7 @@ export function RecipientsClient({ items }: { items: RecipientWithDistance[] }) 
     lng: recipient.longitude,
     title: recipient.name,
     type: "recipient",
-    subtitle: `${ORGANISATION_TYPE_LABELS[recipient.type]} · ${formatDistance(distance_km)} away`,
+    subtitle: `${ORGANISATION_TYPE_LABELS[recipient.type]} · ${formatDistance(distance_km)} ${t("away")}`,
     address: recipient.address,
   }));
 
@@ -78,7 +78,7 @@ export function RecipientsClient({ items }: { items: RecipientWithDistance[] }) 
                         {t("verifiedBadge")}
                       </Badge>
                     ) : (
-                      <Badge variant="secondary">Unverified</Badge>
+                      <Badge variant="secondary">{t("unverified")}</Badge>
                     )}
                   </div>
 
@@ -107,8 +107,8 @@ export function RecipientsClient({ items }: { items: RecipientWithDistance[] }) 
                       <Clock className="mt-0.5 size-3.5 shrink-0 text-muted-foreground" aria-hidden />
                       <dd className="min-w-0 text-foreground/90">
                         {recipient.can_pickup
-                          ? `${recipient.pickup_lead_time_min} min notice`
-                          : "Requires delivery"}
+                          ? `${recipient.pickup_lead_time_min} min ${t("noticeSuffix")}`
+                          : t("requiresDelivery")}
                       </dd>
                     </div>
                   </dl>
@@ -125,7 +125,7 @@ export function RecipientsClient({ items }: { items: RecipientWithDistance[] }) 
 
                   <p className="mt-4 flex items-center gap-1.5 text-xs text-muted-foreground">
                     <Check className="size-3.5 text-primary" aria-hidden />
-                    {Math.round(recipient.reliability * 100)}% pickup rate
+                    {Math.round(recipient.reliability * 100)}% {t("pickupRate")}
                   </p>
                 </CardContent>
               </Card>
