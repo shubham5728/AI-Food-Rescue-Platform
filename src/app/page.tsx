@@ -153,28 +153,38 @@ export default async function LandingPage() {
               
               {/* Inner Orbit */}
               <div className="absolute w-[200px] h-[200px] rounded-full border border-dashed border-border animate-[spin_20s_linear_infinite]">
-                <div className="absolute -top-8 left-1/2 -translate-x-1/2 w-16 h-16 bg-card border-2 border-background rounded-full overflow-hidden shadow-md animate-[spin_20s_linear_infinite_reverse]">
+                <div className="absolute -top-8 left-1/2 -translate-x-1/2 w-16 h-16 bg-card border-2 border-background rounded-full overflow-hidden shadow-md animate-[spin_20s_linear_infinite_reverse] hover:shadow-[0_0_30px_rgba(var(--primary),0.8)] hover:scale-110 transition-all duration-300 cursor-pointer">
                   <img src="/orbit-food-1.png" alt="Fresh salad" className="w-full h-full object-cover" />
                 </div>
               </div>
 
               {/* Middle Orbit */}
               <div className="absolute w-[320px] h-[320px] rounded-full border border-dashed border-border animate-[spin_30s_linear_infinite_reverse]">
-                <div className="absolute -left-8 top-1/2 -translate-y-1/2 w-16 h-16 bg-card border-2 border-background rounded-full overflow-hidden shadow-md animate-[spin_30s_linear_infinite]">
+                <div className="absolute -left-8 top-1/2 -translate-y-1/2 w-16 h-16 bg-card border-2 border-background rounded-full overflow-hidden shadow-md animate-[spin_30s_linear_infinite] hover:shadow-[0_0_30px_rgba(var(--primary),0.8)] hover:scale-110 transition-all duration-300 cursor-pointer">
                   <img src="/orbit-food-2.png" alt="Fresh vegetables" className="w-full h-full object-cover" />
                 </div>
-                <div className="absolute -right-8 top-1/2 -translate-y-1/2 w-16 h-16 bg-card border-2 border-background rounded-full overflow-hidden shadow-md animate-[spin_30s_linear_infinite]">
+                <div className="absolute -right-8 top-1/2 -translate-y-1/2 w-16 h-16 bg-card border-2 border-background rounded-full overflow-hidden shadow-md animate-[spin_30s_linear_infinite] hover:shadow-[0_0_30px_rgba(var(--primary),0.8)] hover:scale-110 transition-all duration-300 cursor-pointer">
                   <img src="/orbit-food-4.png" alt="Gourmet sandwiches" className="w-full h-full object-cover" />
                 </div>
               </div>
 
               {/* Outer Orbit */}
               <div className="absolute w-[440px] h-[440px] rounded-full border border-dashed border-border/70 animate-[spin_40s_linear_infinite]">
-                <div className="absolute -top-8 left-1/2 -translate-x-1/2 w-16 h-16 bg-card border-2 border-background rounded-full overflow-hidden shadow-md animate-[spin_40s_linear_infinite_reverse]">
+                <div className="absolute -top-8 left-1/2 -translate-x-1/2 w-16 h-16 bg-card border-2 border-background rounded-full overflow-hidden shadow-md animate-[spin_40s_linear_infinite_reverse] hover:shadow-[0_0_30px_rgba(var(--primary),0.8)] hover:scale-110 transition-all duration-300 cursor-pointer">
                   <img src="/orbit-food-5.png" alt="Hot catering meal" className="w-full h-full object-cover" />
                 </div>
-                <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-16 h-16 bg-card border-2 border-background rounded-full overflow-hidden shadow-md animate-[spin_40s_linear_infinite_reverse]">
+                <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-16 h-16 bg-card border-2 border-background rounded-full overflow-hidden shadow-md animate-[spin_40s_linear_infinite_reverse] hover:shadow-[0_0_30px_rgba(var(--primary),0.8)] hover:scale-110 transition-all duration-300 cursor-pointer">
                   <img src="/orbit-food-3.png" alt="Artisanal bread" className="w-full h-full object-cover" />
+                </div>
+                {/* 3 New Images in Outer Orbit */}
+                <div className="absolute -left-8 top-1/2 -translate-y-1/2 w-16 h-16 bg-card border-2 border-background rounded-full overflow-hidden shadow-md animate-[spin_40s_linear_infinite_reverse] hover:shadow-[0_0_30px_rgba(var(--primary),0.8)] hover:scale-110 transition-all duration-300 cursor-pointer">
+                  <img src="/orbit-food-6.png" alt="Fresh fruits" className="w-full h-full object-cover" />
+                </div>
+                <div className="absolute -right-8 top-1/2 -translate-y-1/2 w-16 h-16 bg-card border-2 border-background rounded-full overflow-hidden shadow-md animate-[spin_40s_linear_infinite_reverse] hover:shadow-[0_0_30px_rgba(var(--primary),0.8)] hover:scale-110 transition-all duration-300 cursor-pointer">
+                  <img src="/orbit-food-7.png" alt="Bakery pastries" className="w-full h-full object-cover" />
+                </div>
+                <div className="absolute top-[10%] right-[10%] w-16 h-16 bg-card border-2 border-background rounded-full overflow-hidden shadow-md animate-[spin_40s_linear_infinite_reverse] hover:shadow-[0_0_30px_rgba(var(--primary),0.8)] hover:scale-110 transition-all duration-300 cursor-pointer">
+                  <img src="/orbit-food-8.png" alt="Dairy products" className="w-full h-full object-cover" />
                 </div>
               </div>
 
