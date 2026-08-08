@@ -84,6 +84,7 @@ export const createDonationSchema = z
     longitude: z.coerce.number().min(-180).max(180),
     address: z.string().trim().min(3, "Enter a pickup address").max(300),
     notes: z.string().trim().max(1000).optional().nullable(),
+    image_url: z.string().trim().max(500).optional().nullable(),
   })
   .superRefine((data, ctx) => {
     if (new Date(data.pickup_deadline) <= new Date(data.pickup_start)) {

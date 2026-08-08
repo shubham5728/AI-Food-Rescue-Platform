@@ -116,6 +116,7 @@ export class PrismaRepository implements Repository {
         longitude: donation.longitude,
         address: donation.address,
         notes: donation.notes,
+        image_url: donation.image_url,
         status: donation.status,
         matched_recipient_id: donation.matched_recipient_id,
         waste_risk_score: donation.waste_risk_score,

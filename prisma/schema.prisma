@@ -68,6 +68,7 @@ model Donation {
   longitude              Float
   address                String
   notes                  String?
+  image_url              String?
 
   status                 String
   matched_recipient_id   String?

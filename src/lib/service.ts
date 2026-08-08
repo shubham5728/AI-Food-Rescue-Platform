@@ -80,6 +80,7 @@ export async function createDonation(
     longitude: input.longitude,
     address: input.address,
     notes: input.notes ?? null,
+    image_url: input.image_url ?? null,
     status: "available",
     matched_recipient_id: null,
     waste_risk_score: 0,

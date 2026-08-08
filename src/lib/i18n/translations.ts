@@ -186,7 +186,7 @@ export const translations: Record<Language, Translations> = {
 
     donationsTitle: "Surplus Food Listings",
     donationsSub: "Available surplus food waiting for rescue.",
-    btnNewDonation: "+ New Donation",
+    btnNewDonation: "New Donation",
     quantity: "Quantity",
     expiry: "Expires In",
     location: "Location",

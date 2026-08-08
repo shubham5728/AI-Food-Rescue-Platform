@@ -111,6 +111,7 @@ export interface Donation {
   longitude: number;
   address: string;
   notes: string | null;
+  image_url: string | null;
 
   status: DonationStatus;
   /** Set once a recipient accepts. */

@@ -82,6 +82,7 @@ async function main() {
         longitude: d.longitude,
         address: d.address,
         notes: d.notes,
+        image_url: d.image_url,
         status: d.status,
         matched_recipient_id: d.matched_recipient_id,
         waste_risk_score: d.waste_risk_score,

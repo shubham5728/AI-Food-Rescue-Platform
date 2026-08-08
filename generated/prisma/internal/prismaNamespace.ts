@@ -884,6 +884,7 @@ export const DonationScalarFieldEnum = {
   longitude: 'longitude',
   address: 'address',
   notes: 'notes',
+  image_url: 'image_url',
   status: 'status',
   matched_recipient_id: 'matched_recipient_id',
   waste_risk_score: 'waste_risk_score',

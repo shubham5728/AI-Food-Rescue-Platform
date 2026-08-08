@@ -64,6 +64,7 @@ export type DonationMinAggregateOutputType = {
   longitude: number | null
   address: string | null
   notes: string | null
+  image_url: string | null
   status: string | null
   matched_recipient_id: string | null
   waste_risk_score: number | null
@@ -97,6 +98,7 @@ export type DonationMaxAggregateOutputType = {
   longitude: number | null
   address: string | null
   notes: string | null
+  image_url: string | null
   status: string | null
   matched_recipient_id: string | null
   waste_risk_score: number | null
@@ -130,6 +132,7 @@ export type DonationCountAggregateOutputType = {
   longitude: number
   address: number
   notes: number
+  image_url: number
   status: number
   matched_recipient_id: number
   waste_risk_score: number
@@ -185,6 +188,7 @@ export type DonationMinAggregateInputType = {
   longitude?: true
   address?: true
   notes?: true
+  image_url?: true
   status?: true
   matched_recipient_id?: true
   waste_risk_score?: true
@@ -218,6 +222,7 @@ export type DonationMaxAggregateInputType = {
   longitude?: true
   address?: true
   notes?: true
+  image_url?: true
   status?: true
   matched_recipient_id?: true
   waste_risk_score?: true
@@ -251,6 +256,7 @@ export type DonationCountAggregateInputType = {
   longitude?: true
   address?: true
   notes?: true
+  image_url?: true
   status?: true
   matched_recipient_id?: true
   waste_risk_score?: true
@@ -371,6 +377,7 @@ export type DonationGroupByOutputType = {
   longitude: number
   address: string
   notes: string | null
+  image_url: string | null
   status: string
   matched_recipient_id: string | null
   waste_risk_score: number
@@ -427,6 +434,7 @@ export type DonationWhereInput = {
   longitude?: Prisma.FloatFilter<"Donation"> | number
   address?: Prisma.StringFilter<"Donation"> | string
   notes?: Prisma.StringNullableFilter<"Donation"> | string | null
+  image_url?: Prisma.StringNullableFilter<"Donation"> | string | null
   status?: Prisma.StringFilter<"Donation"> | string
   matched_recipient_id?: Prisma.StringNullableFilter<"Donation"> | string | null
   waste_risk_score?: Prisma.FloatFilter<"Donation"> | number
@@ -464,6 +472,7 @@ export type DonationOrderByWithRelationInput = {
   longitude?: Prisma.SortOrder
   address?: Prisma.SortOrder
   notes?: Prisma.SortOrderInput | Prisma.SortOrder
+  image_url?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   matched_recipient_id?: Prisma.SortOrderInput | Prisma.SortOrder
   waste_risk_score?: Prisma.SortOrder
@@ -504,6 +513,7 @@ export type DonationWhereUniqueInput = Prisma.AtLeast<{
   longitude?: Prisma.FloatFilter<"Donation"> | number
   address?: Prisma.StringFilter<"Donation"> | string
   notes?: Prisma.StringNullableFilter<"Donation"> | string | null
+  image_url?: Prisma.StringNullableFilter<"Donation"> | string | null
   status?: Prisma.StringFilter<"Donation"> | string
   matched_recipient_id?: Prisma.StringNullableFilter<"Donation"> | string | null
   waste_risk_score?: Prisma.FloatFilter<"Donation"> | number
@@ -541,6 +551,7 @@ export type DonationOrderByWithAggregationInput = {
   longitude?: Prisma.SortOrder
   address?: Prisma.SortOrder
   notes?: Prisma.SortOrderInput | Prisma.SortOrder
+  image_url?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   matched_recipient_id?: Prisma.SortOrderInput | Prisma.SortOrder
   waste_risk_score?: Prisma.SortOrder
@@ -582,6 +593,7 @@ export type DonationScalarWhereWithAggregatesInput = {
   longitude?: Prisma.FloatWithAggregatesFilter<"Donation"> | number
   address?: Prisma.StringWithAggregatesFilter<"Donation"> | string
   notes?: Prisma.StringNullableWithAggregatesFilter<"Donation"> | string | null
+  image_url?: Prisma.StringNullableWithAggregatesFilter<"Donation"> | string | null
   status?: Prisma.StringWithAggregatesFilter<"Donation"> | string
   matched_recipient_id?: Prisma.StringNullableWithAggregatesFilter<"Donation"> | string | null
   waste_risk_score?: Prisma.FloatWithAggregatesFilter<"Donation"> | number
@@ -614,6 +626,7 @@ export type DonationCreateInput = {
   longitude: number
   address: string
   notes?: string | null
+  image_url?: string | null
   status: string
   waste_risk_score: number
   waste_risk_level: string
@@ -650,6 +663,7 @@ export type DonationUncheckedCreateInput = {
   longitude: number
   address: string
   notes?: string | null
+  image_url?: string | null
   status: string
   matched_recipient_id?: string | null
   waste_risk_score: number
@@ -684,6 +698,7 @@ export type DonationUpdateInput = {
   longitude?: Prisma.FloatFieldUpdateOperationsInput | number
   address?: Prisma.StringFieldUpdateOperationsInput | string
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
   waste_risk_score?: Prisma.FloatFieldUpdateOperationsInput | number
   waste_risk_level?: Prisma.StringFieldUpdateOperationsInput | string
@@ -720,6 +735,7 @@ export type DonationUncheckedUpdateInput = {
   longitude?: Prisma.FloatFieldUpdateOperationsInput | number
   address?: Prisma.StringFieldUpdateOperationsInput | string
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
   matched_recipient_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   waste_risk_score?: Prisma.FloatFieldUpdateOperationsInput | number
@@ -755,6 +771,7 @@ export type DonationCreateManyInput = {
   longitude: number
   address: string
   notes?: string | null
+  image_url?: string | null
   status: string
   matched_recipient_id?: string | null
   waste_risk_score: number
@@ -787,6 +804,7 @@ export type DonationUpdateManyMutationInput = {
   longitude?: Prisma.FloatFieldUpdateOperationsInput | number
   address?: Prisma.StringFieldUpdateOperationsInput | string
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
   waste_risk_score?: Prisma.FloatFieldUpdateOperationsInput | number
   waste_risk_level?: Prisma.StringFieldUpdateOperationsInput | string
@@ -819,6 +837,7 @@ export type DonationUncheckedUpdateManyInput = {
   longitude?: Prisma.FloatFieldUpdateOperationsInput | number
   address?: Prisma.StringFieldUpdateOperationsInput | string
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
   matched_recipient_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   waste_risk_score?: Prisma.FloatFieldUpdateOperationsInput | number
@@ -862,6 +881,7 @@ export type DonationCountOrderByAggregateInput = {
   longitude?: Prisma.SortOrder
   address?: Prisma.SortOrder
   notes?: Prisma.SortOrder
+  image_url?: Prisma.SortOrder
   status?: Prisma.SortOrder
   matched_recipient_id?: Prisma.SortOrder
   waste_risk_score?: Prisma.SortOrder
@@ -905,6 +925,7 @@ export type DonationMaxOrderByAggregateInput = {
   longitude?: Prisma.SortOrder
   address?: Prisma.SortOrder
   notes?: Prisma.SortOrder
+  image_url?: Prisma.SortOrder
   status?: Prisma.SortOrder
   matched_recipient_id?: Prisma.SortOrder
   waste_risk_score?: Prisma.SortOrder
@@ -938,6 +959,7 @@ export type DonationMinOrderByAggregateInput = {
   longitude?: Prisma.SortOrder
   address?: Prisma.SortOrder
   notes?: Prisma.SortOrder
+  image_url?: Prisma.SortOrder
   status?: Prisma.SortOrder
   matched_recipient_id?: Prisma.SortOrder
   waste_risk_score?: Prisma.SortOrder
@@ -1109,6 +1131,7 @@ export type DonationCreateWithoutDonorInput = {
   longitude: number
   address: string
   notes?: string | null
+  image_url?: string | null
   status: string
   waste_risk_score: number
   waste_risk_level: string
@@ -1143,6 +1166,7 @@ export type DonationUncheckedCreateWithoutDonorInput = {
   longitude: number
   address: string
   notes?: string | null
+  image_url?: string | null
   status: string
   matched_recipient_id?: string | null
   waste_risk_score: number
@@ -1186,6 +1210,7 @@ export type DonationCreateWithoutMatched_recipientInput = {
   longitude: number
   address: string
   notes?: string | null
+  image_url?: string | null
   status: string
   waste_risk_score: number
   waste_risk_level: string
@@ -1221,6 +1246,7 @@ export type DonationUncheckedCreateWithoutMatched_recipientInput = {
   longitude: number
   address: string
   notes?: string | null
+  image_url?: string | null
   status: string
   waste_risk_score: number
   waste_risk_level: string
@@ -1283,6 +1309,7 @@ export type DonationScalarWhereInput = {
   longitude?: Prisma.FloatFilter<"Donation"> | number
   address?: Prisma.StringFilter<"Donation"> | string
   notes?: Prisma.StringNullableFilter<"Donation"> | string | null
+  image_url?: Prisma.StringNullableFilter<"Donation"> | string | null
   status?: Prisma.StringFilter<"Donation"> | string
   matched_recipient_id?: Prisma.StringNullableFilter<"Donation"> | string | null
   waste_risk_score?: Prisma.FloatFilter<"Donation"> | number
@@ -1331,6 +1358,7 @@ export type DonationCreateWithoutMatchesInput = {
   longitude: number
   address: string
   notes?: string | null
+  image_url?: string | null
   status: string
   waste_risk_score: number
   waste_risk_level: string
@@ -1366,6 +1394,7 @@ export type DonationUncheckedCreateWithoutMatchesInput = {
   longitude: number
   address: string
   notes?: string | null
+  image_url?: string | null
   status: string
   matched_recipient_id?: string | null
   waste_risk_score: number
@@ -1415,6 +1444,7 @@ export type DonationUpdateWithoutMatchesInput = {
   longitude?: Prisma.FloatFieldUpdateOperationsInput | number
   address?: Prisma.StringFieldUpdateOperationsInput | string
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
   waste_risk_score?: Prisma.FloatFieldUpdateOperationsInput | number
   waste_risk_level?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1450,6 +1480,7 @@ export type DonationUncheckedUpdateWithoutMatchesInput = {
   longitude?: Prisma.FloatFieldUpdateOperationsInput | number
   address?: Prisma.StringFieldUpdateOperationsInput | string
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
   matched_recipient_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   waste_risk_score?: Prisma.FloatFieldUpdateOperationsInput | number
@@ -1483,6 +1514,7 @@ export type DonationCreateWithoutHistoryInput = {
   longitude: number
   address: string
   notes?: string | null
+  image_url?: string | null
   status: string
   waste_risk_score: number
   waste_risk_level: string
@@ -1518,6 +1550,7 @@ export type DonationUncheckedCreateWithoutHistoryInput = {
   longitude: number
   address: string
   notes?: string | null
+  image_url?: string | null
   status: string
   matched_recipient_id?: string | null
   waste_risk_score: number
@@ -1567,6 +1600,7 @@ export type DonationUpdateWithoutHistoryInput = {
   longitude?: Prisma.FloatFieldUpdateOperationsInput | number
   address?: Prisma.StringFieldUpdateOperationsInput | string
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
   waste_risk_score?: Prisma.FloatFieldUpdateOperationsInput | number
   waste_risk_level?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1602,6 +1636,7 @@ export type DonationUncheckedUpdateWithoutHistoryInput = {
   longitude?: Prisma.FloatFieldUpdateOperationsInput | number
   address?: Prisma.StringFieldUpdateOperationsInput | string
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
   matched_recipient_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   waste_risk_score?: Prisma.FloatFieldUpdateOperationsInput | number
@@ -1635,6 +1670,7 @@ export type DonationCreateManyDonorInput = {
   longitude: number
   address: string
   notes?: string | null
+  image_url?: string | null
   status: string
   matched_recipient_id?: string | null
   waste_risk_score: number
@@ -1668,6 +1704,7 @@ export type DonationCreateManyMatched_recipientInput = {
   longitude: number
   address: string
   notes?: string | null
+  image_url?: string | null
   status: string
   waste_risk_score: number
   waste_risk_level: string
@@ -1699,6 +1736,7 @@ export type DonationUpdateWithoutDonorInput = {
   longitude?: Prisma.FloatFieldUpdateOperationsInput | number
   address?: Prisma.StringFieldUpdateOperationsInput | string
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
   waste_risk_score?: Prisma.FloatFieldUpdateOperationsInput | number
   waste_risk_level?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1733,6 +1771,7 @@ export type DonationUncheckedUpdateWithoutDonorInput = {
   longitude?: Prisma.FloatFieldUpdateOperationsInput | number
   address?: Prisma.StringFieldUpdateOperationsInput | string
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
   matched_recipient_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   waste_risk_score?: Prisma.FloatFieldUpdateOperationsInput | number
@@ -1767,6 +1806,7 @@ export type DonationUncheckedUpdateManyWithoutDonorInput = {
   longitude?: Prisma.FloatFieldUpdateOperationsInput | number
   address?: Prisma.StringFieldUpdateOperationsInput | string
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
   matched_recipient_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   waste_risk_score?: Prisma.FloatFieldUpdateOperationsInput | number
@@ -1799,6 +1839,7 @@ export type DonationUpdateWithoutMatched_recipientInput = {
   longitude?: Prisma.FloatFieldUpdateOperationsInput | number
   address?: Prisma.StringFieldUpdateOperationsInput | string
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
   waste_risk_score?: Prisma.FloatFieldUpdateOperationsInput | number
   waste_risk_level?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1834,6 +1875,7 @@ export type DonationUncheckedUpdateWithoutMatched_recipientInput = {
   longitude?: Prisma.FloatFieldUpdateOperationsInput | number
   address?: Prisma.StringFieldUpdateOperationsInput | string
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
   waste_risk_score?: Prisma.FloatFieldUpdateOperationsInput | number
   waste_risk_level?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1868,6 +1910,7 @@ export type DonationUncheckedUpdateManyWithoutMatched_recipientInput = {
   longitude?: Prisma.FloatFieldUpdateOperationsInput | number
   address?: Prisma.StringFieldUpdateOperationsInput | string
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image_url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
   waste_risk_score?: Prisma.FloatFieldUpdateOperationsInput | number
   waste_risk_level?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1940,6 +1983,7 @@ export type DonationSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   longitude?: boolean
   address?: boolean
   notes?: boolean
+  image_url?: boolean
   status?: boolean
   matched_recipient_id?: boolean
   waste_risk_score?: boolean
@@ -1978,6 +2022,7 @@ export type DonationSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   longitude?: boolean
   address?: boolean
   notes?: boolean
+  image_url?: boolean
   status?: boolean
   matched_recipient_id?: boolean
   waste_risk_score?: boolean
@@ -2013,6 +2058,7 @@ export type DonationSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   longitude?: boolean
   address?: boolean
   notes?: boolean
+  image_url?: boolean
   status?: boolean
   matched_recipient_id?: boolean
   waste_risk_score?: boolean
@@ -2048,6 +2094,7 @@ export type DonationSelectScalar = {
   longitude?: boolean
   address?: boolean
   notes?: boolean
+  image_url?: boolean
   status?: boolean
   matched_recipient_id?: boolean
   waste_risk_score?: boolean
@@ -2063,7 +2110,7 @@ export type DonationSelectScalar = {
   updated_at?: boolean
 }
 
-export type DonationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "donor_id" | "food_name" | "food_type" | "quantity" | "quantity_unit" | "meals" | "weight_kg" | "dietary_type" | "allergens" | "prepared_at" | "pickup_start" | "pickup_deadline" | "latitude" | "longitude" | "address" | "notes" | "status" | "matched_recipient_id" | "waste_risk_score" | "waste_risk_level" | "waste_risk_reasons" | "waste_risk_explanation" | "priority_score" | "priority_level" | "priority_reason" | "ai_source" | "analysed_at" | "created_at" | "updated_at", ExtArgs["result"]["donation"]>
+export type DonationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "donor_id" | "food_name" | "food_type" | "quantity" | "quantity_unit" | "meals" | "weight_kg" | "dietary_type" | "allergens" | "prepared_at" | "pickup_start" | "pickup_deadline" | "latitude" | "longitude" | "address" | "notes" | "image_url" | "status" | "matched_recipient_id" | "waste_risk_score" | "waste_risk_level" | "waste_risk_reasons" | "waste_risk_explanation" | "priority_score" | "priority_level" | "priority_reason" | "ai_source" | "analysed_at" | "created_at" | "updated_at", ExtArgs["result"]["donation"]>
 export type DonationInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   donor?: boolean | Prisma.OrganisationDefaultArgs<ExtArgs>
   matched_recipient?: boolean | Prisma.Donation$matched_recipientArgs<ExtArgs>
@@ -2106,6 +2153,7 @@ export type $DonationPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     longitude: number
     address: string
     notes: string | null
+    image_url: string | null
     status: string
     matched_recipient_id: string | null
     waste_risk_score: number
@@ -2563,6 +2611,7 @@ export interface DonationFieldRefs {
   readonly longitude: Prisma.FieldRef<"Donation", 'Float'>
   readonly address: Prisma.FieldRef<"Donation", 'String'>
   readonly notes: Prisma.FieldRef<"Donation", 'String'>
+  readonly image_url: Prisma.FieldRef<"Donation", 'String'>
   readonly status: Prisma.FieldRef<"Donation", 'String'>
   readonly matched_recipient_id: Prisma.FieldRef<"Donation", 'String'>
   readonly waste_risk_score: Prisma.FieldRef<"Donation", 'Float'>

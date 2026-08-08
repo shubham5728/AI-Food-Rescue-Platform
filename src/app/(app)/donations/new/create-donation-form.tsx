@@ -2,6 +2,7 @@
 
 import {
   ArrowRight,
+  Camera,
   Flame,
   Loader2,
   MapPin,
@@ -9,6 +10,7 @@ import {
   Utensils,
   Wand2,
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -38,6 +40,7 @@ import type {
 } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { createDonationSchema, fieldErrors } from "@/lib/validation";
+import { detectFoodImage, ALL_FOOD_IMAGES } from "@/lib/food-images";
 
 /**
  * The donor's entry point, and step 2 of the demo.
@@ -96,6 +99,10 @@ export function CreateDonationForm({
   });
 
   const [allergens, setAllergens] = useState<string[]>([]);
+  const [imageUrl, setImageUrl] = useState<string>(
+    () => detectFoodImage("Vegetable Rice", "cooked_meal"),
+  );
+  const [autoDetected, setAutoDetected] = useState(true);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<{
@@ -105,6 +112,14 @@ export function CreateDonationForm({
 
   const set = (key: keyof typeof values, value: string) => {
     setValues((prev) => ({ ...prev, [key]: value }));
+    // Auto-detect image when food name or food type changes
+    if (key === "food_name" || key === "food_type") {
+      const newName = key === "food_name" ? value : values.food_name;
+      const newType = key === "food_type" ? value : values.food_type;
+      if (autoDetected) {
+        setImageUrl(detectFoodImage(newName, newType));
+      }
+    }
     setErrors((prev) => {
       if (!prev[key]) return prev;
       const next = { ...prev };
@@ -129,6 +144,7 @@ export function CreateDonationForm({
       ...values,
       allergens,
       notes: values.notes.trim() ? values.notes : null,
+      image_url: imageUrl || null,
     });
 
     if (!parsed.success) {
@@ -302,6 +318,91 @@ export function CreateDonationForm({
               })}
             </div>
           </fieldset>
+
+          {/* Image picker */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <p className="flex items-center gap-2 text-sm font-medium">
+                <Camera className="size-4 text-muted-foreground" aria-hidden />
+                Food photo
+              </p>
+              {autoDetected ? (
+                <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 px-2 py-0.5 text-[10px] font-semibold text-emerald-700">
+                  <Sparkles className="size-3" />
+                  AI Auto-detected
+                </span>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setAutoDetected(true);
+                    setImageUrl(detectFoodImage(values.food_name, values.food_type));
+                  }}
+                  className="text-[10px] font-medium text-primary underline underline-offset-2"
+                >
+                  Reset to auto-detect
+                </button>
+              )}
+            </div>
+
+            {/* Selected image large preview */}
+            <div className="relative h-44 w-full overflow-hidden rounded-xl border bg-muted">
+              <Image
+                src={imageUrl}
+                alt="Selected food image"
+                fill
+                className="object-cover transition-all duration-300"
+                sizes="(max-width: 640px) 100vw, 600px"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+              <div className="absolute bottom-2 left-3 right-3 flex items-end justify-between">
+                <span className="text-xs font-semibold text-white drop-shadow">
+                  {ALL_FOOD_IMAGES.find((f) => f.path === imageUrl)?.label ?? "Food Photo"}
+                </span>
+                {autoDetected && (
+                  <span className="rounded-full bg-emerald-600/90 px-2 py-0.5 text-[9px] font-bold text-white uppercase tracking-wide">
+                    Auto-matched
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {/* Thumbnail grid — click to manually override */}
+            <div className="grid grid-cols-4 gap-2">
+              {ALL_FOOD_IMAGES.map(({ path, label }) => (
+                <button
+                  key={path}
+                  type="button"
+                  onClick={() => {
+                    setImageUrl(path);
+                    setAutoDetected(false);
+                  }}
+                  aria-pressed={imageUrl === path}
+                  title={label}
+                  className={cn(
+                    "group relative aspect-square overflow-hidden rounded-lg border-2 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                    imageUrl === path
+                      ? "border-primary shadow-md scale-105"
+                      : "border-transparent opacity-55 hover:opacity-100 hover:scale-105",
+                  )}
+                >
+                  <Image
+                    src={path}
+                    alt={label}
+                    fill
+                    className="object-cover"
+                    sizes="100px"
+                  />
+                  <span className="absolute inset-x-0 bottom-0 bg-black/75 py-0.5 text-center text-[8px] font-medium text-white leading-tight px-0.5 truncate opacity-0 group-hover:opacity-100 transition-opacity">
+                    {label}
+                  </span>
+                </button>
+              ))}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              ✨ Image auto-detects as you type the food name. Click any photo to pick manually.
+            </p>
+          </div>
         </CardContent>
       </Card>
 
