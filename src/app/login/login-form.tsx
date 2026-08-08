@@ -11,7 +11,6 @@ import {
   Store,
 } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -21,7 +20,6 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { apiRequest, RequestError } from "@/lib/client-api";
 import type { DEMO_ACCOUNTS } from "@/lib/db/seed";
-import { useLanguage } from "@/lib/i18n/context";
 import { cn } from "@/lib/utils";
 
 type DemoAccount = (typeof DEMO_ACCOUNTS)[number];
@@ -33,11 +31,8 @@ export function LoginForm({
   accounts: DemoAccount[];
   className?: string;
 }) {
-  const router = useRouter();
-  const { t } = useLanguage();
-
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [password, setPassword] = useState("••••••••");
   const [showPassword, setShowPassword] = useState(false);
   const [pending, setPending] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -56,9 +51,9 @@ export function LoginForm({
         method: "POST",
         body: JSON.stringify({ email: targetEmail.trim(), password }),
       });
-      toast.success("✅ Signed in successfully!");
-      router.push("/dashboard");
-      router.refresh();
+      toast.success("✅ Signed in! Redirecting to Dashboard...");
+      // Bulletproof redirect to dashboard
+      window.location.href = "/dashboard";
     } catch (err) {
       const message =
         err instanceof RequestError
@@ -90,7 +85,7 @@ export function LoginForm({
             name="email"
             type="email"
             autoComplete="email"
-            placeholder="enter your email or user ID"
+            placeholder="kitchen@agashiye.demo"
             value={email}
             disabled={pending !== null}
             aria-invalid={Boolean(error)}
@@ -101,7 +96,7 @@ export function LoginForm({
           />
         </div>
 
-        {/* Password Input with Working Eye Toggle Button */}
+        {/* Password Input */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <Label htmlFor="password" className="flex items-center gap-1.5 font-medium">
@@ -114,7 +109,7 @@ export function LoginForm({
               id="password"
               name="password"
               type={showPassword ? "text" : "password"}
-              placeholder="Enter your password"
+              placeholder="Enter password"
               value={password}
               disabled={pending !== null}
               onChange={(event) => setPassword(event.target.value)}
@@ -152,22 +147,22 @@ export function LoginForm({
           ) : (
             <LogIn className="size-4" aria-hidden />
           )}
-          Sign In
+          Sign In to Dashboard
         </Button>
       </form>
 
-      {/* Demo Accounts List */}
+      {/* 1-Click Demo Profiles List */}
       {accounts.length > 0 ? (
         <>
           <div className="flex items-center gap-3">
             <Separator className="flex-1" />
-            <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-              Or 1-Click Login (Ahmedabad Demo Profiles)
+            <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              ⚡ 1-Click Demo Sign In (Select Email ID)
             </span>
             <Separator className="flex-1" />
           </div>
 
-          <ul className="space-y-2">
+          <ul className="space-y-2.5">
             {accounts.map((account) => {
               const Icon = account.role === "donor" ? Store : Building2;
               const isBusy = pending === account.email;
@@ -177,33 +172,38 @@ export function LoginForm({
                     type="button"
                     disabled={pending !== null}
                     onClick={() => void signIn(account.email)}
-                    className="flex w-full items-center gap-3 rounded-lg border border-border bg-card p-3 text-left transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-60"
+                    className="flex w-full items-center gap-3 rounded-xl border border-border bg-card p-3.5 text-left shadow-sm transition-all hover:border-primary/50 hover:bg-muted/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-60"
                   >
                     <span
                       className={cn(
-                        "flex size-9 shrink-0 items-center justify-center rounded-lg",
+                        "flex size-10 shrink-0 items-center justify-center rounded-lg font-bold",
                         account.role === "donor"
-                          ? "bg-accent-soft text-accent"
-                          : "bg-primary-soft text-primary",
+                          ? "bg-amber-500/10 text-amber-600 border border-amber-500/20"
+                          : "bg-primary-soft text-primary border border-primary/20",
                       )}
                       aria-hidden
                     >
                       {isBusy ? (
-                        <Loader2 className="size-4 animate-spin" />
+                        <Loader2 className="size-5 animate-spin" />
                       ) : (
-                        <Icon className="size-4" />
+                        <Icon className="size-5" />
                       )}
                     </span>
-                    <span className="min-w-0">
-                      <span className="block truncate text-sm font-medium">
-                        {account.name}
+                    <span className="min-w-0 flex-1">
+                      <span className="flex items-center gap-2">
+                        <span className="truncate text-sm font-bold text-foreground">
+                          {account.name}
+                        </span>
+                        <span className="rounded bg-muted px-1.5 py-0.5 text-[10px] font-mono text-muted-foreground">
+                          {account.email}
+                        </span>
                       </span>
-                      <span className="block truncate text-xs text-muted-foreground">
+                      <span className="block truncate text-xs text-muted-foreground mt-0.5">
                         {account.blurb}
                       </span>
                     </span>
-                    <span className="ml-auto text-xs font-semibold text-primary">
-                      1-Click Sign In →
+                    <span className="text-xs font-bold text-primary shrink-0">
+                      Sign In →
                     </span>
                   </button>
                 </li>
