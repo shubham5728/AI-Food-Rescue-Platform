@@ -15,13 +15,12 @@ import {
   Heart,
   Info,
   Leaf,
-  MapPin,
   PackageCheck,
-  PackageSearch,
   Radio,
   ShieldCheck,
   Sparkles,
   Store,
+  Thermometer,
   TreeDeciduous,
   Truck,
   Users,
@@ -29,9 +28,8 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 
-import { DynamicFoodMap, type MapMarkerItem } from "@/components/map";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { useLanguage } from "@/lib/i18n/context";
 import type { ImpactStats, ImpactTimePoint } from "@/lib/types";
@@ -48,77 +46,6 @@ export function ImpactClient({ stats }: ImpactClientProps) {
   const co2eSavedKg = 2888;
   const waterSavedLitres = 1.42; // Million Litres
   const methanePreventedKg = 485;
-
-  // Map markers for Ahmedabad Rescue Map
-  const mapMarkers: MapMarkerItem[] = [
-    {
-      id: "donor_agashiye",
-      lat: 23.0250,
-      lng: 72.5830,
-      title: "Agashiye (House of MG)",
-      type: "donation",
-      riskLevel: "HIGH",
-      meals: 50,
-      subtitle: "🔴 Urgent Rescue Required",
-      address: "Lal Darwaja, Ahmedabad",
-    },
-    {
-      id: "donor_tgb",
-      lat: 23.0380,
-      lng: 72.5120,
-      title: "The Grand Bhagwati (TGB)",
-      type: "donation",
-      riskLevel: "MEDIUM",
-      meals: 68,
-      subtitle: "🟠 Active Surplus Detected",
-      address: "Bodakdev, SG Highway, Ahmedabad",
-    },
-    {
-      id: "donor_havmor",
-      lat: 23.0360,
-      lng: 72.5610,
-      title: "Havmor Restaurant",
-      type: "donor",
-      subtitle: "Partner Restaurant",
-      address: "Navrangpura, Ahmedabad",
-    },
-    {
-      id: "ngo_robinhood",
-      lat: 23.0390,
-      lng: 72.5110,
-      title: "Robin Hood Army Ahmedabad",
-      type: "recipient",
-      subtitle: "🟢 Verified NGO Shelter",
-      address: "SG Highway Circle, Bodakdev",
-    },
-    {
-      id: "ngo_akshaya",
-      lat: 23.0850,
-      lng: 72.5020,
-      title: "Akshaya Patra Foundation",
-      type: "recipient",
-      subtitle: "🟢 Verified Mega Kitchen",
-      address: "Bhadaj Circle, SG Highway",
-    },
-    {
-      id: "ngo_manav",
-      lat: 23.0600,
-      lng: 72.5800,
-      title: "Manav Sadhna",
-      type: "recipient",
-      subtitle: "🟢 Verified Care Centre",
-      address: "Gandhi Ashram, Sabarmati",
-    },
-    {
-      id: "ngo_annamrita",
-      lat: 23.0270,
-      lng: 72.5080,
-      title: "Annamrita Foundation",
-      type: "recipient",
-      subtitle: "🟢 Verified Food Bank",
-      address: "Satellite, Ahmedabad",
-    },
-  ];
 
   return (
     <div className="container space-y-10 py-8">
@@ -144,7 +71,7 @@ export function ImpactClient({ stats }: ImpactClientProps) {
         </div>
       </header>
 
-      {/* 5. 🔥 Live Rescue Activity Feed (Ticker Panel) */}
+      {/* Live Rescue Activity Feed (Ticker Panel) */}
       <section className="rounded-2xl border border-primary/20 bg-card p-4 sm:p-5 shadow-lg relative overflow-hidden">
         <div className="flex items-center justify-between border-b border-border/50 pb-3 mb-4">
           <div className="flex items-center gap-2">
@@ -218,38 +145,138 @@ export function ImpactClient({ stats }: ImpactClientProps) {
         </div>
       </section>
 
-      {/* 1. 🗺️ Ahmedabad Rescue Impact Map (Must Have) */}
+      {/* NEW FEATURE 1: 🚚 Real-Time Dispatch Fleet & Logistics Tracker */}
       <section className="space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <MapPin className="size-6 text-primary" aria-hidden />
+            <Truck className="size-6 text-primary" aria-hidden />
             <div>
               <h2 className="text-xl font-bold tracking-tight text-foreground">
-                Ahmedabad Rescue Impact & Route Map
+                Express Logistics & Temperature-Controlled Dispatch Fleet
               </h2>
               <p className="text-xs sm:text-sm text-muted-foreground">
-                Live OpenStreetMap tracking surplus donor hubs (🔴), active rescues (🟠), and verified NGO shelters (🟢).
+                Insulated transport vehicles maintaining strict food freshness during transit across Ahmedabad.
               </p>
             </div>
           </div>
-          <div className="hidden sm:flex items-center gap-2 text-xs font-semibold">
-            <span className="flex items-center gap-1"><span className="size-2.5 rounded-full bg-rose-500"></span> Donors / Urgent</span>
-            <span className="flex items-center gap-1"><span className="size-2.5 rounded-full bg-amber-500"></span> Active Surplus</span>
-            <span className="flex items-center gap-1"><span className="size-2.5 rounded-full bg-emerald-500"></span> NGOs</span>
-          </div>
+          <Badge variant="outline" className="text-xs text-emerald-600 border-emerald-500/30 font-bold">
+            3 Active Vans En Route
+          </Badge>
         </div>
 
-        <div className="rounded-3xl border border-border shadow-2xl overflow-hidden">
-          <DynamicFoodMap
-            markers={mapMarkers}
-            center={[23.0380, 72.5350]}
-            zoom={12}
-            height="460px"
-          />
+        <div className="grid gap-4 sm:grid-cols-3">
+          <Card className="p-4 border-emerald-500/20 bg-emerald-500/5 shadow-sm space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="font-bold text-sm text-foreground">Express Electric Van #01</span>
+              <Badge className="bg-emerald-600 text-white text-[10px]">Active Transit</Badge>
+            </div>
+            <div className="space-y-1 text-xs text-muted-foreground">
+              <p className="flex justify-between font-medium"><span>Route:</span> <strong className="text-foreground">Lal Darwaja ➔ SG Highway</strong></p>
+              <p className="flex justify-between font-medium"><span>Cargo:</span> <strong className="text-foreground">50 Hot Meals</strong></p>
+              <p className="flex justify-between font-medium"><span>Internal Temp:</span> <strong className="text-emerald-600">68°C (Insulated)</strong></p>
+            </div>
+            <div className="pt-2 border-t border-border/50 flex items-center justify-between text-xs font-semibold text-primary">
+              <span>Driver ID: #AHM-V01</span>
+              <span>ETA 11 min</span>
+            </div>
+          </Card>
+
+          <Card className="p-4 border-blue-500/20 bg-blue-500/5 shadow-sm space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="font-bold text-sm text-foreground">Cold Storage Van #02</span>
+              <Badge className="bg-blue-600 text-white text-[10px]">Refrigerated</Badge>
+            </div>
+            <div className="space-y-1 text-xs text-muted-foreground">
+              <p className="flex justify-between font-medium"><span>Route:</span> <strong className="text-foreground">Navrangpura ➔ Sabarmati</strong></p>
+              <p className="flex justify-between font-medium"><span>Cargo:</span> <strong className="text-foreground">35 Milk & Dessert Packs</strong></p>
+              <p className="flex justify-between font-medium"><span>Chiller Temp:</span> <strong className="text-blue-600">4°C (Optimal)</strong></p>
+            </div>
+            <div className="pt-2 border-t border-border/50 flex items-center justify-between text-xs font-semibold text-primary">
+              <span>Driver ID: #AHM-V02</span>
+              <span>Completed</span>
+            </div>
+          </Card>
+
+          <Card className="p-4 border-amber-500/20 bg-amber-500/5 shadow-sm space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="font-bold text-sm text-foreground">Express Electric Van #03</span>
+              <Badge className="bg-amber-600 text-white text-[10px]">Dispatched</Badge>
+            </div>
+            <div className="space-y-1 text-xs text-muted-foreground">
+              <p className="flex justify-between font-medium"><span>Route:</span> <strong className="text-foreground">Bodakdev ➔ Bhadaj Circle</strong></p>
+              <p className="flex justify-between font-medium"><span>Cargo:</span> <strong className="text-foreground">68 Buffet Portions</strong></p>
+              <p className="flex justify-between font-medium"><span>Internal Temp:</span> <strong className="text-amber-600">65°C (Hot Box)</strong></p>
+            </div>
+            <div className="pt-2 border-t border-border/50 flex items-center justify-between text-xs font-semibold text-primary">
+              <span>Driver ID: #AHM-V03</span>
+              <span>ETA 16 min</span>
+            </div>
+          </Card>
         </div>
       </section>
 
-      {/* 2. 🍱 Food Rescue Flow (Horizontal Visual) */}
+      {/* NEW FEATURE 2: 🛡️ FSSAI Food Safety & Quality Control Verification Grid */}
+      <section className="space-y-4">
+        <div className="flex items-center gap-2">
+          <ShieldCheck className="size-6 text-emerald-600" aria-hidden />
+          <div>
+            <h2 className="text-xl font-bold tracking-tight text-foreground">
+              FSSAI Food Safety & Hygiene Verification Standard
+            </h2>
+            <p className="text-xs sm:text-sm text-muted-foreground">
+              Every rescued meal undergoes a 4-point automated safety audit before distribution.
+            </p>
+          </div>
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-4">
+          <Card className="p-4 border-border/80 shadow-sm space-y-2">
+            <div className="flex size-9 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-600 font-bold">
+              <Thermometer className="size-4" />
+            </div>
+            <p className="font-bold text-sm text-foreground">1. Core Temp Test</p>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Hot meals verified &gt; 60°C and cold items &lt; 5°C before sealing.
+            </p>
+            <Badge variant="outline" className="text-[10px] text-emerald-600 border-emerald-500/30">100% Passed</Badge>
+          </Card>
+
+          <Card className="p-4 border-border/80 shadow-sm space-y-2">
+            <div className="flex size-9 items-center justify-center rounded-lg bg-blue-500/10 text-blue-600 font-bold">
+              <Clock className="size-4" />
+            </div>
+            <p className="font-bold text-sm text-foreground">2. Prep Window Check</p>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Meals dispatched within 3 hours of kitchen preparation time.
+            </p>
+            <Badge variant="outline" className="text-[10px] text-blue-600 border-blue-500/30">&lt; 18 min Avg</Badge>
+          </Card>
+
+          <Card className="p-4 border-border/80 shadow-sm space-y-2">
+            <div className="flex size-9 items-center justify-center rounded-lg bg-purple-500/10 text-purple-600 font-bold">
+              <PackageCheck className="size-4" />
+            </div>
+            <p className="font-bold text-sm text-foreground">3. Sealed Container Audit</p>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Tamper-evident food grade packaging verified by rescue driver.
+            </p>
+            <Badge variant="outline" className="text-[10px] text-purple-600 border-purple-500/30">Food-Grade Sealed</Badge>
+          </Card>
+
+          <Card className="p-4 border-border/80 shadow-sm space-y-2">
+            <div className="flex size-9 items-center justify-center rounded-lg bg-amber-500/10 text-amber-600 font-bold">
+              <Award className="size-4" />
+            </div>
+            <p className="font-bold text-sm text-foreground">4. FSSAI Kitchen Audit</p>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              All 5 donor hotels certified with 5-star FSSAI hygiene ratings.
+            </p>
+            <Badge variant="outline" className="text-[10px] text-amber-600 border-amber-500/30">FSSAI Certified</Badge>
+          </Card>
+        </div>
+      </section>
+
+      {/* Food Rescue Journey Flow (Horizontal Visual) */}
       <section className="space-y-4">
         <div className="flex items-center gap-2">
           <Truck className="size-5 text-primary" aria-hidden />
@@ -306,7 +333,7 @@ export function ImpactClient({ stats }: ImpactClientProps) {
         </Card>
       </section>
 
-      {/* 3. 🌱 Environmental Impact Visual & Equivalents */}
+      {/* Environmental Impact Progress & Equivalents */}
       <section className="space-y-4">
         <div className="flex items-center gap-2">
           <Leaf className="size-5 text-emerald-600" aria-hidden />
@@ -375,7 +402,45 @@ export function ImpactClient({ stats }: ImpactClientProps) {
         </div>
       </section>
 
-      {/* 4. 📸 Real Rescue Stories (Human Connection Cards) */}
+      {/* NEW FEATURE 3: 👥 Demographic Shelter Distribution Breakdown */}
+      <section className="space-y-4">
+        <div className="flex items-center gap-2">
+          <Users className="size-5 text-primary" aria-hidden />
+          <h2 className="text-xl font-bold tracking-tight text-foreground">
+            Demographic Beneficiary & Shelter Distribution
+          </h2>
+        </div>
+
+        <Card className="p-5 border-border/80 shadow-sm space-y-4">
+          <div className="grid gap-4 sm:grid-cols-4">
+            <div className="space-y-1.5 p-3 rounded-xl bg-muted/40 border border-border/50">
+              <p className="text-xs font-bold text-muted-foreground">Night Shelters & Children</p>
+              <p className="text-2xl font-extrabold text-foreground">45% <span className="text-xs font-normal text-muted-foreground">(742 meals)</span></p>
+              <Progress value={45} className="h-2 bg-primary/20 [&>div]:bg-primary" />
+            </div>
+
+            <div className="space-y-1.5 p-3 rounded-xl bg-muted/40 border border-border/50">
+              <p className="text-xs font-bold text-muted-foreground">Senior Citizen Care</p>
+              <p className="text-2xl font-extrabold text-foreground">28% <span className="text-xs font-normal text-muted-foreground">(462 meals)</span></p>
+              <Progress value={28} className="h-2 bg-emerald-500/20 [&>div]:bg-emerald-600" />
+            </div>
+
+            <div className="space-y-1.5 p-3 rounded-xl bg-muted/40 border border-border/50">
+              <p className="text-xs font-bold text-muted-foreground">Hospital Attendant Canteens</p>
+              <p className="text-2xl font-extrabold text-foreground">17% <span className="text-xs font-normal text-muted-foreground">(280 meals)</span></p>
+              <Progress value={17} className="h-2 bg-blue-500/20 [&>div]:bg-blue-600" />
+            </div>
+
+            <div className="space-y-1.5 p-3 rounded-xl bg-muted/40 border border-border/50">
+              <p className="text-xs font-bold text-muted-foreground">Differently Abled Hostels</p>
+              <p className="text-2xl font-extrabold text-foreground">10% <span className="text-xs font-normal text-muted-foreground">(166 meals)</span></p>
+              <Progress value={10} className="h-2 bg-purple-500/20 [&>div]:bg-purple-600" />
+            </div>
+          </div>
+        </Card>
+      </section>
+
+      {/* Real Rescue Stories */}
       <section className="space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -479,9 +544,9 @@ export function ImpactClient({ stats }: ImpactClientProps) {
         </div>
       </section>
 
-      {/* 6. 🥗 Food Category & 7. 📈 Before vs After Waste Comparison */}
+      {/* Food Category & Before vs After Waste Comparison */}
       <section className="grid gap-6 md:grid-cols-2">
-        {/* 6. Food Category Visual */}
+        {/* Food Category Visual */}
         <Card className="p-5 border-border/80 shadow-sm space-y-4">
           <div className="flex items-center gap-2">
             <Utensils className="size-5 text-primary" aria-hidden />
@@ -510,7 +575,7 @@ export function ImpactClient({ stats }: ImpactClientProps) {
           </div>
         </Card>
 
-        {/* 7. 📈 What FoodBridge Changes (Before vs After Waste) */}
+        {/* What FoodBridge Changes (Before vs After Waste) */}
         <Card className="p-5 border border-primary/30 bg-primary/5 shadow-md space-y-4">
           <div className="flex items-center gap-2">
             <PackageCheck className="size-5 text-primary" aria-hidden />
@@ -547,7 +612,7 @@ export function ImpactClient({ stats }: ImpactClientProps) {
         </Card>
       </section>
 
-      {/* 8. 🏆 Donor Reliability Visual Leaderboard */}
+      {/* Donor Reliability Visual Leaderboard */}
       <section className="space-y-4">
         <div className="flex items-center gap-2">
           <Award className="size-5 text-amber-500" aria-hidden />
