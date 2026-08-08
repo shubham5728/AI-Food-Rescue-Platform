@@ -14,7 +14,8 @@ const globalForPrisma = globalThis as unknown as { prisma: PrismaClient }
 export const prisma =
   globalForPrisma.prisma ||
   (function () {
-    const adapter = new PrismaBetterSqlite3({ url: process.env.DATABASE_URL! })
+    const url = process.env.DATABASE_URL || "file:./dev.db"
+    const adapter = new PrismaBetterSqlite3({ url })
     return new PrismaClient({ adapter })
   })()
 

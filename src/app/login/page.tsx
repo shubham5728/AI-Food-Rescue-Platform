@@ -70,9 +70,8 @@ export default async function LoginPage() {
           <h1 className="text-2xl font-semibold tracking-tight">
             Sign in to FoodBridge
           </h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Enter the email your organisation is registered with, or pick one of the
-            demo organisations below.
+          <p className="mt-1.5 text-sm text-muted-foreground">
+            Select a demo profile to continue.
           </p>
 
           <LoginForm accounts={accounts} className="mt-7" />
