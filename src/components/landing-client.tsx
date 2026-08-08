@@ -242,9 +242,9 @@ function Orbit3D({
         */}
         <div
           className={`absolute inset-0 rounded-full border border-dashed ${
-            faint ? "border-border/70" : "border-border"
+            faint ? "border-primary/5" : "border-primary/15"
           }`}
-          style={{ transform: "rotateX(90deg)" }}
+          style={{ transform: "rotateX(90deg) translateZ(-1px)" }}
         />
         {children}
       </div>
@@ -274,6 +274,9 @@ function OrbitItem3D({
   reverse?: boolean;
   children: React.ReactNode;
 }) {
+  // Create a staggered delay based on angle for the floating animation
+  const floatDelay = (angle / 360) * -4;
+
   return (
     <div
       className="fb-orbit-3d absolute left-1/2 top-1/2 w-16 h-16 -ml-8 -mt-8"
@@ -285,11 +288,16 @@ function OrbitItem3D({
           animation: `${reverse ? "fb-orbit-counter-reverse" : "fb-orbit-counter"} ${duration}s linear infinite`,
         }}
       >
-        <div
-          className="w-full h-full hover:scale-110 transition-transform duration-300 cursor-pointer rounded-full overflow-hidden bg-white shadow-md p-1.5 flex items-center justify-center border border-white/5 outline outline-1 outline-transparent"
-          style={{ transform: `rotateY(${-angle}deg) rotateX(${-ORBIT_TILT_DEG}deg) translateZ(1px)`, WebkitBackfaceVisibility: 'hidden' }}
+        <div 
+          className="fb-orbit-3d w-full h-full"
+          style={{ animation: `fb-orbit-float 4s ease-in-out infinite`, animationDelay: `${floatDelay}s` }}
         >
-          {children}
+          <div
+            className="w-full h-full hover:scale-110 transition-transform duration-300 cursor-pointer rounded-full overflow-hidden bg-gradient-to-b from-white to-neutral-50 shadow-[0_15px_30px_-10px_rgba(0,0,0,0.15),0_0_20px_rgba(16,185,129,0.08),inset_0_2px_4px_rgba(255,255,255,1)] p-2 flex items-center justify-center border border-black/5 ring-1 ring-white/60"
+            style={{ transform: `rotateY(${-angle}deg) rotateX(${-ORBIT_TILT_DEG}deg) translateZ(1px)`, WebkitBackfaceVisibility: 'hidden' }}
+          >
+            {children}
+          </div>
         </div>
       </div>
     </div>
@@ -436,7 +444,7 @@ export function LandingClient({ stats, session, demo }: LandingClientProps) {
           >
             <div className="fb-orbit-3d relative flex items-center justify-center w-full h-full">
               {/* Center Human Element */}
-              <div className="fb-orbit-3d absolute z-10 flex flex-col items-center justify-center w-32 h-32 rounded-full shadow-[0_0_40px_rgba(16,185,129,0.15)] overflow-hidden">
+              <div className="fb-orbit-3d absolute z-10 flex flex-col items-center justify-center w-36 h-36 rounded-full shadow-[0_0_60px_rgba(16,185,129,0.25),0_20px_40px_-10px_rgba(0,0,0,0.15),inset_0_2px_4px_rgba(255,255,255,0.8)] overflow-hidden ring-1 ring-black/5 before:absolute before:inset-0 before:rounded-full before:bg-gradient-to-tr before:from-emerald-500/10 before:to-transparent before:pointer-events-none transition-transform duration-700 hover:scale-105 bg-white">
                 <img src="/orbit-person-2.png" alt="Person in need" className="w-full h-full object-cover" />
               </div>
 
