@@ -66,7 +66,7 @@ export function DonorDashboardClient({
       lng: organisation.longitude,
       title: organisation.name,
       type: "donor",
-      subtitle: "Your Organisation",
+      subtitle: t("yourOrg"),
       address: organisation.address,
     },
     {
@@ -145,11 +145,11 @@ export function DonorDashboardClient({
           <div className="flex items-center gap-2 mb-1.5">
             <Badge variant="outline" className="border-primary/30 text-primary">
               <Building2 className="size-3.5 mr-1" aria-hidden />
-              {organisation.type.toUpperCase()} · Verified Partner
+              {organisation.type.toUpperCase()} · {t("orgVerifiedPartner")}
             </Badge>
             <Badge variant="secondary" className="text-emerald-700 bg-emerald-500/10">
               <ShieldCheck className="size-3.5 mr-1 text-emerald-600" />
-              98% Reliability
+              98% {t("orgReliability")}
             </Badge>
           </div>
           <h1 className="text-2xl font-extrabold tracking-tight sm:text-4xl text-foreground">
@@ -157,7 +157,7 @@ export function DonorDashboardClient({
           </h1>
           <p className="mt-1 text-sm sm:text-base text-muted-foreground">
             {myActive.length > 0
-              ? `${myActive.length} active surplus food listings currently being rescued`
+              ? `${myActive.length} ${t("activeListingsMsg")}`
               : t("dashSub")}
           </p>
         </div>
@@ -178,19 +178,19 @@ export function DonorDashboardClient({
             </div>
             <div>
               <div className="flex items-center gap-2 mb-0.5">
-                <span className="font-extrabold text-base text-foreground">LIVE RESCUE DISPATCH TRACKING</span>
+                <span className="font-extrabold text-base text-foreground">{t("liveRescueTracking")}</span>
                 <Badge className="bg-emerald-600 text-white font-bold text-[10px]">
-                  <Radio className="size-3 mr-1 animate-pulse" /> Live GPS Connected
+                  <Radio className="size-3 mr-1 animate-pulse" /> {t("liveGPSConnected")}
                 </Badge>
               </div>
               <p className="text-xs sm:text-sm text-muted-foreground">
-                Driver <strong>Rahul Patel</strong> is <strong>2.4 km away</strong> · ETA: <strong>9 min</strong> · Rescue Window: <strong>34 min remaining</strong> (🟢 ON TIME)
+                {t("driverStatusDonor")}
               </p>
             </div>
           </div>
           <Button asChild size="sm" className="font-bold shadow">
             <Link href="/tracking/del_demo01">
-              Open Driver Live Map →
+              {t("openLiveMap")}
             </Link>
           </Button>
         </div>
@@ -239,13 +239,13 @@ export function DonorDashboardClient({
             <div>
               <p className="text-xs font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-300 flex items-center gap-1.5">
                 <CloudSun className="size-4 text-emerald-600" />
-                CO₂ Emissions Offset
+                {t("co2Title")}
               </p>
               <p className="mt-1 text-2xl font-extrabold tracking-tight text-foreground">
-                {co2eSavedKg.toLocaleString()} kg CO₂e
+                {co2eSavedKg.toLocaleString()} {t("co2Unit")}
               </p>
               <p className="mt-0.5 text-xs text-muted-foreground">
-                Stopped greenhouse gas emissions from landfill waste
+                {t("co2Subtitle")}
               </p>
             </div>
             <div className="flex size-12 items-center justify-center rounded-2xl bg-emerald-500/10 text-emerald-600 font-bold text-lg border border-emerald-500/20">
@@ -259,13 +259,13 @@ export function DonorDashboardClient({
             <div>
               <p className="text-xs font-bold uppercase tracking-wider text-blue-700 dark:text-blue-300 flex items-center gap-1.5">
                 <Droplets className="size-4 text-blue-600" />
-                Agricultural Water Conserved
+                {t("waterTitle")}
               </p>
               <p className="mt-1 text-2xl font-extrabold tracking-tight text-foreground">
-                {(waterSavedLitres / 1000).toFixed(1)}k Litres
+                {(waterSavedLitres / 1000).toFixed(1)} {t("waterUnit")}
               </p>
               <p className="mt-0.5 text-xs text-muted-foreground">
-                Fresh water saved by rescuing prepared meals
+                {t("waterSubtitle")}
               </p>
             </div>
             <div className="flex size-12 items-center justify-center rounded-2xl bg-blue-500/10 text-blue-600 font-bold text-lg border border-blue-500/20">
@@ -281,11 +281,11 @@ export function DonorDashboardClient({
           <div className="flex items-center gap-2">
             <MapPin className="size-5 text-primary" aria-hidden />
             <h2 className="text-lg font-bold tracking-tight text-foreground">
-              Ahmedabad Real-Time Dispatch Map
+              {t("liveDispatchMapTitle")}
             </h2>
           </div>
           <Badge variant="outline" className="text-xs font-semibold text-primary">
-            <Radio className="size-3 mr-1 animate-pulse text-emerald-600" /> Live GPS Dispatch
+            <Radio className="size-3 mr-1 animate-pulse text-emerald-600" /> {t("liveGPSDispatch")}
           </Badge>
         </div>
 

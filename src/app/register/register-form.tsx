@@ -21,12 +21,14 @@ import {
 import type { DietaryType, FoodCategory, UserRole } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { fieldErrors, registerSchema } from "@/lib/validation";
+import { useLanguage } from "@/lib/i18n/context";
 
 /** Bangalore city centre, so a new profile starts somewhere plausible. */
 const DEFAULT_LOCATION = { latitude: "12.9716", longitude: "77.5946" };
 
 export function RegisterForm({ className }: { className?: string }) {
   const router = useRouter();
+  const { t } = useLanguage();
 
   const [role, setRole] = useState<UserRole>("donor");
   const [values, setValues] = useState({
@@ -152,21 +154,21 @@ export function RegisterForm({ className }: { className?: string }) {
     <form noValidate onSubmit={submit} className={cn("space-y-6", className)}>
       {/* Role -------------------------------------------------------- */}
       <fieldset>
-        <legend className="text-sm font-medium">I am registering as</legend>
+        <legend className="text-sm font-medium">{t("registerAs")}</legend>
         <div className="mt-3 grid gap-3 sm:grid-cols-2">
           {(
             [
               {
                 value: "donor" as const,
                 icon: Store,
-                title: "A donor",
-                body: "Restaurant, hostel, caterer or event with surplus food",
+                title: t("donorTitle"),
+                body: t("donorDesc"),
               },
               {
                 value: "recipient" as const,
                 icon: Building2,
-                title: "A recipient",
-                body: "Shelter, NGO, community kitchen, food bank or care home",
+                title: t("recipientTitle"),
+                body: t("recipientDesc"),
               },
             ]
           ).map((option) => (
@@ -204,7 +206,7 @@ export function RegisterForm({ className }: { className?: string }) {
       <Card>
         <CardContent className="space-y-5 pt-5">
           <div className="grid gap-5 sm:grid-cols-2">
-            <Field label="Organisation name" htmlFor="name" error={err("name")}>
+            <Field label={t("orgName")} htmlFor="name" error={err("name")}>
               <Input
                 id="name"
                 value={values.name}
@@ -213,7 +215,7 @@ export function RegisterForm({ className }: { className?: string }) {
                 placeholder="Hope Community Kitchen"
               />
             </Field>
-            <Field label="Organisation type" htmlFor="type" error={err("type")}>
+            <Field label={t("orgType")} htmlFor="type" error={err("type")}>
               <Select
                 id="type"
                 value={values.type}
@@ -230,7 +232,7 @@ export function RegisterForm({ className }: { className?: string }) {
 
           <div className="grid gap-5 sm:grid-cols-2">
             <Field
-              label="Contact person"
+              label={t("contactPerson")}
               htmlFor="contact_person"
               error={err("contact_person")}
             >
@@ -241,7 +243,7 @@ export function RegisterForm({ className }: { className?: string }) {
                 aria-invalid={Boolean(err("contact_person"))}
               />
             </Field>
-            <Field label="Phone" htmlFor="phone" error={err("phone")}>
+            <Field label={t("phone")} htmlFor="phone" error={err("phone")}>
               <Input
                 id="phone"
                 type="tel"
@@ -253,7 +255,7 @@ export function RegisterForm({ className }: { className?: string }) {
             </Field>
           </div>
 
-          <Field label="Email" htmlFor="email" error={err("email")}>
+          <Field label={t("email")} htmlFor="email" error={err("email")}>
             <Input
               id="email"
               type="email"
@@ -264,7 +266,7 @@ export function RegisterForm({ className }: { className?: string }) {
             />
           </Field>
 
-          <Field label="Address" htmlFor="address" error={err("address")}>
+          <Field label={t("address")} htmlFor="address" error={err("address")}>
             <Input
               id="address"
               value={values.address}
@@ -274,7 +276,7 @@ export function RegisterForm({ className }: { className?: string }) {
           </Field>
 
           <div className="grid gap-5 sm:grid-cols-2">
-            <Field label="Latitude" htmlFor="latitude" error={err("latitude")}>
+            <Field label={t("latitude")} htmlFor="latitude" error={err("latitude")}>
               <Input
                 id="latitude"
                 type="number"
@@ -284,7 +286,7 @@ export function RegisterForm({ className }: { className?: string }) {
                 aria-invalid={Boolean(err("latitude"))}
               />
             </Field>
-            <Field label="Longitude" htmlFor="longitude" error={err("longitude")}>
+            <Field label={t("longitude")} htmlFor="longitude" error={err("longitude")}>
               <Input
                 id="longitude"
                 type="number"
@@ -303,16 +305,15 @@ export function RegisterForm({ className }: { className?: string }) {
         <Card>
           <CardContent className="space-y-5 pt-5">
             <div>
-              <h2 className="text-sm font-semibold">What can you take?</h2>
+              <h2 className="text-sm font-semibold">{t("whatCanYouTake")}</h2>
               <p className="mt-1 text-xs text-muted-foreground">
-                These are hard constraints. A donation that breaches any of them is
-                filtered out before it is ever scored for you.
+                {t("hardConstraintsHint")}
               </p>
             </div>
 
             <div className="grid gap-5 sm:grid-cols-3">
               <Field
-                label="Minimum useful quantity"
+                label={t("minQty")}
                 htmlFor="capacity_min"
                 error={err("capacity_min")}
               >
@@ -326,7 +327,7 @@ export function RegisterForm({ className }: { className?: string }) {
                 />
               </Field>
               <Field
-                label="Maximum capacity"
+                label={t("maxCap")}
                 htmlFor="capacity_max"
                 error={err("capacity_max")}
               >
@@ -340,7 +341,7 @@ export function RegisterForm({ className }: { className?: string }) {
                 />
               </Field>
               <Field
-                label="Typical quantity"
+                label={t("typicalQty")}
                 htmlFor="typical_quantity"
                 error={err("typical_quantity")}
               >
@@ -356,7 +357,7 @@ export function RegisterForm({ className }: { className?: string }) {
             </div>
 
             <fieldset>
-              <legend className="text-sm font-medium">Diets you can accept</legend>
+              <legend className="text-sm font-medium">{t("acceptedDiets")}</legend>
               {err("dietary_requirements") ? (
                 <p role="alert" className="mt-1 text-sm text-destructive">
                   {err("dietary_requirements")}
@@ -377,10 +378,7 @@ export function RegisterForm({ className }: { className?: string }) {
 
             <fieldset>
               <legend className="text-sm font-medium">
-                Food types you accept
-                <span className="ml-1.5 font-normal text-muted-foreground">
-                  (leave empty for no restriction)
-                </span>
+                {t("acceptedFood")}
               </legend>
               <div className="mt-3 flex flex-wrap gap-2">
                 {(Object.keys(FOOD_CATEGORY_LABELS) as FoodCategory[]).map((type) => (
@@ -397,7 +395,7 @@ export function RegisterForm({ className }: { className?: string }) {
 
             <fieldset>
               <legend className="text-sm font-medium">
-                Allergens you cannot handle
+                {t("excludedAllergens")}
               </legend>
               <div className="mt-3 flex flex-wrap gap-2">
                 {COMMON_ALLERGENS.map((allergen) => (
@@ -414,7 +412,7 @@ export function RegisterForm({ className }: { className?: string }) {
 
             <div className="grid gap-5 sm:grid-cols-2">
               <Field
-                label="Collection range (km)"
+                label={t("collectionRange")}
                 htmlFor="pickup_radius_km"
                 error={err("pickup_radius_km")}
               >
@@ -429,10 +427,9 @@ export function RegisterForm({ className }: { className?: string }) {
                 />
               </Field>
               <Field
-                label="Notice needed (minutes)"
+                label={t("noticeNeeded")}
                 htmlFor="pickup_lead_time_min"
                 error={err("pickup_lead_time_min")}
-                hint="How long before you can have a collection on the road"
               >
                 <Input
                   id="pickup_lead_time_min"
@@ -452,15 +449,14 @@ export function RegisterForm({ className }: { className?: string }) {
                 onChange={(e) => setCanPickup(e.target.checked)}
                 className="size-4 rounded border-input accent-[hsl(var(--primary))]"
               />
-              We can collect food ourselves
+              {t("weCanCollect")}
             </label>
           </CardContent>
         </Card>
       ) : null}
 
       <p className="text-sm text-muted-foreground">
-        New organisations start unverified. Unverified recipients are never
-        recommended by the matching engine — that filter is deliberate.
+        {t("unverifiedNote")}
       </p>
 
       <Button type="submit" size="lg" disabled={submitting}>
@@ -469,7 +465,7 @@ export function RegisterForm({ className }: { className?: string }) {
         ) : (
           <UserPlus className="size-4" aria-hidden />
         )}
-        Create profile
+        {t("createProfileBtn")}
       </Button>
     </form>
   );

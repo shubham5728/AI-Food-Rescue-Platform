@@ -14,20 +14,21 @@ import { usePathname } from "next/navigation";
 import type { UserRole } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/lib/i18n/context";
+import type { Translations } from "@/lib/i18n/translations";
 
 interface NavItem {
   href: string;
-  label: string;
+  labelKey: keyof Translations;
   icon: LucideIcon;
   roles?: UserRole[];
 }
 
 const ITEMS: NavItem[] = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/tracking", label: "GPS Dispatch", icon: Navigation },
-  { href: "/donations", label: "Donations", icon: PackageSearch },
-  { href: "/recipients", label: "Recipients", icon: Users, roles: ["donor"] },
-  { href: "/impact", label: "Impact", icon: BarChart3 },
+  { href: "/dashboard", labelKey: "navDashboard", icon: LayoutDashboard },
+  { href: "/tracking", labelKey: "navGPS", icon: Navigation },
+  { href: "/donations", labelKey: "navDonations", icon: PackageSearch },
+  { href: "/recipients", labelKey: "navRecipients", icon: Users, roles: ["donor"] },
+  { href: "/impact", labelKey: "navImpact", icon: BarChart3 },
 ];
 
 export function MainNav({
@@ -62,10 +63,11 @@ export function MainNav({
             )}
           >
             <item.icon className="size-4" aria-hidden />
-            <span className="hidden md:inline">{item.label}</span>
+            <span className="hidden md:inline">{t(item.labelKey)}</span>
           </Link>
         );
       })}
     </nav>
   );
 }
+

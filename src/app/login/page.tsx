@@ -1,14 +1,10 @@
-import { ArrowLeft, Leaf } from "lucide-react";
 import type { Metadata } from "next";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 
-import { LoginForm } from "@/app/login/login-form";
-import { Button } from "@/components/ui/button";
-import { LanguageSwitcher } from "@/components/shell/language-switcher";
 import { getDb, isDemoMode } from "@/lib/db";
 import { DEMO_ACCOUNTS } from "@/lib/db/seed";
 import { getSession } from "@/lib/session";
+import { LoginClient } from "./login-client";
 
 export const metadata: Metadata = { title: "Sign in" };
 export const dynamic = "force-dynamic";
@@ -26,60 +22,5 @@ export default async function LoginPage() {
   );
   const accounts = existing.filter((e) => e.exists).map((e) => e.account);
 
-  return (
-    <div className="grid min-h-screen lg:grid-cols-2">
-      <div className="hero-glow relative hidden border-r border-border lg:block">
-        <div className="surface-grain absolute inset-0 opacity-70" aria-hidden />
-        <div className="relative flex h-full flex-col justify-between p-10">
-          <Link href="/" className="flex items-center gap-2.5">
-            <span className="flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-              <Leaf className="size-4" aria-hidden />
-            </span>
-            <span className="text-base font-semibold tracking-tight">
-              FoodBridge<span className="text-primary"> AI</span>
-            </span>
-          </Link>
-
-          <div className="max-w-md">
-            <h2 className="text-3xl font-bold leading-tight tracking-tight">
-              Rescue surplus food before it expires.
-            </h2>
-            <p className="mt-3 leading-relaxed text-muted-foreground">
-              Sign in as a donor to list surplus food, or as a shelter to collect fresh meals in time.
-            </p>
-          </div>
-
-          <p className="text-xs text-muted-foreground">
-            {isDemoMode()
-              ? "Demo mode · seeded in-memory data"
-              : "Connected to Database"}
-          </p>
-        </div>
-      </div>
-
-      <div className="relative flex items-center justify-center p-6 sm:p-10">
-        <div className="absolute top-6 right-6">
-          <LanguageSwitcher />
-        </div>
-
-        <div className="w-full max-w-md">
-          <Button asChild variant="ghost" size="sm" className="mb-6 -ml-3">
-            <Link href="/">
-              <ArrowLeft className="size-4" aria-hidden />
-              Back
-            </Link>
-          </Button>
-
-          <h1 className="text-2xl font-bold tracking-tight">
-            FoodBridge AI — Sign In
-          </h1>
-          <p className="mt-1.5 text-sm text-muted-foreground">
-            Enter your email & password or select a 1-click demo profile.
-          </p>
-
-          <LoginForm accounts={accounts} className="mt-6" />
-        </div>
-      </div>
-    </div>
-  );
+  return <LoginClient accounts={accounts} isDemoMode={isDemoMode()} />;
 }

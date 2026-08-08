@@ -50,7 +50,7 @@ export function RecipientDashboardClient({
       lng: organisation.longitude,
       title: organisation.name,
       type: "recipient",
-      subtitle: "Your Verified NGO Shelter",
+      subtitle: t("ngoSubtitle"),
       address: organisation.address,
     },
     ...offers.map(({ donation }) => ({
@@ -73,7 +73,7 @@ export function RecipientDashboardClient({
           </h1>
           <p className="mt-1 text-sm sm:text-base text-muted-foreground">
             {offers.length > 0
-              ? `${offers.length} active surplus meal offers available for immediate pickup`
+              ? `${offers.length} ${t("activeOffersMsg")}`
               : t("recipientsSub")}
           </p>
         </div>
@@ -85,11 +85,11 @@ export function RecipientDashboardClient({
           </Badge>
           <Badge variant="outline" className="border-primary/30 text-primary font-semibold">
             <MapPin className="size-3.5 mr-1" aria-hidden />
-            {organisation.pickup_radius_km} km radius
+            {organisation.pickup_radius_km} {t("radiusSuffix")}
           </Badge>
           <Badge variant="outline" className="border-primary/30 text-primary font-semibold">
             <Clock className="size-3.5 mr-1" aria-hidden />
-            {organisation.pickup_lead_time_min} min lead time
+            {organisation.pickup_lead_time_min} {t("leadTimeSuffix")}
           </Badge>
         </div>
       </header>
@@ -103,19 +103,19 @@ export function RecipientDashboardClient({
             </div>
             <div>
               <div className="flex items-center gap-2 mb-0.5">
-                <span className="font-extrabold text-base text-foreground">INCOMING MEAL DELIVERY IN TRANSIT</span>
+                <span className="font-extrabold text-base text-foreground">{t("incomingDeliveryTransit")}</span>
                 <Badge className="bg-emerald-600 text-white font-bold text-[10px]">
-                  <Radio className="size-3 mr-1 animate-pulse" /> Live Tracking Active
+                  <Radio className="size-3 mr-1 animate-pulse" /> {t("liveTrackingActive")}
                 </Badge>
               </div>
               <p className="text-xs sm:text-sm text-muted-foreground">
-                Driver <strong>Rahul Patel</strong> is transporting <strong>50 Gujarati Thali Meals</strong> · ETA: <strong>9 min</strong> (2.4 km away)
+                {t("driverStatusRecipient")}
               </p>
             </div>
           </div>
           <Button asChild size="sm" className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold shadow">
             <Link href="/tracking/del_demo01">
-              Track Incoming Driver Live →
+              {t("trackIncomingLive")}
             </Link>
           </Button>
         </div>
@@ -126,7 +126,7 @@ export function RecipientDashboardClient({
         <div className="flex items-center gap-2">
           <MapPin className="size-5 text-primary" aria-hidden />
           <h2 className="text-lg font-bold tracking-tight text-foreground">
-            Ahmedabad Live Dispatch & Pickup Map
+            {t("liveDispatchMapTitle")}
           </h2>
         </div>
         <DynamicFoodMap
@@ -217,7 +217,7 @@ export function RecipientDashboardClient({
                       <p className="mt-3 flex items-start gap-2 rounded-lg bg-primary-soft/60 p-2.5 text-xs text-foreground/90">
                         <Check className="mt-0.5 size-4 shrink-0 text-primary" aria-hidden />
                         <span>
-                          {t("statusPending")} — {formatDuration(match.time_buffer_min)} buffer
+                          {t("statusPending")} — {formatDuration(match.time_buffer_min)} {t("bufferSuffix")}
                         </span>
                       </p>
 

@@ -21,6 +21,7 @@ import { Separator } from "@/components/ui/separator";
 import { apiRequest, RequestError } from "@/lib/client-api";
 import type { DEMO_ACCOUNTS } from "@/lib/db/seed";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/lib/i18n/context";
 
 type DemoAccount = (typeof DEMO_ACCOUNTS)[number];
 
@@ -37,9 +38,11 @@ export function LoginForm({
   const [pending, setPending] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  const { t } = useLanguage();
+
   const signIn = async (targetEmail: string) => {
     if (!targetEmail.trim()) {
-      setError("Please enter your email address");
+      setError(t("errorNoEmail"));
       return;
     }
 
@@ -51,13 +54,13 @@ export function LoginForm({
         method: "POST",
         body: JSON.stringify({ email: targetEmail.trim(), password }),
       });
-      toast.success("✅ Signed in! Redirecting to Dashboard...");
+      toast.success(t("successSignIn"));
       window.location.href = "/dashboard";
     } catch (err) {
       const message =
         err instanceof RequestError
           ? (err.fields?.email ?? err.message)
-          : "Could not sign in. Please try again.";
+          : t("errorSignIn");
       setError(message);
       setPending(null);
     }
@@ -77,7 +80,7 @@ export function LoginForm({
         <div className="space-y-2">
           <Label htmlFor="email" className="flex items-center gap-1.5 font-medium">
             <Mail className="size-4 text-primary" aria-hidden />
-            Email Address / User ID
+            {t("emailLabel")}
           </Label>
           <Input
             id="email"
@@ -100,7 +103,7 @@ export function LoginForm({
           <div className="flex items-center justify-between">
             <Label htmlFor="password" className="flex items-center gap-1.5 font-medium">
               <KeyRound className="size-4 text-primary" aria-hidden />
-              Password
+              {t("passwordLabel")}
             </Label>
           </div>
           <div className="relative flex items-center">
@@ -108,7 +111,7 @@ export function LoginForm({
               id="password"
               name="password"
               type={showPassword ? "text" : "password"}
-              placeholder="Enter password"
+              placeholder={t("passwordPlaceholder")}
               value={password}
               disabled={pending !== null}
               onChange={(event) => setPassword(event.target.value)}
@@ -146,7 +149,7 @@ export function LoginForm({
           ) : (
             <LogIn className="size-4" aria-hidden />
           )}
-          Sign In to Dashboard
+          {t("btnSignInDash")}
         </Button>
       </form>
 
@@ -156,7 +159,7 @@ export function LoginForm({
           <div className="flex items-center gap-3">
             <Separator className="flex-1" />
             <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-              ⚡ 1-Click Demo Sign In (Select Email ID)
+              {t("demoSignInLabel")}
             </span>
             <Separator className="flex-1" />
           </div>
@@ -202,7 +205,7 @@ export function LoginForm({
                       </span>
                     </span>
                     <span className="text-xs font-bold text-primary shrink-0">
-                      Sign In →
+                      {t("btnSignInShort")}
                     </span>
                   </button>
                 </li>
@@ -213,12 +216,12 @@ export function LoginForm({
       ) : null}
 
       <p className="text-center text-sm text-muted-foreground">
-        New organisation?{" "}
+        {t("newOrgText")}{" "}
         <Link
           href="/register"
           className="font-medium text-primary underline-offset-4 hover:underline"
         >
-          Create a profile
+          {t("createProfileText")}
         </Link>
       </p>
     </div>

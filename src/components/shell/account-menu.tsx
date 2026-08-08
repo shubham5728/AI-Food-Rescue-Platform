@@ -18,6 +18,7 @@ import { apiRequest } from "@/lib/client-api";
 import { ORGANISATION_TYPE_LABELS } from "@/lib/constants";
 import type { Organisation } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/lib/i18n/context";
 
 /**
  * Identity control, plus the demo account switcher.
@@ -37,6 +38,7 @@ export function AccountMenu({
 }) {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
+  const { t } = useLanguage();
 
   const switchTo = async (target: Organisation) => {
     if (target.id === organisation.id) return;
@@ -46,11 +48,11 @@ export function AccountMenu({
         method: "POST",
         body: JSON.stringify({ email: target.email }),
       });
-      toast.success(`Now signed in as ${target.name}`);
+      toast.success(`${t("signedInAs")}${target.name}`);
       router.push("/dashboard");
       router.refresh();
     } catch {
-      toast.error("Could not switch organisation");
+      toast.error(t("couldNotSwitch"));
     } finally {
       setBusy(false);
     }
@@ -108,11 +110,11 @@ export function AccountMenu({
           {organisation.verified ? (
             <Badge variant="success" className="mt-2">
               <Check className="size-3" aria-hidden />
-              Verified
+              {t("verified")}
             </Badge>
           ) : (
             <Badge variant="medium" className="mt-2">
-              Pending verification
+              {t("pendingVerification")}
             </Badge>
           )}
         </div>
@@ -120,7 +122,7 @@ export function AccountMenu({
         {demoMode ? (
           <>
             <DropdownMenuSeparator />
-            <DropdownMenuLabel>Switch account — donors</DropdownMenuLabel>
+            <DropdownMenuLabel>{t("switchDonors")}</DropdownMenuLabel>
             {donors.map((org) => (
               <AccountRow
                 key={org.id}
@@ -131,7 +133,7 @@ export function AccountMenu({
             ))}
 
             <DropdownMenuLabel className="mt-1">
-              Switch account — recipients
+              {t("switchRecipients")}
             </DropdownMenuLabel>
             {recipients
               .filter((org) => org.verified)
@@ -149,7 +151,7 @@ export function AccountMenu({
         <DropdownMenuSeparator />
         <DropdownMenuItem onSelect={() => void signOut()}>
           <LogOut className="size-4" aria-hidden />
-          Sign out
+          {t("signOut")}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

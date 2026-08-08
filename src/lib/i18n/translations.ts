@@ -62,6 +62,12 @@ export interface Translations {
   ctaTitle: string;
   ctaSub: string;
 
+  // Video Showcase
+  videoBadge: string;
+  videoTitle: string;
+  videoSub: string;
+  videoFallback: string;
+
   // Dashboard Page
   dashTitle: string;
   dashSub: string;
@@ -105,12 +111,102 @@ export interface Translations {
   activePartners: string;
 
   // Login / Auth
+  loginHeroTitle: string;
+  loginHeroSub: string;
+  demoModeActive: string;
+  dbModeActive: string;
+  loginPageTitle: string;
+  loginPageSub: string;
+  emailLabel: string;
+  passwordLabel: string;
+  passwordPlaceholder: string;
+  errorNoEmail: string;
+  errorSignIn: string;
+  successSignIn: string;
+  btnSignInDash: string;
+  demoSignInLabel: string;
+  btnSignInShort: string;
+  newOrgText: string;
+  createProfileText: string;
   loginTitle: string;
   loginSub: string;
   selectRole: string;
   roleDonor: string;
   roleRecipient: string;
   demoOrgs: string;
+
+  // Register
+  registerTitle: string;
+  registerSub: string;
+  registerAs: string;
+  donorTitle: string;
+  donorDesc: string;
+  recipientTitle: string;
+  recipientDesc: string;
+  orgName: string;
+  orgType: string;
+  contactPerson: string;
+  phone: string;
+  email: string;
+  address: string;
+  latitude: string;
+  longitude: string;
+  whatCanYouTake: string;
+  hardConstraintsHint: string;
+  minQty: string;
+  maxCap: string;
+  typicalQty: string;
+  acceptedDiets: string;
+  acceptedFood: string;
+  excludedAllergens: string;
+  collectionRange: string;
+  noticeNeeded: string;
+  weCanCollect: string;
+  unverifiedNote: string;
+  createProfileBtn: string;
+
+  // Navigation
+  navDashboard: string;
+  navGPS: string;
+  navDonations: string;
+  navRecipients: string;
+  navImpact: string;
+
+  // Account Menu
+  signedInAs: string;
+  couldNotSwitch: string;
+  verified: string;
+  pendingVerification: string;
+  switchDonors: string;
+  switchRecipients: string;
+  signOut: string;
+
+  // Phase 2: Dashboards
+  orgVerifiedPartner: string;
+  orgReliability: string;
+  activeListingsMsg: string;
+  liveDispatchMapTitle: string;
+  liveGPSDispatch: string;
+  liveTrackingActive: string;
+  incomingDeliveryTransit: string;
+  liveRescueTracking: string;
+  liveGPSConnected: string;
+  openLiveMap: string;
+  trackIncomingLive: string;
+  driverStatusDonor: string;
+  driverStatusRecipient: string;
+  co2Title: string;
+  co2Subtitle: string;
+  waterTitle: string;
+  waterSubtitle: string;
+  waterUnit: string;
+  co2Unit: string;
+  activeOffersMsg: string;
+  radiusSuffix: string;
+  leadTimeSuffix: string;
+  bufferSuffix: string;
+  yourOrg: string;
+  ngoSubtitle: string;
 
   // Common UI
   loading: string;
@@ -176,6 +272,11 @@ export const translations: Record<Language, Translations> = {
     ctaTitle: "Surplus Food is Available Now",
     ctaSub: "Connect local donors with nearby food banks in minutes.",
 
+    videoBadge: "AI Video Showcase",
+    videoTitle: "FoodBridge AI — Real-Time Surplus Food Rescue",
+    videoSub: "Watch how our intelligent AI algorithm matches surplus meals from restaurants & event caterers to verified shelters in real-time across Ahmedabad.",
+    videoFallback: "Your browser does not support HTML5 video player.",
+
     dashTitle: "Rescue Dispatch Dashboard",
     dashSub: "Live monitoring of active donations and AI match rankings.",
     tabOverview: "Overview",
@@ -213,13 +314,98 @@ export const translations: Record<Language, Translations> = {
     co2Saved: "CO₂ Avoided",
     rescueRate: "Rescue Success Rate",
     activePartners: "Active Partners",
-
+    loginHeroTitle: "Rescue surplus food before it expires.",
+    loginHeroSub: "Sign in as a donor to list surplus food, or as a shelter to collect fresh meals in time.",
+    demoModeActive: "Demo mode · seeded in-memory data",
+    dbModeActive: "Connected to Database",
+    loginPageTitle: "FoodBridge AI — Sign In",
+    loginPageSub: "Enter your email & password or select a 1-click demo profile.",
+    emailLabel: "Email Address / User ID",
+    passwordLabel: "Password",
+    passwordPlaceholder: "Enter password",
+    errorNoEmail: "Please enter your email address",
+    errorSignIn: "Could not sign in. Please try again.",
+    successSignIn: "✅ Signed in! Redirecting to Dashboard...",
+    btnSignInDash: "Sign In to Dashboard",
+    demoSignInLabel: "⚡ 1-Click Demo Sign In (Select Email ID)",
+    btnSignInShort: "Sign In →",
+    newOrgText: "New organisation?",
+    createProfileText: "Create a profile",
     loginTitle: "Sign In to FoodBridge AI",
     loginSub: "Access donor or recipient dashboard with your credentials.",
     selectRole: "Choose Role",
     roleDonor: "Food Donor (Restaurant / Catering)",
     roleRecipient: "Shelter / NGO Recipient",
     demoOrgs: "Quick Demo Accounts (Ahmedabad)",
+
+    registerTitle: "Create an organisation profile",
+    registerSub: "Donors post surplus food. Recipients describe what they can take, and the matching engine uses those constraints literally — capacity, diet, allergens, distance and how quickly you can mobilise a collection.",
+    registerAs: "I am registering as",
+    donorTitle: "A donor",
+    donorDesc: "Restaurant, hostel, caterer or event with surplus food",
+    recipientTitle: "A recipient",
+    recipientDesc: "Shelter, NGO, community kitchen, food bank or care home",
+    orgName: "Organisation name",
+    orgType: "Organisation type",
+    contactPerson: "Contact person",
+    phone: "Phone",
+    email: "Email",
+    address: "Address",
+    latitude: "Latitude",
+    longitude: "Longitude",
+    whatCanYouTake: "What can you take?",
+    hardConstraintsHint: "These are hard constraints. A donation that breaches any of them is filtered out before it is ever scored for you.",
+    minQty: "Minimum useful quantity",
+    maxCap: "Maximum capacity",
+    typicalQty: "Typical quantity",
+    acceptedDiets: "Diets you can accept",
+    acceptedFood: "Food types you accept (leave empty for no restriction)",
+    excludedAllergens: "Allergens you cannot handle",
+    collectionRange: "Collection range (km)",
+    noticeNeeded: "Notice needed (minutes)",
+    weCanCollect: "We can collect food ourselves",
+    unverifiedNote: "New organisations start unverified. Unverified recipients are never recommended by the matching engine — that filter is deliberate.",
+    createProfileBtn: "Create profile",
+
+    navDashboard: "Dashboard",
+    navGPS: "GPS Dispatch",
+    navDonations: "Donations",
+    navRecipients: "Recipients",
+    navImpact: "Impact",
+
+    signedInAs: "Now signed in as ",
+    couldNotSwitch: "Could not switch organisation",
+    verified: "Verified",
+    pendingVerification: "Pending verification",
+    switchDonors: "Switch account — donors",
+    switchRecipients: "Switch account — recipients",
+    signOut: "Sign out",
+
+    orgVerifiedPartner: "Verified Partner",
+    orgReliability: "Reliability",
+    activeListingsMsg: "active surplus food listings currently being rescued",
+    liveDispatchMapTitle: "Ahmedabad Real-Time Dispatch Map",
+    liveGPSDispatch: "Live GPS Dispatch",
+    liveTrackingActive: "Live Tracking Active",
+    incomingDeliveryTransit: "INCOMING MEAL DELIVERY IN TRANSIT",
+    liveRescueTracking: "LIVE RESCUE DISPATCH TRACKING",
+    liveGPSConnected: "Live GPS Connected",
+    openLiveMap: "Open Driver Live Map →",
+    trackIncomingLive: "Track Incoming Driver Live →",
+    driverStatusDonor: "Driver Rahul Patel is 2.4 km away · ETA: 9 min · Rescue Window: 34 min remaining (🟢 ON TIME)",
+    driverStatusRecipient: "Driver Rahul Patel is transporting 50 Gujarati Thali Meals · ETA: 9 min (2.4 km away)",
+    co2Title: "CO₂ Emissions Offset",
+    co2Subtitle: "Stopped greenhouse gas emissions from landfill waste",
+    waterTitle: "Agricultural Water Conserved",
+    waterSubtitle: "Fresh water saved by rescuing prepared meals",
+    waterUnit: "k Litres",
+    co2Unit: "kg CO₂e",
+    activeOffersMsg: "active surplus meal offers available for immediate pickup",
+    radiusSuffix: "km radius",
+    leadTimeSuffix: "min lead time",
+    bufferSuffix: "buffer",
+    yourOrg: "Your Organisation",
+    ngoSubtitle: "Your Verified NGO Shelter",
 
     loading: "Loading...",
     close: "Close",
@@ -282,6 +468,11 @@ export const translations: Record<Language, Translations> = {
     ctaTitle: "अतिरिक्त भोजन अभी उपलब्ध है",
     ctaSub: "स्थानीय दाताओं को मिनटों में नजदीकी फूड बैंकों से जोड़ें।",
 
+    videoBadge: "एआई वीडियो शोकेस",
+    videoTitle: "फूडब्रिज एआई — रीयल-टाइम सरप्लस फूड रेस्क्यू",
+    videoSub: "देखें कि कैसे हमारा बुद्धिमान एआई एल्गोरिदम अहमदाबाद भर में सत्यापित आश्रयों में रेस्तरां और इवेंट कैटरर्स से बचे हुए भोजन का वास्तविक समय में मिलान करता है।",
+    videoFallback: "आपका ब्राउज़र HTML5 वीडियो प्लेयर का समर्थन नहीं करता है।",
+
     dashTitle: "बचाव डिस्पैच डैशबोर्ड",
     dashSub: "सक्रिय दान और एआई मैच रैंकिंग की लाइव निगरानी।",
     tabOverview: "अवलोकन",
@@ -318,14 +509,99 @@ export const translations: Record<Language, Translations> = {
     impactSub: "बचाए गए भोजन और पर्यावरण सुरक्षा के वास्तविक समय आंकड़े।",
     co2Saved: "CO₂ बचाव",
     rescueRate: "बचाव सफलता दर",
-    activePartners: "सक्रिय भागीदार",
-
+    activePartners: "सक्रिय Partners",
+    loginHeroTitle: "बचे हुए खाने को खराब होने से पहले बचाएं।",
+    loginHeroSub: "अतिरिक्त भोजन सूचीबद्ध करने के लिए दाता के रूप में साइन इन करें, या ताजा भोजन एकत्र करने के लिए आश्रय के रूप में।",
+    demoModeActive: "डेमो मोड · इन-मेमोरी डेटा",
+    dbModeActive: "डेटाबेस से कनेक्टेड",
+    loginPageTitle: "फूडब्रिज एआई — साइन इन",
+    loginPageSub: "अपना ईमेल और पासवर्ड दर्ज करें या 1-क्लिक डेमो प्रोफ़ाइल चुनें।",
+    emailLabel: "ईमेल पता / यूजर आईडी",
+    passwordLabel: "पासवर्ड",
+    passwordPlaceholder: "पासवर्ड दर्ज करें",
+    errorNoEmail: "कृपया अपना ईमेल पता दर्ज करें",
+    errorSignIn: "साइन इन नहीं हो सका। कृपया पुनः प्रयास करें।",
+    successSignIn: "✅ साइन इन हो गया! डैशबोर्ड पर ले जाया जा रहा है...",
+    btnSignInDash: "डैशबोर्ड में साइन इन करें",
+    demoSignInLabel: "⚡ 1-क्लिक डेमो साइन इन (ईमेल आईडी चुनें)",
+    btnSignInShort: "साइन इन →",
+    newOrgText: "नई संस्था?",
+    createProfileText: "प्रोफ़ाइल बनाएं",
     loginTitle: "फूडब्रिज एआई में साइन इन करें",
     loginSub: "अपने क्रेडेंशियल्स के साथ दाता या प्राप्तकर्ता डैशबोर्ड एक्सेस करें।",
     selectRole: "भूमिका चुनें",
     roleDonor: "भोजन दाता (रेस्तरां / कैटरिंग)",
     roleRecipient: "आश्रम / एनजीओ प्राप्तकर्ता",
     demoOrgs: "त्वरित डेमो खाते (अहमदाबाद)",
+
+    registerTitle: "संगठन प्रोफ़ाइल बनाएं",
+    registerSub: "दाता अतिरिक्त भोजन पोस्ट करते हैं। प्राप्तकर्ता वर्णन करते हैं कि वे क्या ले सकते हैं, और मिलान इंजन उन बाधाओं का उपयोग करता है — क्षमता, आहार, एलर्जी, दूरी और आप कितनी जल्दी संग्रह कर सकते हैं।",
+    registerAs: "मैं के रूप में पंजीकरण कर रहा हूँ",
+    donorTitle: "एक दाता",
+    donorDesc: "अतिरिक्त भोजन के साथ रेस्तरां, छात्रावास, कैटरर या कार्यक्रम",
+    recipientTitle: "एक प्राप्तकर्ता",
+    recipientDesc: "आश्रय, एनजीओ, सामुदायिक रसोई, फूड बैंक या केयर होम",
+    orgName: "संगठन का नाम",
+    orgType: "संगठन का प्रकार",
+    contactPerson: "संपर्क व्यक्ति",
+    phone: "फ़ोन",
+    email: "ईमेल",
+    address: "पता",
+    latitude: "अक्षांश",
+    longitude: "देशांतर",
+    whatCanYouTake: "आप क्या ले सकते हैं?",
+    hardConstraintsHint: "ये सख्त बाधाएं हैं। कोई भी दान जो इनमें से किसी का भी उल्लंघन करता है, वह आपके लिए स्कोर किए जाने से पहले ही फ़िल्टर कर दिया जाता है।",
+    minQty: "न्यूनतम उपयोगी मात्रा",
+    maxCap: "अधिकतम क्षमता",
+    typicalQty: "विशिष्ट मात्रा",
+    acceptedDiets: "आहार जो आप स्वीकार कर सकते हैं",
+    acceptedFood: "भोजन के प्रकार जो आप स्वीकार करते हैं (कोई प्रतिबंध नहीं के लिए खाली छोड़ दें)",
+    excludedAllergens: "एलर्जी जिसे आप संभाल नहीं सकते",
+    collectionRange: "संग्रह सीमा (किमी)",
+    noticeNeeded: "आवश्यक सूचना (मिनट)",
+    weCanCollect: "हम खुद खाना इकट्ठा कर सकते हैं",
+    unverifiedNote: "नए संगठन असत्यापित शुरू होते हैं। असत्यापित प्राप्तकर्ताओं को कभी भी मिलान इंजन द्वारा अनुशंसित नहीं किया जाता है — यह फ़िल्टर जानबूझकर है।",
+    createProfileBtn: "प्रोफ़ाइल बनाएं",
+
+    navDashboard: "डैशबोर्ड",
+    navGPS: "जीपीएस डिस्पैच",
+    navDonations: "दान (Donations)",
+    navRecipients: "प्राप्तकर्ता (Recipients)",
+    navImpact: "प्रभाव (Impact)",
+
+    signedInAs: "के रूप में साइन इन हैं: ",
+    couldNotSwitch: "संगठन नहीं बदल सका",
+    verified: "सत्यापित",
+    pendingVerification: "सत्यापन लंबित",
+    switchDonors: "खाता बदलें — दाता",
+    switchRecipients: "खाता बदलें — प्राप्तकर्ता",
+    signOut: "साइन आउट करें",
+
+    orgVerifiedPartner: "सत्यापित भागीदार",
+    orgReliability: "विश्वसनीयता",
+    activeListingsMsg: "सक्रिय अतिरिक्त भोजन सूची वर्तमान में बचाई जा रही है",
+    liveDispatchMapTitle: "अहमदाबाद रीयल-टाइम डिस्पैच मैप",
+    liveGPSDispatch: "लाइव जीपीएस डिस्पैच",
+    liveTrackingActive: "लाइव ट्रैकिंग सक्रिय",
+    incomingDeliveryTransit: "रास्ते में आने वाला भोजन वितरण",
+    liveRescueTracking: "लाइव रेस्क्यू डिस्पैच ट्रैकिंग",
+    liveGPSConnected: "लाइव जीपीएस कनेक्टेड",
+    openLiveMap: "ड्राइवर का लाइव मैप खोलें →",
+    trackIncomingLive: "आने वाले ड्राइवर को लाइव ट्रैक करें →",
+    driverStatusDonor: "ड्राइवर राहुल पटेल 2.4 किमी दूर हैं · समय: 9 मिनट · बचाव खिड़की: 34 मिनट शेष (🟢 समय पर)",
+    driverStatusRecipient: "ड्राइवर राहुल पटेल 50 गुजराती थाली भोजन ला रहे हैं · समय: 9 मिनट (2.4 किमी दूर)",
+    co2Title: "CO₂ उत्सर्जन में कमी",
+    co2Subtitle: "लैंडफिल कचरे से ग्रीनहाउस गैस उत्सर्जन को रोका",
+    waterTitle: "कृषि जल संरक्षित",
+    waterSubtitle: "तैयार भोजन को बचाकर ताजे पानी की बचत की गई",
+    waterUnit: "हजार लीटर",
+    co2Unit: "किग्रा CO₂e",
+    activeOffersMsg: "तत्काल पिकअप के लिए उपलब्ध सक्रिय भोजन ऑफ़र",
+    radiusSuffix: "किमी दायरा",
+    leadTimeSuffix: "मिनट की सूचना",
+    bufferSuffix: "बफर",
+    yourOrg: "आपका संगठन",
+    ngoSubtitle: "आपका सत्यापित एनजीओ आश्रय",
 
     loading: "लोड हो रहा है...",
     close: "बंद करें",
@@ -388,6 +664,11 @@ export const translations: Record<Language, Translations> = {
     ctaTitle: "વધારાનું ભોજન અત્યારે ઉપલબ્ધ છે",
     ctaSub: "સ્થાનિક દાતાઓને મિનિટોમાં નજીકના ફૂડ બેંકો સાથે જોડો.",
 
+    videoBadge: "AI વિડિઓ શોકેસ",
+    videoTitle: "ફૂડબ્રિજ AI — રીઅલ-ટાઇમ સરપ્લસ ફૂડ રેસ્ક્યૂ",
+    videoSub: "જુઓ કે કેવી રીતે અમારું બુદ્ધિશાળી AI અલ્ગોરિધમ અમદાવાદમાં પ્રમાણિત આશ્રયસ્થાનોમાં રેસ્ટોરન્ટ્સ અને ઇવેન્ટ કેટરર્સના વધારાના ભોજનને રીઅલ-ટાઇમમાં મેચ કરે છે.",
+    videoFallback: "તમારું બ્રાઉઝર HTML5 વિડિઓ પ્લેયરને સપોર્ટ કરતું નથી.",
+
     dashTitle: "રેસ્ક્યૂ ડિસ્પેચ ડેશબોર્ડ",
     dashSub: "સક્રિય દાન અને AI મેચ રેન્કિંગનું લાઇવ મોનિટરિંગ.",
     tabOverview: "ઓવરવ્યુ",
@@ -424,14 +705,99 @@ export const translations: Record<Language, Translations> = {
     impactSub: "બચાવેલ ખોરાક અને પર્યાવરણ સુરક્ષાના લાઇવ આંકડા.",
     co2Saved: "CO₂ બચત",
     rescueRate: "સફળતા દર",
-    activePartners: "સક્રિય ભાગીદારો",
-
+    activePartners: "સક્રિય Partners",
+    loginHeroTitle: "વધેલો ખોરાક બગડે તે પહેલાં બચાવો.",
+    loginHeroSub: "વધારાનો ખોરાક લિસ્ટ કરવા દાતા તરીકે સાઇન ઇન કરો, અથવા સમયસર તાજું ભોજન એકત્ર કરવા આશ્રય તરીકે.",
+    demoModeActive: "ડેમો મોડ · ઇન-મેમરી ડેટા",
+    dbModeActive: "ડેટાબેઝ સાથે જોડાયેલ છે",
+    loginPageTitle: "ફૂડબ્રિજ AI — સાઇન ઇન",
+    loginPageSub: "તમારું ઇમેઇલ અને પાસવર્ડ દાખલ કરો અથવા 1-ક્લિક ડેમો પ્રોફાઇલ પસંદ કરો.",
+    emailLabel: "ઇમેઇલ સરનામું / યુઝર આઈડી",
+    passwordLabel: "પાસવર્ડ",
+    passwordPlaceholder: "પાસવર્ડ દાખલ કરો",
+    errorNoEmail: "કૃપા કરીને તમારું ઇમેઇલ સરનામું દાખલ કરો",
+    errorSignIn: "સાઇન ઇન થઈ શક્યું નથી. કૃપા કરીને ફરી પ્રયાસ કરો.",
+    successSignIn: "✅ સાઇન ઇન થઈ ગયું! ડેશબોર્ડ પર રીડાયરેક્ટ કરી રહ્યાં છીએ...",
+    btnSignInDash: "ડેશબોર્ડમાં સાઇન ઇન કરો",
+    demoSignInLabel: "⚡ 1-ક્લિક ડેમો સાઇન ઇન (ઇમેઇલ આઇડી પસંદ કરો)",
+    btnSignInShort: "સાઇન ઇન →",
+    newOrgText: "નવી સંસ્થા?",
+    createProfileText: "પ્રોફાઇલ બનાવો",
     loginTitle: "ફૂડબ્રિજ AI માં સાઇન ઇન કરો",
     loginSub: "તમારા એકાઉન્ટ સાથે ડેશબોર્ડ ઍક્સેસ કરો.",
     selectRole: "ભૂમિકા પસંદ કરો",
     roleDonor: "ભોજન દાતા (રેસ્ટોરન્ટ / કેટરિંગ)",
     roleRecipient: "આશ્રમ / એનજીઓ પ્રાપ્તકર્તા",
     demoOrgs: "ઝડપી ડેમો એકાઉન્ટ્સ (અમદાવાદ)",
+
+    registerTitle: "સંસ્થા પ્રોફાઇલ બનાવો",
+    registerSub: "દાતા વધારાનો ખોરાક પોસ્ટ કરે છે. પ્રાપ્તકર્તા વર્ણન કરે છે કે તેઓ શું લઈ શકે છે, અને મેચિંગ એન્જિન તે મર્યાદાઓનો ઉપયોગ કરે છે — ક્ષમતા, આહાર, એલર્જી, અંતર અને તમે કેટલી ઝડપથી સંગ્રહ કરી શકો છો.",
+    registerAs: "હું તરીકે નોંધણી કરી રહ્યો છું",
+    donorTitle: "એક દાતા",
+    donorDesc: "વધારાના ભોજન સાથે રેસ્ટોરન્ટ, છાત્રાલય, કેટરર અથવા ઇવેન્ટ",
+    recipientTitle: "એક પ્રાપ્તકર્તા",
+    recipientDesc: "આશ્રય, એનજીઓ, સામુદાયિક રસોડું, ફૂડ બેંક અથવા કેર હોમ",
+    orgName: "સંસ્થાનું નામ",
+    orgType: "સંસ્થાનો પ્રકાર",
+    contactPerson: "સંપર્ક વ્યક્તિ",
+    phone: "ફોન",
+    email: "ઇમેઇલ",
+    address: "સરનામું",
+    latitude: "અક્ષાંશ",
+    longitude: "રેખાંશ",
+    whatCanYouTake: "તમે શું લઈ શકો છો?",
+    hardConstraintsHint: "આ કડક મર્યાદાઓ છે. કોઈપણ દાન જે આમાંથી કોઈનું ઉલ્લંઘન કરે છે તે તમારા માટે સ્કોર થતાં પહેલાં જ ફિલ્ટર થઈ જાય છે.",
+    minQty: "ન્યૂનતમ ઉપયોગી જથ્થો",
+    maxCap: "મહત્તમ ક્ષમતા",
+    typicalQty: "સામાન્ય જથ્થો",
+    acceptedDiets: "આહાર જે તમે સ્વીકારી શકો છો",
+    acceptedFood: "ખોરાકના પ્રકારો જે તમે સ્વીકારો છો (કોઈ પ્રતિબંધ ન હોય તો ખાલી છોડો)",
+    excludedAllergens: "એલર્જી જે તમે સંભાળી શકતા નથી",
+    collectionRange: "સંગ્રહ શ્રેણી (કિમી)",
+    noticeNeeded: "જરૂરી સૂચના (મિનિટ)",
+    weCanCollect: "અમે જાતે ખોરાક એકત્ર કરી શકીએ છીએ",
+    unverifiedNote: "નવી સંસ્થાઓ ચકાસ્યા વગર શરૂ થાય છે. અચકાસાયેલ પ્રાપ્તકર્તાઓને મેચિંગ એન્જિન દ્વારા ક્યારેય ભલામણ કરવામાં આવતી નથી.",
+    createProfileBtn: "પ્રોફાઇલ બનાવો",
+
+    navDashboard: "ડેશબોર્ડ",
+    navGPS: "જીપીએસ ડિસ્પેચ (GPS)",
+    navDonations: "દાન (Donations)",
+    navRecipients: "પ્રાપ્તકર્તા (Recipients)",
+    navImpact: "પ્રભાવ (Impact)",
+
+    signedInAs: "તરીકે સાઇન ઇન કર્યું છે: ",
+    couldNotSwitch: "સંસ્થા બદલી શક્યા નથી",
+    verified: "ચકાસાયેલ",
+    pendingVerification: "ચકાસણી બાકી છે",
+    switchDonors: "એકાઉન્ટ બદલો — દાતા",
+    switchRecipients: "એકાઉન્ટ બદલો — પ્રાપ્તકર્તા",
+    signOut: "સાઇન આઉટ",
+
+    orgVerifiedPartner: "ચકાસાયેલ ભાગીદાર",
+    orgReliability: "વિશ્વસનીયતા",
+    activeListingsMsg: "સક્રિય ખોરાક લિસ્ટિંગ હાલમાં બચાવવામાં આવી રહ્યા છે",
+    liveDispatchMapTitle: "અમદાવાદ રીઅલ-ટાઇમ ડિસ્પેચ નકશો",
+    liveGPSDispatch: "લાઇવ જીપીએસ ડિસ્પેચ",
+    liveTrackingActive: "લાઇવ ટ્રેકિંગ સક્રિય",
+    incomingDeliveryTransit: "માર્ગમાં આવતું ભોજન વિતરણ",
+    liveRescueTracking: "લાઇવ રેસ્ક્યૂ ડિસ્પેચ ટ્રેકિંગ",
+    liveGPSConnected: "લાઇવ જીપીએસ કનેક્ટેડ",
+    openLiveMap: "ડ્રાઇવરનો લાઇવ નકશો ખોલો →",
+    trackIncomingLive: "આવતા ડ્રાઇવરને લાઇવ ટ્રૅક કરો →",
+    driverStatusDonor: "ડ્રાઇવર રાહુલ પટેલ 2.4 કિમી દૂર છે · સમય: 9 મિનિટ · બચાવ વિન્ડો: 34 મિનિટ બાકી (🟢 સમયસર)",
+    driverStatusRecipient: "ડ્રાઇવર રાહુલ પટેલ 50 ગુજરાતી થાળી ભોજન લાવી રહ્યા છે · સમય: 9 મિનિટ (2.4 કિમી દૂર)",
+    co2Title: "CO₂ ઉત્સર્જન ઘટાડો",
+    co2Subtitle: "લેન્ડફિલ કચરામાંથી ગ્રીનહાઉસ ગેસ ઉત્સર્જન અટકાવ્યું",
+    waterTitle: "કૃષિ જળ સંરક્ષિત",
+    waterSubtitle: "તૈયાર ભોજન બચાવીને તાજા પાણીની બચત",
+    waterUnit: "હજાર લિટર",
+    co2Unit: "કિગ્રા CO₂e",
+    activeOffersMsg: "તાત્કાલિક પિકઅપ માટે ઉપલબ્ધ સક્રિય ભોજન ઑફર્સ",
+    radiusSuffix: "કિમી ત્રિજ્યા",
+    leadTimeSuffix: "મિનિટની સૂચના",
+    bufferSuffix: "બફર",
+    yourOrg: "તમારી સંસ્થા",
+    ngoSubtitle: "તમારો ચકાસાયેલ NGO આશ્રય",
 
     loading: "લોડ થઈ રહ્યું છે...",
     close: "બંધ કરો",
