@@ -39,6 +39,7 @@ const demoDonation: Donation = {
   latitude: greenLeaf.latitude,
   longitude: greenLeaf.longitude,
   address: greenLeaf.address,
+  image_url: null,
   notes: null,
   status: "available",
   matched_recipient_id: null,
