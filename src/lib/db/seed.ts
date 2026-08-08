@@ -344,16 +344,16 @@ const HISTORY_FOODS: {
   image: string;
 }[] = [
   { name: "Gujarati Special Thali (Rotli, Shaak, Dal, Rice)", type: "cooked_meal", diet: "vegetarian", unit: "meals", image: "/food-gujarati-thali.png" },
-  { name: "Kathiyawadi Meals (Sev Tameta, Bajra Roti)", type: "cooked_meal", diet: "vegetarian", unit: "meals", image: "/orbit-food-1.png" },
-  { name: "Dal Dhokli & Jeera Rice", type: "cooked_meal", diet: "vegetarian", unit: "meals", image: "/orbit-food-3.png" },
-  { name: "Fresh Khaman Dhokla & Farsan Boxes", type: "bakery", diet: "vegetarian", unit: "trays", image: "/orbit-food-5.png" },
-  { name: "Fresh Produce Crates (Vegetables)", type: "produce", diet: "vegan", unit: "kg", image: "/orbit-food-6.png" },
-  { name: "Fresh Buttermilk (Chaas) Jars", type: "dairy", diet: "vegetarian", unit: "litres", image: "/orbit-food-7.png" },
-  { name: "Paneer Butter Masala & Naan Trays", type: "cooked_meal", diet: "vegetarian", unit: "meals", image: "/orbit-food-2.png" },
-  { name: "Puri Bhaji & Shrikhand Combo", type: "cooked_meal", diet: "vegetarian", unit: "meals", image: "/orbit-food-4.png" },
-  { name: "Packaged Snack Packets", type: "packaged", diet: "vegetarian", unit: "packets", image: "/orbit-food-8.png" },
-  { name: "Fresh Mango & Fruit Bowls", type: "produce", diet: "vegan", unit: "kg", image: "/orbit-food-6.png" },
-  { name: "Khichdi & Kadhi Buffet Surplus", type: "cooked_meal", diet: "vegetarian", unit: "meals", image: "/orbit-food-3.png" },
+  { name: "Kathiyawadi Meals (Sev Tameta, Bajra Roti)", type: "cooked_meal", diet: "vegetarian", unit: "meals", image: "/food-kathiyawadi.png" },
+  { name: "Dal Dhokli & Jeera Rice", type: "cooked_meal", diet: "vegetarian", unit: "meals", image: "/food-dal-dhokli.png" },
+  { name: "Fresh Khaman Dhokla & Farsan Boxes", type: "bakery", diet: "vegetarian", unit: "trays", image: "/food-dhokla-farsan.png" },
+  { name: "Fresh Produce Crates (Vegetables)", type: "produce", diet: "vegan", unit: "kg", image: "/food-produce.png" },
+  { name: "Fresh Buttermilk (Chaas) Jars", type: "dairy", diet: "vegetarian", unit: "litres", image: "/food-chaas.png" },
+  { name: "Paneer Butter Masala & Naan Trays", type: "cooked_meal", diet: "vegetarian", unit: "meals", image: "/food-paneer-naan.png" },
+  { name: "Puri Bhaji & Shrikhand Combo", type: "cooked_meal", diet: "vegetarian", unit: "meals", image: "/food-puri-bhaji.png" },
+  { name: "Packaged Snack Packets", type: "packaged", diet: "vegetarian", unit: "packets", image: "/food-snacks.png" },
+  { name: "Fresh Mango & Fruit Bowls", type: "produce", diet: "vegan", unit: "kg", image: "/food-produce.png" },
+  { name: "Khichdi & Kadhi Buffet Surplus", type: "cooked_meal", diet: "vegetarian", unit: "meals", image: "/food-dal-dhokli.png" },
 ];
 
 const HISTORY_PAIRS: [string, string][] = [
@@ -534,7 +534,7 @@ const ACTIVE_SPECS: ActiveSpec[] = [
     status: "available",
     matched_recipient_id: null,
     notes: "SG Highway banquets. Needs vehicle transport.",
-    image: "/orbit-food-4.png",
+    image: "/food-wedding-buffet.png",
   },
   {
     id: "don_a03",
@@ -552,7 +552,7 @@ const ACTIVE_SPECS: ActiveSpec[] = [
     status: "available",
     matched_recipient_id: null,
     notes: "Hot packed in thermal foil trays.",
-    image: "/orbit-food-2.png",
+    image: "/food-paneer-naan.png",
   },
   {
     id: "don_a04",
@@ -570,7 +570,7 @@ const ACTIVE_SPECS: ActiveSpec[] = [
     status: "matched",
     matched_recipient_id: "org_robin_hood_ahmedabad",
     notes: "Satellite hotel kitchen. Collect at gate #2.",
-    image: "/orbit-food-5.png",
+    image: "/food-upma-dhokla.png",
   },
   {
     id: "don_a05",
@@ -588,7 +588,7 @@ const ACTIVE_SPECS: ActiveSpec[] = [
     status: "pickup_scheduled",
     matched_recipient_id: "org_manav_sadhna",
     notes: null,
-    image: "/orbit-food-8.png",
+    image: "/food-dhokla-farsan.png",
   },
   {
     id: "don_a06",
@@ -606,7 +606,7 @@ const ACTIVE_SPECS: ActiveSpec[] = [
     status: "available",
     matched_recipient_id: null,
     notes: "Vejalpur kitchen. Freshly washed produce.",
-    image: "/orbit-food-6.png",
+    image: "/food-produce.png",
   },
   {
     id: "don_a07",
@@ -624,7 +624,7 @@ const ACTIVE_SPECS: ActiveSpec[] = [
     status: "picked_up",
     matched_recipient_id: "org_blind_people_assoc",
     notes: null,
-    image: "/orbit-food-3.png",
+    image: "/food-dal-dhokli.png",
   },
 ];
 
