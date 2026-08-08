@@ -32,7 +32,9 @@ import type {
   ImpactTimePoint,
   MatchWithRecipient,
   Organisation,
+  PriorityLevel,
   RejectedCandidate,
+  RiskLevel,
   RoutePlan,
   SurplusForecast,
 } from "@/lib/types";
@@ -651,6 +653,87 @@ export async function getImpactBreakdown(): Promise<ImpactBreakdown> {
         : rescued
             .map((d) => d.updated_at)
             .sort((a, b) => new Date(a).getTime() - new Date(b).getTime())[0],
+  };
+}
+
+/**
+ * What the public landing page shows.
+ *
+ * The homepage of a food-rescue platform should be able to say what it has
+ * actually rescued and what is open right now. Everything here is read from
+ * the database, including the live example — a hardcoded "Best match 95%" card
+ * stops being true the moment the seed changes, and stops being persuasive the
+ * moment anyone checks.
+ */
+export interface LandingSnapshot {
+  stats: ImpactStats;
+  verified_donors: number;
+  verified_recipients: number;
+  /** The open donation a coordinator should look at first, if any. */
+  featured: {
+    id: string;
+    food_name: string;
+    meals: number;
+    donor_name: string;
+    minutes_remaining: number;
+    risk_score: number;
+    risk_level: RiskLevel;
+    priority_score: number;
+    priority_level: PriorityLevel;
+    top_match_name: string | null;
+    top_match_score: number | null;
+    viable: number;
+    ruled_out: number;
+  } | null;
+}
+
+export async function getLandingSnapshot(): Promise<LandingSnapshot> {
+  const db = getDb();
+  const [stats, organisations, open] = await Promise.all([
+    getImpactStats(),
+    db.listOrganisations(),
+    db.listDonations({ status: ["available"] }),
+  ]);
+
+  const recipients = organisations.filter(
+    (o) => o.role === "recipient" && o.verified,
+  );
+  const donors = organisations.filter((o) => o.role === "donor" && o.verified);
+
+  const now = new Date();
+  const scored = open
+    .map((donation) => {
+      const { viable, rejected } = applyHardConstraints(donation, recipients, now);
+      const matches = rankCandidates(donation, viable);
+      const { risk, priority } = rescoreForList(donation, recipients, now);
+      return { donation, risk, priority, matches, viable, rejected };
+    })
+    .sort((a, b) => b.priority.score - a.priority.score);
+
+  const top = scored[0];
+  const byId = new Map(organisations.map((o) => [o.id, o]));
+
+  return {
+    stats,
+    verified_donors: donors.length,
+    verified_recipients: recipients.length,
+    featured: top
+      ? {
+          id: top.donation.id,
+          food_name: top.donation.food_name,
+          meals: top.donation.meals,
+          donor_name: byId.get(top.donation.donor_id)?.name ?? "A local kitchen",
+          minutes_remaining: top.risk.minutes_remaining,
+          risk_score: top.risk.score,
+          risk_level: top.risk.level,
+          priority_score: top.priority.score,
+          priority_level: top.priority.level,
+          top_match_name: top.matches[0]?.recipient.name ?? null,
+          top_match_score: top.matches[0]?.score ?? null,
+          viable: top.viable.length,
+          ruled_out: top.rejected.length,
+        }
+      : null,
   };
 }
 

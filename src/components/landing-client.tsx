@@ -23,7 +23,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { LanguageSwitcher } from "@/components/shell/language-switcher";
 import { useLanguage } from "@/lib/i18n/context";
-import { formatNumber } from "@/lib/utils";
+import type { LandingSnapshot } from "@/lib/service";
+import type { ImpactStats } from "@/lib/types";
+import { cn, formatDuration, formatNumber } from "@/lib/utils";
 import { DynamicFoodMap, type MapMarkerItem, type MapRouteItem } from "@/components/map";
 
 const AHMEDABAD_LANDING_MARKERS: MapMarkerItem[] = [
@@ -180,20 +182,22 @@ const AHMEDABAD_LANDING_ROUTES: MapRouteItem[] = [
 
 
 interface LandingClientProps {
-  stats: {
-    meals_donated: number;
-    food_saved_kg: number;
-    people_served: number;
-    meals_at_risk: number;
-    active_donations: number;
-  };
+  stats: ImpactStats;
+  /** Live figures and the current highest-priority open donation. */
+  snapshot: LandingSnapshot;
   session: unknown;
   demo: boolean;
 }
 
 
-export function LandingClient({ stats, session, demo }: LandingClientProps) {
+export function LandingClient({
+  stats,
+  snapshot,
+  session,
+  demo,
+}: LandingClientProps) {
   const { t } = useLanguage();
+  const featured = snapshot.featured;
 
   const AI_FEATURES = [
     {
@@ -352,44 +356,78 @@ export function LandingClient({ stats, session, demo }: LandingClientProps) {
             </div>
           </div>
 
-          {/* Real Ahmedabad Operational Showcase Grid */}
+          {/*
+            Every figure below is read from the database on each request. The
+            previous version hardcoded "13 Verified Partners", "< 18 min
+            Response" and "100% Quality Checked / FSSAI standards" — none of
+            which the platform measures, and the last of which asserted a
+            regulatory status for real named restaurants.
+          */}
           <div className="mt-12 grid gap-4 sm:grid-cols-3">
             <div className="rounded-xl border border-border bg-card/80 p-4 sm:p-5 shadow-sm backdrop-blur">
               <div className="flex items-center gap-2 text-primary font-bold text-sm">
-                <span className="flex size-2 rounded-full bg-emerald-500 animate-ping" />
-                Live Ahmedabad Network
+                <Utensils className="size-4" aria-hidden />
+                Rescued so far
               </div>
-              <p className="mt-2 text-2xl font-bold tracking-tight text-foreground">
-                13 Verified Partners
+              <p className="mt-2 text-2xl font-bold tracking-tight text-foreground tabular">
+                {formatNumber(stats.meals_donated)} meals
               </p>
               <p className="mt-1 text-xs text-muted-foreground leading-relaxed">
-                5 Hotel Donors (Agashiye, TGB, Havmor, Marriott, Rajwadu) & 8 NGO Shelters (Robin Hood, Akshaya Patra, Manav Sadhna) mapped across Ahmedabad.
-              </p>
-            </div>
-
-            <div className="rounded-xl border border-border bg-card/80 p-4 sm:p-5 shadow-sm backdrop-blur">
-              <div className="flex items-center gap-2 text-amber-600 font-bold text-sm">
-                <Clock3 className="size-4 text-amber-500" aria-hidden />
-                Express Dispatch
-              </div>
-              <p className="mt-2 text-2xl font-bold tracking-tight text-foreground">
-                &lt; 18 min Response
-              </p>
-              <p className="mt-1 text-xs text-muted-foreground leading-relaxed">
-                Surplus food is automatically matched with nearest verified shelter to prevent expiry & ensure immediate delivery.
+                {formatNumber(stats.food_saved_kg)} kg of food delivered across{" "}
+                {formatNumber(stats.donations_completed)} completed donations,
+                feeding an estimated {formatNumber(stats.people_served)} people.
               </p>
             </div>
 
             <div className="rounded-xl border border-border bg-card/80 p-4 sm:p-5 shadow-sm backdrop-blur">
               <div className="flex items-center gap-2 text-blue-600 font-bold text-sm">
                 <ShieldCheck className="size-4 text-blue-500" aria-hidden />
-                Safety Assurance
+                Verified network
               </div>
-              <p className="mt-2 text-2xl font-bold tracking-tight text-foreground">
-                100% Quality Checked
+              <p className="mt-2 text-2xl font-bold tracking-tight text-foreground tabular">
+                {snapshot.verified_donors + snapshot.verified_recipients} partners
               </p>
               <p className="mt-1 text-xs text-muted-foreground leading-relaxed">
-                FSSAI food hygiene standards, prep time checks, and storage freshness verification before listing distribution.
+                {snapshot.verified_donors} donor kitchens and{" "}
+                {snapshot.verified_recipients} verified receiving organisations.
+                Unverified organisations are filtered out before any match is
+                offered.
+              </p>
+            </div>
+
+            <div
+              className={cn(
+                "rounded-xl border bg-card/80 p-4 sm:p-5 shadow-sm backdrop-blur",
+                stats.meals_at_risk > 0
+                  ? "border-signal-critical/30"
+                  : "border-border",
+              )}
+            >
+              <div
+                className={cn(
+                  "flex items-center gap-2 font-bold text-sm",
+                  stats.meals_at_risk > 0
+                    ? "text-signal-critical"
+                    : "text-muted-foreground",
+                )}
+              >
+                <span
+                  className={cn(
+                    "flex size-2 rounded-full",
+                    stats.meals_at_risk > 0
+                      ? "bg-signal-critical animate-ping"
+                      : "bg-muted-foreground",
+                  )}
+                />
+                Open right now
+              </div>
+              <p className="mt-2 text-2xl font-bold tracking-tight text-foreground tabular">
+                {formatNumber(stats.meals_at_risk)} meals at risk
+              </p>
+              <p className="mt-1 text-xs text-muted-foreground leading-relaxed">
+                Across {stats.high_risk_donations} high-risk donations of{" "}
+                {stats.active_donations} currently open. Recomputed on every
+                page load, so this moves through the day.
               </p>
             </div>
           </div>
@@ -478,13 +516,73 @@ export function LandingClient({ stats, session, demo }: LandingClientProps) {
             </ul>
           </div>
 
+          {/*
+            A real open donation, scored live — not a mock-up. The previous
+            version hardcoded "Best Match — Hope Kitchen (95%)", an
+            organisation that no longer exists in the dataset. Anything shown
+            here has to survive the data changing underneath it.
+          */}
           <Card className="overflow-hidden">
-            <div className="border-b border-border bg-card px-4 py-2.5">
+            <div className="flex items-center justify-between gap-2 border-b border-border bg-card px-4 py-2.5">
               <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                {t("donorPreviewTitle")}
+                {featured ? "Live — highest priority right now" : t("donorPreviewTitle")}
               </p>
+              {featured ? (
+                <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                  <span className="flex size-1.5 rounded-full bg-signal-critical animate-ping" />
+                  {featured.donor_name}
+                </span>
+              ) : null}
             </div>
             <CardContent className="space-y-3 pt-4">
+              {featured ? (
+                <>
+                  <div className="rounded-lg border border-signal-critical/25 bg-signal-critical/[0.06] p-3.5">
+                    <p className="flex items-center gap-2 text-sm font-semibold text-signal-critical">
+                      <Flame className="size-4" aria-hidden />
+                      Waste risk {featured.risk_score}/100 —{" "}
+                      {featured.risk_level === "HIGH"
+                        ? "High"
+                        : featured.risk_level === "MEDIUM"
+                          ? "Medium"
+                          : "Low"}
+                    </p>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      {featured.meals} meals of {featured.food_name}
+                      {featured.minutes_remaining > 0
+                        ? `, ${formatDuration(featured.minutes_remaining)} left before the pickup deadline.`
+                        : ", past its pickup deadline."}
+                    </p>
+                  </div>
+
+                  <div className="rounded-lg border border-primary/25 bg-primary-soft/60 p-3.5">
+                    <p className="flex items-center gap-2 text-sm font-semibold text-primary">
+                      <Sparkles className="size-4" aria-hidden />
+                      {featured.top_match_name
+                        ? `Best match — ${featured.top_match_name} (${featured.top_match_score}%)`
+                        : "No recipient clears every constraint"}
+                    </p>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      {featured.ruled_out} organisation
+                      {featured.ruled_out === 1 ? "" : "s"} ruled out on capacity,
+                      diet, distance or timing before anything was scored;{" "}
+                      {featured.viable} left viable.
+                    </p>
+                  </div>
+
+                  <div className="rounded-lg border border-signal-high/25 bg-signal-high/[0.06] p-3.5">
+                    <p className="flex items-center gap-2 text-sm font-semibold text-signal-high">
+                      <ListOrdered className="size-4" aria-hidden />
+                      Pickup priority {featured.priority_score}/100 —{" "}
+                      {featured.priority_level}
+                    </p>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      Ranked against every other open donation on the platform.
+                    </p>
+                  </div>
+                </>
+              ) : (
+                <>
               <div className="rounded-lg border border-signal-critical/25 bg-signal-critical/[0.06] p-3.5">
                 <p className="flex items-center gap-2 text-sm font-semibold text-signal-critical">
                   <Flame className="size-4" aria-hidden />
@@ -514,6 +612,8 @@ export function LandingClient({ stats, session, demo }: LandingClientProps) {
                   {t("priorityBody")}
                 </p>
               </div>
+                </>
+              )}
             </CardContent>
           </Card>
         </div>
