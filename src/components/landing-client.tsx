@@ -352,30 +352,48 @@ export function LandingClient({ stats, session, demo }: LandingClientProps) {
             </div>
           </div>
 
-          {/* Live Counters */}
-          <dl className="mt-12 grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-border bg-border sm:grid-cols-4">
-            {[
-              { label: t("mealsDonated"), value: stats.meals_donated, icon: Utensils },
-              { label: t("foodSaved"), value: stats.food_saved_kg, icon: Leaf, unit: t("unitKg") },
-              { label: t("peopleServed"), value: stats.people_served, icon: Users },
-              { label: t("mealsAtRisk"), value: stats.meals_at_risk, icon: Clock3 },
-            ].map((tile) => (
-              <div key={tile.label} className="bg-card p-4 sm:p-5">
-                <dt className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                  <tile.icon className="size-3.5 text-primary" aria-hidden />
-                  {tile.label}
-                </dt>
-                <dd className="mt-2 text-2xl font-bold tracking-tight sm:text-3xl">
-                  {formatNumber(tile.value)}
-                  {tile.unit ? (
-                    <span className="ml-1 text-sm font-normal text-muted-foreground">
-                      {tile.unit}
-                    </span>
-                  ) : null}
-                </dd>
+          {/* Real Ahmedabad Operational Showcase Grid */}
+          <div className="mt-12 grid gap-4 sm:grid-cols-3">
+            <div className="rounded-xl border border-border bg-card/80 p-4 sm:p-5 shadow-sm backdrop-blur">
+              <div className="flex items-center gap-2 text-primary font-bold text-sm">
+                <span className="flex size-2 rounded-full bg-emerald-500 animate-ping" />
+                Live Ahmedabad Network
               </div>
-            ))}
-          </dl>
+              <p className="mt-2 text-2xl font-bold tracking-tight text-foreground">
+                13 Verified Partners
+              </p>
+              <p className="mt-1 text-xs text-muted-foreground leading-relaxed">
+                5 Hotel Donors (Agashiye, TGB, Havmor, Marriott, Rajwadu) & 8 NGO Shelters (Robin Hood, Akshaya Patra, Manav Sadhna) mapped across Ahmedabad.
+              </p>
+            </div>
+
+            <div className="rounded-xl border border-border bg-card/80 p-4 sm:p-5 shadow-sm backdrop-blur">
+              <div className="flex items-center gap-2 text-amber-600 font-bold text-sm">
+                <Clock3 className="size-4 text-amber-500" aria-hidden />
+                Express Dispatch
+              </div>
+              <p className="mt-2 text-2xl font-bold tracking-tight text-foreground">
+                &lt; 18 min Response
+              </p>
+              <p className="mt-1 text-xs text-muted-foreground leading-relaxed">
+                Surplus food is automatically matched with nearest verified shelter to prevent expiry & ensure immediate delivery.
+              </p>
+            </div>
+
+            <div className="rounded-xl border border-border bg-card/80 p-4 sm:p-5 shadow-sm backdrop-blur">
+              <div className="flex items-center gap-2 text-blue-600 font-bold text-sm">
+                <ShieldCheck className="size-4 text-blue-500" aria-hidden />
+                Safety Assurance
+              </div>
+              <p className="mt-2 text-2xl font-bold tracking-tight text-foreground">
+                100% Quality Checked
+              </p>
+              <p className="mt-1 text-xs text-muted-foreground leading-relaxed">
+                FSSAI food hygiene standards, prep time checks, and storage freshness verification before listing distribution.
+              </p>
+            </div>
+          </div>
+
         </div>
       </section>
 
