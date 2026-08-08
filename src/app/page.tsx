@@ -163,10 +163,16 @@ export default async function LandingPage() {
                 <div className="absolute -left-6 top-1/2 -translate-y-1/2 w-12 h-12 bg-card border-2 border-background rounded-full overflow-hidden shadow-md animate-[spin_30s_linear_infinite]">
                   <img src="/orbit-food-2.png" alt="Fresh vegetables" className="w-full h-full object-cover" />
                 </div>
+                <div className="absolute -right-6 top-1/2 -translate-y-1/2 w-12 h-12 bg-card border-2 border-background rounded-full overflow-hidden shadow-md animate-[spin_30s_linear_infinite]">
+                  <img src="/orbit-food-4.png" alt="Gourmet sandwiches" className="w-full h-full object-cover" />
+                </div>
               </div>
 
               {/* Outer Orbit */}
               <div className="absolute w-[440px] h-[440px] rounded-full border border-dashed border-border/70 animate-[spin_40s_linear_infinite]">
+                <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-12 h-12 bg-card border-2 border-background rounded-full overflow-hidden shadow-md animate-[spin_40s_linear_infinite_reverse]">
+                  <img src="/orbit-food-5.png" alt="Hot catering meal" className="w-full h-full object-cover" />
+                </div>
                 <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-12 h-12 bg-card border-2 border-background rounded-full overflow-hidden shadow-md animate-[spin_40s_linear_infinite_reverse]">
                   <img src="/orbit-food-3.png" alt="Artisanal bread" className="w-full h-full object-cover" />
                 </div>
