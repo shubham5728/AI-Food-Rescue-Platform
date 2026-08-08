@@ -164,7 +164,7 @@ export default async function LandingPage() {
                   <img src="/orbit-food-2.png" alt="Fresh vegetables" className="w-full h-full object-cover" />
                 </div>
                 <div className="absolute -right-6 top-1/2 -translate-y-1/2 w-12 h-12 bg-card border-2 border-background rounded-full overflow-hidden shadow-md animate-[spin_30s_linear_infinite]">
-                  <img src="/orbit-food-4.png" alt="Gourmet sandwiches" className="w-full h-full object-cover" />
+                  <img src="/orbit-person-1.png" alt="Teenager holding empty bowl" className="w-full h-full object-cover" />
                 </div>
               </div>
 
