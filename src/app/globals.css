@@ -134,6 +134,62 @@
 }
 
 /* Custom Animations for FoodBridge Real Dispatch Map */
+/* ---------------------------------------------------------------------------
+   3D hero orbit
+
+   The rings are real 3D: each is tilted back on the X axis and spun on the Y
+   axis, so items travel around the centre in depth rather than around a flat
+   circle. Perspective makes the far side of each orbit read smaller, and
+   preserve-3d lets items pass behind the centre figure instead of over it.
+
+   Each food item needs two counter-rotations to stay facing the viewer: one
+   undoing the ring's spin (animated, opposite direction, same duration) and
+   one undoing the ring's tilt (static). They are applied on separate nested
+   elements because a single transform would have to compose them in an order
+   CSS cannot express against an animated parent.
+   --------------------------------------------------------------------------- */
+@keyframes fb-orbit-spin {
+  from { transform: rotateY(0deg); }
+  to   { transform: rotateY(360deg); }
+}
+
+@keyframes fb-orbit-spin-reverse {
+  from { transform: rotateY(360deg); }
+  to   { transform: rotateY(0deg); }
+}
+
+/* Counter-rotations: exact inverses of the two above. */
+@keyframes fb-orbit-counter {
+  from { transform: rotateY(0deg); }
+  to   { transform: rotateY(-360deg); }
+}
+
+@keyframes fb-orbit-counter-reverse {
+  from { transform: rotateY(-360deg); }
+  to   { transform: rotateY(0deg); }
+}
+
+.fb-orbit-scene {
+  perspective: 1100px;
+  perspective-origin: 50% 45%;
+}
+
+.fb-orbit-3d {
+  transform-style: preserve-3d;
+}
+
+/*
+  A spinning 3D scene is a common migraine and vestibular trigger, so it stops
+  entirely when the visitor has asked for reduced motion. The rings and food
+  stay on screen — only the movement goes.
+*/
+@media (prefers-reduced-motion: reduce) {
+  .fb-orbit-scene *,
+  .fb-orbit-scene {
+    animation: none !important;
+  }
+}
+
 @keyframes radar-pulse {
   0% {
     transform: scale(0.8);

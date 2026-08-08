@@ -25,7 +25,7 @@ export function EmptyState({
         className,
       )}
     >
-      <div className="mb-3 flex size-11 items-center justify-center rounded-full bg-primary-soft text-primary">
+      <div className="mb-3 flex size-11 shrink-0 items-center justify-center rounded-full bg-primary-soft text-primary">
         <Icon className="size-5" />
       </div>
       <p className="text-sm font-semibold text-foreground">{title}</p>

@@ -27,7 +27,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { useLanguage } from "@/lib/i18n/context";
-import { motion } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
 import type { ScoredDonation } from "@/lib/service";
 import type { Organisation } from "@/lib/types";
 
@@ -117,7 +117,9 @@ export function DonorDashboardClient({
     })),
   ];
 
-  const container = {
+  // Typed as Variants so `type: "spring"` is contextually narrowed to the
+  // animation-generator union rather than inferred as a plain string.
+  const container: Variants = {
     hidden: { opacity: 0 },
     show: {
       opacity: 1,
@@ -125,7 +127,7 @@ export function DonorDashboardClient({
     },
   };
 
-  const itemAnim = {
+  const itemAnim: Variants = {
     hidden: { opacity: 0, y: 15 },
     show: { opacity: 1, y: 0, transition: { type: "spring" as const, stiffness: 300, damping: 24 } },
   };

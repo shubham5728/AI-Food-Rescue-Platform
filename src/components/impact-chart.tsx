@@ -131,7 +131,7 @@ export function ImpactChart({ data, className }: ImpactChartProps) {
                 )}
               >
                 <span
-                  className="size-2 rounded-full"
+                  className="size-2 shrink-0 rounded-full"
                   style={{ backgroundColor: m.color }}
                   aria-hidden
                 />
@@ -189,7 +189,7 @@ export function ImpactChart({ data, className }: ImpactChartProps) {
                         </p>
                         <p className="mt-0.5 flex items-center gap-1.5 text-sm font-semibold">
                           <span
-                            className="size-2 rounded-full"
+                            className="size-2 shrink-0 rounded-full"
                             style={{ backgroundColor: metric.color }}
                             aria-hidden
                           />
