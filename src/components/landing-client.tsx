@@ -231,12 +231,20 @@ function Orbit3D({
           animation: `${reverse ? "fb-orbit-spin-reverse" : "fb-orbit-spin"} ${duration}s linear infinite`,
         }}
       >
-        {/* The ring itself. Tilted, a circle draws as an ellipse — the 3D cue. */}
+        {/*
+          The ring, laid into the same plane the items travel in.
+
+          Items are placed with rotateY(angle) translateZ(radius), so their
+          circle lives in this element's XZ plane. A plain div draws its border
+          in XY, which after the tilt projects to a visibly different ellipse —
+          the items then appear to float off their own track. rotateX(90deg)
+          stands the circle up into XZ so the two coincide.
+        */}
         <div
           className={`absolute inset-0 rounded-full border border-dashed ${
             faint ? "border-border/70" : "border-border"
           }`}
-          style={{ transform: "translateZ(-1px)" }}
+          style={{ transform: "rotateX(90deg)" }}
         />
         {children}
       </div>
@@ -477,7 +485,7 @@ export function LandingClient({ stats, session, demo }: LandingClientProps) {
         <div className="grid gap-4 sm:grid-cols-3">
           <div className="rounded-xl border border-border bg-card/80 p-4 sm:p-5 shadow-sm backdrop-blur">
             <div className="flex items-center gap-2 text-primary font-bold text-sm">
-              <span className="flex size-2 rounded-full bg-emerald-500 animate-ping" />
+              <span className="flex size-2 shrink-0 rounded-full bg-emerald-500 animate-ping" />
               Live Ahmedabad Network
             </div>
             <p className="mt-2 text-2xl font-bold tracking-tight text-foreground">
@@ -654,9 +662,9 @@ export function LandingClient({ stats, session, demo }: LandingClientProps) {
             </p>
           </div>
           <div className="flex items-center gap-3 text-xs font-semibold">
-            <span className="flex items-center gap-1.5"><span className="size-2.5 rounded-full bg-emerald-600"></span> Donors</span>
-            <span className="flex items-center gap-1.5"><span className="size-2.5 rounded-full bg-blue-600"></span> NGOs</span>
-            <span className="flex items-center gap-1.5"><span className="size-2.5 rounded-full bg-red-600"></span> Urgent</span>
+            <span className="flex items-center gap-1.5"><span className="size-2.5 shrink-0 rounded-full bg-emerald-600"></span> Donors</span>
+            <span className="flex items-center gap-1.5"><span className="size-2.5 shrink-0 rounded-full bg-blue-600"></span> NGOs</span>
+            <span className="flex items-center gap-1.5"><span className="size-2.5 shrink-0 rounded-full bg-red-600"></span> Urgent</span>
           </div>
         </div>
 

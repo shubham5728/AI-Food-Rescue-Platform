@@ -53,7 +53,7 @@ export function PriorityBadge({
         className,
       )}
     >
-      <span className={cn("size-1.5 rounded-full", style.dot)} aria-hidden />
+      <span className={cn("size-1.5 shrink-0 rounded-full", style.dot)} aria-hidden />
       Priority {style.label}
       {score !== undefined ? <span className="tabular">· {score}</span> : null}
     </Badge>

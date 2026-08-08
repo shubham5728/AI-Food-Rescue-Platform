@@ -25,7 +25,7 @@ export default function DashboardLoading() {
               <CardContent className="p-6 space-y-4">
                 <div className="flex justify-between items-center">
                   <Skeleton className="h-5 w-24 rounded-md" />
-                  <Skeleton className="size-8 rounded-full" />
+                  <Skeleton className="size-8 shrink-0 rounded-full" />
                 </div>
                 <Skeleton className="h-8 w-16 rounded-md" />
                 <Skeleton className="h-4 w-32 rounded-md" />
@@ -41,7 +41,7 @@ export default function DashboardLoading() {
           {/* Priority Queue Skeleton */}
           <section className="space-y-4">
             <div className="flex items-center gap-2">
-              <Skeleton className="size-5 rounded-full" />
+              <Skeleton className="size-5 shrink-0 rounded-full" />
               <Skeleton className="h-6 w-40 rounded-md" />
             </div>
             <div className="space-y-4">
