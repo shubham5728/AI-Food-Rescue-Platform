@@ -25,6 +25,7 @@ import { LanguageSwitcher } from "@/components/shell/language-switcher";
 import { useLanguage } from "@/lib/i18n/context";
 import { formatNumber } from "@/lib/utils";
 import { DynamicFoodMap, type MapMarkerItem, type MapRouteItem } from "@/components/map";
+import { motion } from "framer-motion";
 
 const AHMEDABAD_LANDING_MARKERS: MapMarkerItem[] = [
   {
@@ -219,6 +220,19 @@ export function LandingClient({ stats, session, demo }: LandingClientProps) {
     },
   ];
 
+  const fadeUpVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
+  };
+
+  const staggerContainer = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.15 },
+    },
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-background">
       {/* Header */}
@@ -260,140 +274,85 @@ export function LandingClient({ stats, session, demo }: LandingClientProps) {
       </header>
 
       {/* Hero Section */}
-      <section className="hero-glow relative overflow-hidden border-b border-border">
-        <div className="surface-grain absolute inset-0 opacity-70" aria-hidden />
-        <div className="container relative py-12 sm:py-20">
-          <div className="grid lg:grid-cols-2 gap-10 items-center">
-            <div className="max-w-2xl">
-              <Badge variant="success" className="mb-4">
-                <Sparkles className="size-3.5" aria-hidden />
-                {t("aiBadge")}
-              </Badge>
+      <section className="relative overflow-hidden pt-24 pb-32 sm:pt-32 sm:pb-40 border-b border-border/40">
+        <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/10 via-background to-background" />
 
-              <h1 className="text-balance text-3xl font-bold leading-tight tracking-tight sm:text-5xl">
-                {t("heroTitle1")}
-                <br />
-                <span className="text-primary">{t("heroTitle2")}</span>
-              </h1>
+        <motion.div 
+          className="container flex flex-col items-center text-center space-y-10"
+          variants={staggerContainer}
+          initial="hidden"
+          animate="visible"
+        >
+          <motion.div variants={fadeUpVariants} className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-sm font-medium text-primary">
+            <Sparkles className="size-4" aria-hidden />
+            <span>{t("heroBadge")}</span>
+          </motion.div>
 
-              <p className="mt-4 text-base sm:text-lg text-muted-foreground leading-relaxed">
-                {t("heroSubtitle")}
-              </p>
+          <motion.div variants={fadeUpVariants} className="max-w-4xl space-y-5">
+            <h1 className="text-4xl font-extrabold tracking-tight sm:text-6xl lg:text-7xl">
+              {t("heroTitle1")} <br className="hidden sm:inline" />
+              <span className="text-primary">{t("heroTitle2")}</span>
+            </h1>
+            <p className="mx-auto max-w-2xl text-lg text-muted-foreground sm:text-xl leading-relaxed">
+              {t("heroSub")}
+            </p>
+          </motion.div>
 
-              <div className="mt-6 flex flex-wrap gap-3">
-                <Button asChild size="lg">
-                  <Link href="/donations/new">
-                    <Utensils className="size-4" aria-hidden />
-                    {t("btnDonate")}
-                  </Link>
-                </Button>
-                <Button asChild size="lg" variant="outline">
-                  <Link href="/dashboard">
-                    <Users className="size-4" aria-hidden />
-                    {t("btnFind")}
-                  </Link>
-                </Button>
-              </div>
+          <motion.div variants={fadeUpVariants} className="flex flex-wrap items-center justify-center gap-4">
+            <Button asChild size="lg" className="h-12 px-8 text-base shadow-lg shadow-primary/20 transition-all hover:scale-105 hover:shadow-primary/30 font-bold">
+              <Link href="/login">
+                {t("btnGetStarted")}
+                <ArrowRight className="size-5" aria-hidden />
+              </Link>
+            </Button>
+            <Button asChild variant="outline" size="lg" className="h-12 px-8 text-base bg-background/50 hover:bg-muted transition-all font-semibold">
+              <Link href="/impact">{t("btnViewImpact")}</Link>
+            </Button>
+          </motion.div>
+        </motion.div>
+      </section>
 
-              {demo && (
-                <p className="mt-4 text-xs sm:text-sm text-muted-foreground">
-                  ⚡ {t("demoMode")} —{" "}
-                  <Link href="/login" className="font-medium text-primary underline hover:underline">
-                    {t("navLogin")}
-                  </Link>
-                </p>
-              )}
+      {/* Real Ahmedabad Operational Showcase Grid */}
+      <section className="container py-12">
+        <div className="grid gap-4 sm:grid-cols-3">
+          <div className="rounded-xl border border-border bg-card/80 p-4 sm:p-5 shadow-sm backdrop-blur">
+            <div className="flex items-center gap-2 text-primary font-bold text-sm">
+              <span className="flex size-2 rounded-full bg-emerald-500 animate-ping" />
+              Live Ahmedabad Network
             </div>
-
-            {/* Orbital Animation Right Side (Friend's 3D Food Photography & Hover Glow) */}
-            <div className="relative hidden lg:flex items-center justify-center w-full h-[420px]">
-              
-              {/* Center Human Element */}
-              <div className="absolute z-10 flex flex-col items-center justify-center w-32 h-32 rounded-full shadow-[0_0_50px_rgba(var(--primary),0.2)] overflow-hidden">
-                <img src="/orbit-person-2.png" alt="Person in need" className="w-full h-full object-cover mix-blend-multiply" />
-              </div>
-              
-              {/* Inner Orbit */}
-              <div className="absolute w-[200px] h-[200px] rounded-full border border-dashed border-border" style={{ animation: 'spin 60s linear infinite' }}>
-                <div style={{ left: '68px', top: '-32px', animation: 'spin 60s linear infinite reverse' }} className="absolute w-16 h-16 bg-card border-2 border-background rounded-full overflow-hidden shadow-md hover:shadow-[0_0_30px_rgba(var(--primary),0.8)] hover:scale-110 transition-all duration-300 cursor-pointer">
-                  <img src="/orbit-food-1.png" alt="Fresh salad" className="w-full h-full object-cover" />
-                </div>
-              </div>
-
-              {/* Middle Orbit */}
-              <div className="absolute w-[320px] h-[320px] rounded-full border border-dashed border-border" style={{ animation: 'spin 90s linear infinite reverse' }}>
-                <div style={{ left: '288px', top: '128px', animation: 'spin 90s linear infinite' }} className="absolute w-16 h-16 bg-card border-2 border-background rounded-full overflow-hidden shadow-md hover:shadow-[0_0_30px_rgba(var(--primary),0.8)] hover:scale-110 transition-all duration-300 cursor-pointer">
-                  <img src="/orbit-food-2.png" alt="Fresh vegetables" className="w-full h-full object-cover" />
-                </div>
-                <div style={{ left: '-32px', top: '128px', animation: 'spin 90s linear infinite' }} className="absolute w-16 h-16 bg-card border-2 border-background rounded-full overflow-hidden shadow-md hover:shadow-[0_0_30px_rgba(var(--primary),0.8)] hover:scale-110 transition-all duration-300 cursor-pointer">
-                  <img src="/orbit-food-4.png" alt="Gourmet sandwiches" className="w-full h-full object-cover" />
-                </div>
-              </div>
-
-              {/* Outer Orbit (5 items) */}
-              <div className="absolute w-[440px] h-[440px] rounded-full border border-dashed border-border/70" style={{ animation: 'spin 120s linear infinite' }}>
-                <div style={{ left: '408px', top: '188px', animation: 'spin 120s linear infinite reverse' }} className="absolute w-16 h-16 bg-card border-2 border-background rounded-full overflow-hidden shadow-md hover:shadow-[0_0_30px_rgba(var(--primary),0.8)] hover:scale-110 transition-all duration-300 cursor-pointer">
-                  <img src="/orbit-food-5.png" alt="Hot catering meal" className="w-full h-full object-cover" />
-                </div>
-                <div style={{ left: '256px', top: '397px', animation: 'spin 120s linear infinite reverse' }} className="absolute w-16 h-16 bg-card border-2 border-background rounded-full overflow-hidden shadow-md hover:shadow-[0_0_30px_rgba(var(--primary),0.8)] hover:scale-110 transition-all duration-300 cursor-pointer">
-                  <img src="/orbit-food-3.png" alt="Artisanal bread" className="w-full h-full object-cover" />
-                </div>
-                <div style={{ left: '10px', top: '317px', animation: 'spin 120s linear infinite reverse' }} className="absolute w-16 h-16 bg-card border-2 border-background rounded-full overflow-hidden shadow-md hover:shadow-[0_0_30px_rgba(var(--primary),0.8)] hover:scale-110 transition-all duration-300 cursor-pointer">
-                  <img src="/orbit-food-6.png" alt="Fresh fruits" className="w-full h-full object-cover" />
-                </div>
-                <div style={{ left: '10px', top: '59px', animation: 'spin 120s linear infinite reverse' }} className="absolute w-16 h-16 bg-card border-2 border-background rounded-full overflow-hidden shadow-md hover:shadow-[0_0_30px_rgba(var(--primary),0.8)] hover:scale-110 transition-all duration-300 cursor-pointer">
-                  <img src="/orbit-food-7.png" alt="Bakery pastries" className="w-full h-full object-cover" />
-                </div>
-                <div style={{ left: '256px', top: '-21px', animation: 'spin 120s linear infinite reverse' }} className="absolute w-16 h-16 bg-card border-2 border-background rounded-full overflow-hidden shadow-md hover:shadow-[0_0_30px_rgba(var(--primary),0.8)] hover:scale-110 transition-all duration-300 cursor-pointer">
-                  <img src="/orbit-food-8.png" alt="Dairy products" className="w-full h-full object-cover" />
-                </div>
-              </div>
-
-            </div>
+            <p className="mt-2 text-2xl font-bold tracking-tight text-foreground">
+              13 Verified Partners
+            </p>
+            <p className="mt-1 text-xs text-muted-foreground leading-relaxed">
+              5 Hotel Donors (Agashiye, TGB, Havmor, Marriott, Rajwadu) & 8 NGO Shelters (Robin Hood, Akshaya Patra, Manav Sadhna) mapped across Ahmedabad.
+            </p>
           </div>
 
-          {/* Real Ahmedabad Operational Showcase Grid */}
-          <div className="mt-12 grid gap-4 sm:grid-cols-3">
-            <div className="rounded-xl border border-border bg-card/80 p-4 sm:p-5 shadow-sm backdrop-blur">
-              <div className="flex items-center gap-2 text-primary font-bold text-sm">
-                <span className="flex size-2 rounded-full bg-emerald-500 animate-ping" />
-                Live Ahmedabad Network
-              </div>
-              <p className="mt-2 text-2xl font-bold tracking-tight text-foreground">
-                13 Verified Partners
-              </p>
-              <p className="mt-1 text-xs text-muted-foreground leading-relaxed">
-                5 Hotel Donors (Agashiye, TGB, Havmor, Marriott, Rajwadu) & 8 NGO Shelters (Robin Hood, Akshaya Patra, Manav Sadhna) mapped across Ahmedabad.
-              </p>
+          <div className="rounded-xl border border-border bg-card/80 p-4 sm:p-5 shadow-sm backdrop-blur">
+            <div className="flex items-center gap-2 text-amber-600 font-bold text-sm">
+              <Clock3 className="size-4 text-amber-500" aria-hidden />
+              Express Dispatch
             </div>
-
-            <div className="rounded-xl border border-border bg-card/80 p-4 sm:p-5 shadow-sm backdrop-blur">
-              <div className="flex items-center gap-2 text-amber-600 font-bold text-sm">
-                <Clock3 className="size-4 text-amber-500" aria-hidden />
-                Express Dispatch
-              </div>
-              <p className="mt-2 text-2xl font-bold tracking-tight text-foreground">
-                &lt; 18 min Response
-              </p>
-              <p className="mt-1 text-xs text-muted-foreground leading-relaxed">
-                Surplus food is automatically matched with nearest verified shelter to prevent expiry & ensure immediate delivery.
-              </p>
-            </div>
-
-            <div className="rounded-xl border border-border bg-card/80 p-4 sm:p-5 shadow-sm backdrop-blur">
-              <div className="flex items-center gap-2 text-blue-600 font-bold text-sm">
-                <ShieldCheck className="size-4 text-blue-500" aria-hidden />
-                Safety Assurance
-              </div>
-              <p className="mt-2 text-2xl font-bold tracking-tight text-foreground">
-                100% Quality Checked
-              </p>
-              <p className="mt-1 text-xs text-muted-foreground leading-relaxed">
-                FSSAI food hygiene standards, prep time checks, and storage freshness verification before listing distribution.
-              </p>
-            </div>
+            <p className="mt-2 text-2xl font-bold tracking-tight text-foreground">
+              &lt; 18 min Response
+            </p>
+            <p className="mt-1 text-xs text-muted-foreground leading-relaxed">
+              Surplus food is automatically matched with nearest verified shelter to prevent expiry & ensure immediate delivery.
+            </p>
           </div>
 
+          <div className="rounded-xl border border-border bg-card/80 p-4 sm:p-5 shadow-sm backdrop-blur">
+            <div className="flex items-center gap-2 text-blue-600 font-bold text-sm">
+              <ShieldCheck className="size-4 text-blue-500" aria-hidden />
+              Safety Assurance
+            </div>
+            <p className="mt-2 text-2xl font-bold tracking-tight text-foreground">
+              100% Quality Checked
+            </p>
+            <p className="mt-1 text-xs text-muted-foreground leading-relaxed">
+              FSSAI food hygiene standards, prep time checks, and storage freshness verification before listing distribution.
+            </p>
+          </div>
         </div>
       </section>
 

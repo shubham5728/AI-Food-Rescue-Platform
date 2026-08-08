@@ -26,6 +26,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { useLanguage } from "@/lib/i18n/context";
+import { motion } from "framer-motion";
 import type { ScoredDonation } from "@/lib/service";
 import type { Organisation } from "@/lib/types";
 
@@ -115,10 +116,28 @@ export function DonorDashboardClient({
     })),
   ];
 
+  const container = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: { staggerChildren: 0.1 },
+    },
+  };
+
+  const itemAnim = {
+    hidden: { opacity: 0, y: 15 },
+    show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } },
+  };
+
   return (
-    <div className="container space-y-8 py-8">
+    <motion.div 
+      className="container space-y-8 py-8"
+      variants={container}
+      initial="hidden"
+      animate="show"
+    >
       {/* Top Welcome Header */}
-      <header className="flex flex-wrap items-end justify-between gap-4 border-b border-border/60 pb-5">
+      <motion.header variants={itemAnim} className="flex flex-wrap items-end justify-between gap-4 border-b border-border/60 pb-5">
         <div>
           <div className="flex items-center gap-2 mb-1.5">
             <Badge variant="outline" className="border-primary/30 text-primary">
@@ -145,10 +164,10 @@ export function DonorDashboardClient({
             {t("btnNewDonation")}
           </Link>
         </Button>
-      </header>
+      </motion.header>
 
       {/* Main KPI Stat Tiles */}
-      <section aria-label="Impact">
+      <motion.section variants={itemAnim} aria-label="Impact">
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <StatTile
             label={t("mealsDonated")}
@@ -246,66 +265,71 @@ export function DonorDashboardClient({
           zoom={13}
           height="420px"
         />
-      </section>
+      </motion.section>
 
       {/* Main Grid: Priority Queue & Recent Listings */}
-      <div className="grid gap-8 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)]">
-        {/* Priority Queue */}
-        <section aria-labelledby="priority-heading" className="space-y-4">
-          <div className="flex items-center gap-2">
-            <ListOrdered className="size-5 text-signal-high" aria-hidden />
-            <h2 id="priority-heading" className="text-lg font-bold tracking-tight text-foreground">
-              {t("feat3Title")}
-            </h2>
-          </div>
+      <div className="grid gap-8 lg:grid-cols-3">
+        {/* Main Content Area */}
+        <motion.div variants={itemAnim} className="space-y-8 lg:col-span-2">
+          {/* Priority Queue */}
+          <section aria-labelledby="priority-heading" className="space-y-4">
+            <div className="flex items-center gap-2">
+              <ListOrdered className="size-5 text-signal-high" aria-hidden />
+              <h2 id="priority-heading" className="text-lg font-bold tracking-tight text-foreground">
+                {t("feat3Title")}
+              </h2>
+            </div>
 
-          {queue.length > 0 ? (
-            <PriorityQueue items={queue} />
-          ) : (
-            <EmptyState
-              icon={ListOrdered}
-              title={t("dashTitle")}
-              description={t("dashSub")}
-              action={
-                <Button asChild>
-                  <Link href="/donations/new">
-                    <Plus className="size-4" aria-hidden />
-                    {t("btnNewDonation")}
-                  </Link>
-                </Button>
-              }
-            />
-          )}
-        </section>
+            {queue.length > 0 ? (
+              <PriorityQueue items={queue} />
+            ) : (
+              <EmptyState
+                icon={ListOrdered}
+                title={t("dashTitle")}
+                description={t("dashSub")}
+                action={
+                  <Button asChild>
+                    <Link href="/donations/new">
+                      <Plus className="size-4" aria-hidden />
+                      {t("btnNewDonation")}
+                    </Link>
+                  </Button>
+                }
+              />
+            )}
+          </section>
+        </motion.div>
 
-        {/* Recent Active Donations */}
-        <section aria-labelledby="recent-heading" className="space-y-4">
-          <div className="flex items-center justify-between gap-3">
-            <h2 id="recent-heading" className="text-lg font-bold tracking-tight text-foreground">
-              {t("donationsTitle")}
-            </h2>
-            <Button asChild variant="ghost" size="sm" className="font-semibold text-primary">
-              <Link href="/donations">{t("filterAll")}</Link>
-            </Button>
-          </div>
+        {/* Sidebar */}
+        <motion.div variants={itemAnim} className="space-y-8">
+          <section aria-labelledby="recent-heading" className="space-y-4">
+            <div className="flex items-center justify-between gap-3">
+              <h2 id="recent-heading" className="text-lg font-bold tracking-tight text-foreground">
+                {t("donationsTitle")}
+              </h2>
+              <Button asChild variant="ghost" size="sm" className="font-semibold text-primary">
+                <Link href="/donations">{t("filterAll")}</Link>
+              </Button>
+            </div>
 
-          {recent.length > 0 ? (
-            <ul className="space-y-3">
-              {recent.map((item) => (
-                <li key={item.donation.id}>
-                  <DonationCard item={item} showDonor={false} />
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <EmptyState
-              icon={PackageSearch}
-              title={t("donationsSub")}
-              description={t("ctaSub")}
-            />
-          )}
-        </section>
+            {recent.length > 0 ? (
+              <ul className="space-y-3">
+                {recent.map((item) => (
+                  <li key={item.donation.id}>
+                    <DonationCard item={item} showDonor={false} />
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <EmptyState
+                icon={PackageSearch}
+                title={t("donationsSub")}
+                description={t("ctaSub")}
+              />
+            )}
+          </section>
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 }
