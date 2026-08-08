@@ -9,7 +9,6 @@ import {
   LogIn,
   Mail,
   RotateCcw,
-  Sparkles,
   Store,
 } from "lucide-react";
 import Link from "next/link";
@@ -41,9 +40,8 @@ export function LoginForm({
 
   const [step, setStep] = useState<"email" | "otp">("email");
   const [email, setEmail] = useState("");
-  const [generatedOtp, setGeneratedOtp] = useState<string>("");
   const [otpDigits, setOtpDigits] = useState<string[]>(["", "", "", ""]);
-  const [pending, setPending] = useState<string | null>(null);
+  const [pending, setPending] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
   const inputRefs = [
@@ -53,33 +51,46 @@ export function LoginForm({
     useRef<HTMLInputElement>(null),
   ];
 
-  const handleSendOtp = (targetEmail: string) => {
+  const handleSendOtp = async (targetEmail: string) => {
     if (!targetEmail.trim()) {
       setError("Please enter your registered organisation email");
       return;
     }
 
-    // Generate random 4-digit OTP
-    const code = Math.floor(1000 + Math.random() * 9000).toString();
-    setGeneratedOtp(code);
-    setEmail(targetEmail);
+    setPending(true);
     setError(null);
-    setOtpDigits(["", "", "", ""]);
-    setStep("otp");
 
-    toast.success(`📩 Verification code sent! Your 4-digit OTP is ${code}`, {
-      duration: 10000,
-    });
+    try {
+      await apiRequest<{ success: boolean; message: string }>("/api/auth/send-otp", {
+        method: "POST",
+        body: JSON.stringify({ email: targetEmail.trim() }),
+      });
 
-    // Auto-focus first digit input
-    setTimeout(() => {
-      inputRefs[0].current?.focus();
-    }, 100);
+      setEmail(targetEmail.trim());
+      setOtpDigits(["", "", "", ""]);
+      setStep("otp");
+      setPending(false);
+
+      toast.success(`📩 4-Digit OTP sent directly to ${targetEmail.trim()}! Check your email inbox.`, {
+        duration: 8000,
+      });
+
+      setTimeout(() => {
+        inputRefs[0].current?.focus();
+      }, 100);
+    } catch (err) {
+      const message =
+        err instanceof RequestError
+          ? err.message
+          : "Could not send verification code. Please check your email.";
+      setError(message);
+      setPending(false);
+    }
   };
 
   const handleDigitChange = (index: number, value: string) => {
     if (value.length > 1) {
-      // User pasted full 4-digit code
+      // User pasted code
       const digits = value.slice(0, 4).split("");
       const newDigits = ["", "", "", ""];
       digits.forEach((d, i) => {
@@ -103,7 +114,7 @@ export function LoginForm({
       inputRefs[index + 1].current?.focus();
     }
 
-    // If 4 digits filled, auto verify
+    // Auto submit if 4 digits filled
     if (newDigits.every((d) => d !== "") && newDigits.join("").length === 4) {
       void verifyOtp(newDigits.join(""));
     }
@@ -115,38 +126,31 @@ export function LoginForm({
     }
   };
 
-  const autoFillCode = () => {
-    if (!generatedOtp) return;
-    const digits = generatedOtp.split("");
-    setOtpDigits(digits);
-    inputRefs[3].current?.focus();
-    void verifyOtp(generatedOtp);
-  };
-
   const verifyOtp = async (codeToTest: string) => {
-    if (codeToTest !== generatedOtp) {
-      setError("Incorrect 4-digit code. Please try again.");
-      toast.error("Invalid verification code");
+    if (codeToTest.length !== 4) {
+      setError("Please enter the complete 4-digit code sent to your email.");
       return;
     }
 
-    setPending(email);
+    setPending(true);
     setError(null);
+
     try {
       await apiRequest("/api/auth/login", {
         method: "POST",
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email, otpCode: codeToTest }),
       });
-      toast.success("✅ Code verified! Signed in successfully");
+      toast.success("✅ 4-Digit code verified! Signed in successfully");
       router.push("/dashboard");
       router.refresh();
     } catch (err) {
       const message =
         err instanceof RequestError
-          ? (err.fields?.email ?? err.message)
-          : "Could not sign in. Please try again.";
+          ? err.message
+          : "Invalid 4-digit code. Please check your email inbox.";
       setError(message);
-      setPending(null);
+      setPending(false);
+      toast.error(message);
     }
   };
 
@@ -157,14 +161,14 @@ export function LoginForm({
           noValidate
           onSubmit={(event) => {
             event.preventDefault();
-            handleSendOtp(email.trim());
+            void handleSendOtp(email.trim());
           }}
           className="space-y-4"
         >
           <div className="space-y-2">
-            <Label htmlFor="email" className="flex items-center gap-1.5">
+            <Label htmlFor="email" className="flex items-center gap-1.5 font-medium">
               <Mail className="size-4 text-primary" aria-hidden />
-              Organisation email address
+              Organisation Email Address
             </Label>
             <Input
               id="email"
@@ -173,6 +177,7 @@ export function LoginForm({
               autoComplete="email"
               placeholder="kitchen@agashiye.demo"
               value={email}
+              disabled={pending}
               aria-invalid={Boolean(error)}
               onChange={(event) => {
                 setEmail(event.target.value);
@@ -186,9 +191,13 @@ export function LoginForm({
             ) : null}
           </div>
 
-          <Button type="submit" className="w-full" size="lg">
-            <LogIn className="size-4" aria-hidden />
-            Send 4-Digit Verification Code
+          <Button type="submit" className="w-full" size="lg" disabled={pending}>
+            {pending ? (
+              <Loader2 className="size-4 animate-spin" aria-hidden />
+            ) : (
+              <LogIn className="size-4" aria-hidden />
+            )}
+            Send 4-Digit Code to Email
           </Button>
         </form>
       ) : (
@@ -198,10 +207,10 @@ export function LoginForm({
             <div>
               <Badge variant="outline" className="mb-1.5 border-primary/30 text-primary">
                 <KeyRound className="size-3" aria-hidden />
-                4-Digit Verification Code Sent
+                Email OTP Sent
               </Badge>
               <p className="text-xs text-muted-foreground">
-                Code sent to <span className="font-semibold text-foreground">{email}</span>
+                4-digit code sent directly to <span className="font-semibold text-foreground">{email}</span>
               </p>
             </div>
             <Button
@@ -214,31 +223,22 @@ export function LoginForm({
               }}
               className="text-xs text-muted-foreground"
             >
-              <ArrowLeft className="size-3" /> Change
+              <ArrowLeft className="size-3" /> Change Email
             </Button>
           </div>
 
-          {/* Generated Code Toast Notification Banner */}
-          <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-3.5 flex items-center justify-between gap-3">
-            <div className="flex items-center gap-2 text-xs font-semibold text-emerald-700 dark:text-emerald-300">
-              <Sparkles className="size-4 shrink-0 text-emerald-600 animate-pulse" />
-              <span>Your OTP Code: <strong className="text-base tracking-widest font-mono text-emerald-800 dark:text-emerald-200">{generatedOtp}</strong></span>
-            </div>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={autoFillCode}
-              className="h-7 text-xs border-emerald-500/40 text-emerald-700 hover:bg-emerald-500/20"
-            >
-              Auto-fill Code
-            </Button>
+          {/* Email Inbox Instructions */}
+          <div className="rounded-lg border border-primary/20 bg-primary-soft/40 p-3.5 flex items-center gap-3">
+            <Mail className="size-5 shrink-0 text-primary" />
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Please open your email inbox for <strong className="text-foreground">{email}</strong> and enter the 4-digit code below.
+            </p>
           </div>
 
           {/* 4 Digit Input Boxes */}
           <div className="space-y-2">
             <Label className="text-xs font-semibold text-center block text-muted-foreground">
-              Enter the 4-digit code below
+              Enter 4-Digit Verification Code
             </Label>
             <div className="flex justify-center gap-3 py-1">
               {otpDigits.map((digit, idx) => (
@@ -249,9 +249,10 @@ export function LoginForm({
                   inputMode="numeric"
                   maxLength={4}
                   value={digit}
+                  disabled={pending}
                   onChange={(e) => handleDigitChange(idx, e.target.value)}
                   onKeyDown={(e) => handleKeyDown(idx, e)}
-                  className="size-14 text-center text-2xl font-bold font-mono rounded-xl border-2 border-input bg-background shadow-sm focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                  className="size-14 text-center text-2xl font-bold font-mono rounded-xl border-2 border-input bg-background shadow-sm focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all disabled:opacity-60"
                 />
               ))}
             </div>
@@ -268,24 +269,25 @@ export function LoginForm({
               type="button"
               className="w-full"
               size="lg"
-              disabled={pending !== null || otpDigits.some((d) => !d)}
+              disabled={pending || otpDigits.some((d) => !d)}
               onClick={() => verifyOtp(otpDigits.join(""))}
             >
-              {pending !== null ? (
+              {pending ? (
                 <Loader2 className="size-4 animate-spin" />
               ) : (
                 <CheckCircle2 className="size-4" />
               )}
-              Verify & Sign In
+              Verify 4-Digit Code & Sign In
             </Button>
 
             <div className="flex justify-between items-center text-xs text-muted-foreground pt-1">
               <button
                 type="button"
-                onClick={() => handleSendOtp(email)}
-                className="flex items-center gap-1 font-medium text-primary hover:underline"
+                disabled={pending}
+                onClick={() => void handleSendOtp(email)}
+                className="flex items-center gap-1 font-medium text-primary hover:underline disabled:opacity-50"
               >
-                <RotateCcw className="size-3" /> Resend 4-Digit Code
+                <RotateCcw className="size-3" /> Resend Code to Email
               </button>
               <span>Code expires in 5:00</span>
             </div>
@@ -299,7 +301,7 @@ export function LoginForm({
           <div className="flex items-center gap-3">
             <Separator className="flex-1" />
             <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-              Or pick an Ahmedabad organisation
+              Or select an Ahmedabad organisation
             </span>
             <Separator className="flex-1" />
           </div>
@@ -311,8 +313,9 @@ export function LoginForm({
                 <li key={account.email}>
                   <button
                     type="button"
-                    onClick={() => handleSendOtp(account.email)}
-                    className="flex w-full items-center gap-3 rounded-lg border border-border bg-card p-3 text-left transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    disabled={pending}
+                    onClick={() => void handleSendOtp(account.email)}
+                    className="flex w-full items-center gap-3 rounded-lg border border-border bg-card p-3 text-left transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-60"
                   >
                     <span
                       className={cn(
@@ -334,7 +337,7 @@ export function LoginForm({
                       </span>
                     </span>
                     <span className="ml-auto text-xs font-semibold text-primary">
-                      Send OTP →
+                      Send Email Code →
                     </span>
                   </button>
                 </li>
@@ -356,4 +359,3 @@ export function LoginForm({
     </div>
   );
 }
-
