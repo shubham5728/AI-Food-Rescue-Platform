@@ -1,5 +1,5 @@
 /**
- * In-Memory Real-Time GPS Tracking & Delivery Store.
+ * In-Memory Real-Time GPS Tracking & Delivery Store with globalThis persistence.
  * Holds active deliveries, GPS telemetry points, geofencing triggers, and OTP verifications.
  */
 
@@ -18,65 +18,66 @@ import type {
   TrackingState,
 } from "../types";
 
-class TrackingStore {
-  private deliveries = new Map<string, Delivery>();
-  private locations = new Map<string, DriverLocation>();
-  private events = new Map<string, TrackingEvent[]>();
+interface TrackingStoreData {
+  deliveries: Map<string, Delivery>;
+  locations: Map<string, DriverLocation>;
+  events: Map<string, TrackingEvent[]>;
+}
 
-  constructor() {
-    this.seedInitialDeliveries();
-  }
+const TRACKING_GLOBAL_KEY = Symbol.for("foodbridge.tracking.store");
 
-  private seedInitialDeliveries() {
-    const now = new Date();
-    const deadline = new Date(now.getTime() + 40 * 60 * 1000).toISOString(); // 40 min rescue window
+function loadTrackingData(): TrackingStoreData {
+  const holder = globalThis as unknown as Record<symbol, TrackingStoreData | undefined>;
+  if (holder[TRACKING_GLOBAL_KEY]) return holder[TRACKING_GLOBAL_KEY]!;
 
-    const demoDelivery: Delivery = {
-      id: "del_demo01",
-      donation_id: "don_a01",
-      driver_id: "drv_rahul",
-      driver_name: "Rahul Patel (Volunteer #AHM-04)",
-      driver_phone: "+91 98250 12345",
-      donor_id: "org_green_leaf",
-      donor_name: "Agashiye - House of MG",
-      donor_address: "Lal Darwaja, Opposite Sidi Saiyyed Mosque, Ahmedabad",
-      donor_lat: 23.0250,
-      donor_lng: 72.5830,
-      recipient_id: "org_robin_hood",
-      recipient_name: "Robin Hood Army Ahmedabad",
-      recipient_address: "SG Highway Circle, Bodakdev, Ahmedabad",
-      recipient_lat: 23.0390,
-      recipient_lng: 72.5110,
-      food_name: "50 Gujarati Thali Surplus Meals",
-      meals: 50,
-      status: "GOING_TO_PICKUP",
-      pickup_otp: "8492",
-      delivery_otp: "3921",
-      started_at: now.toISOString(),
-      picked_up_at: null,
-      delivered_at: null,
-      food_rescue_deadline: deadline,
-      created_at: now.toISOString(),
-      updated_at: now.toISOString(),
-    };
+  const now = new Date();
+  const deadline = new Date(now.getTime() + 40 * 60 * 1000).toISOString();
 
-    this.deliveries.set(demoDelivery.id, demoDelivery);
+  const demoDelivery: Delivery = {
+    id: "del_demo01",
+    donation_id: "don_a01",
+    driver_id: "drv_rahul",
+    driver_name: "Rahul Patel (Volunteer #AHM-04)",
+    driver_phone: "+91 98250 12345",
+    donor_id: "org_green_leaf",
+    donor_name: "Agashiye - House of MG",
+    donor_address: "Lal Darwaja, Opposite Sidi Saiyyed Mosque, Ahmedabad",
+    donor_lat: 23.0250,
+    donor_lng: 72.5830,
+    recipient_id: "org_robin_hood",
+    recipient_name: "Robin Hood Army Ahmedabad",
+    recipient_address: "SG Highway Circle, Bodakdev, Ahmedabad",
+    recipient_lat: 23.0390,
+    recipient_lng: 72.5110,
+    food_name: "50 Gujarati Thali Surplus Meals",
+    meals: 50,
+    status: "GOING_TO_PICKUP",
+    pickup_otp: "8492",
+    delivery_otp: "3921",
+    started_at: now.toISOString(),
+    picked_up_at: null,
+    delivered_at: null,
+    food_rescue_deadline: deadline,
+    created_at: now.toISOString(),
+    updated_at: now.toISOString(),
+  };
 
-    // Initial Driver Position near Lal Darwaja
-    const initialLocation: DriverLocation = {
-      id: `loc_init_${Date.now()}`,
-      delivery_id: demoDelivery.id,
-      driver_id: demoDelivery.driver_id,
-      latitude: 23.0265,
-      longitude: 72.5780,
-      accuracy: 8,
-      speed: 24.5,
-      heading: 270,
-      timestamp: now.toISOString(),
-    };
-    this.locations.set(demoDelivery.id, initialLocation);
+  const initialLocation: DriverLocation = {
+    id: `loc_init_${Date.now()}`,
+    delivery_id: demoDelivery.id,
+    driver_id: demoDelivery.driver_id,
+    latitude: 23.0265,
+    longitude: 72.5780,
+    accuracy: 8,
+    speed: 24.5,
+    heading: 270,
+    timestamp: now.toISOString(),
+  };
 
-    this.events.set(demoDelivery.id, [
+  const data: TrackingStoreData = {
+    deliveries: new Map([[demoDelivery.id, demoDelivery]]),
+    locations: new Map([[demoDelivery.id, initialLocation]]),
+    events: new Map([[demoDelivery.id, [
       {
         id: `evt_1`,
         delivery_id: demoDelivery.id,
@@ -86,15 +87,24 @@ class TrackingStore {
         timestamp: now.toISOString(),
         note: "Delivery assigned to driver Rahul Patel",
       },
-    ]);
+    ]]]),
+  };
+
+  holder[TRACKING_GLOBAL_KEY] = data;
+  return data;
+}
+
+class TrackingStore {
+  private get data(): TrackingStoreData {
+    return loadTrackingData();
   }
 
   public getDelivery(deliveryId: string): Delivery | null {
-    return this.deliveries.get(deliveryId) ?? null;
+    return this.data.deliveries.get(deliveryId) ?? null;
   }
 
   public listDeliveries(statusFilter?: string): Delivery[] {
-    const all = Array.from(this.deliveries.values());
+    const all = Array.from(this.data.deliveries.values());
     if (!statusFilter || statusFilter === "ALL") return all;
     return all.filter((d) => d.status === statusFilter);
   }
@@ -103,7 +113,7 @@ class TrackingStore {
     deliveryId: string,
     locationData: Omit<DriverLocation, "id" | "delivery_id">,
   ): TrackingState {
-    const delivery = this.deliveries.get(deliveryId);
+    const delivery = this.data.deliveries.get(deliveryId);
     if (!delivery) throw new Error(`Delivery ${deliveryId} not found`);
 
     const location: DriverLocation = {
@@ -111,7 +121,7 @@ class TrackingStore {
       delivery_id: deliveryId,
       ...locationData,
     };
-    this.locations.set(deliveryId, location);
+    this.data.locations.set(deliveryId, location);
 
     // Auto-Geofence Checks (50m Radius)
     const donorGeofence = isWithinGeofence(
@@ -149,7 +159,7 @@ class TrackingStore {
     status: DeliveryStatus,
     note?: string,
   ): Delivery {
-    const delivery = this.deliveries.get(deliveryId);
+    const delivery = this.data.deliveries.get(deliveryId);
     if (!delivery) throw new Error(`Delivery ${deliveryId} not found`);
 
     const now = new Date().toISOString();
@@ -162,7 +172,7 @@ class TrackingStore {
       delivery.delivered_at = now;
     }
 
-    const currentLoc = this.locations.get(deliveryId);
+    const currentLoc = this.data.locations.get(deliveryId);
     this.addEvent(
       deliveryId,
       status,
@@ -181,7 +191,7 @@ class TrackingStore {
     currentLat?: number,
     currentLng?: number,
   ): { success: boolean; message: string; delivery: Delivery } {
-    const delivery = this.deliveries.get(deliveryId);
+    const delivery = this.data.deliveries.get(deliveryId);
     if (!delivery) throw new Error(`Delivery ${deliveryId} not found`);
 
     const targetOtp = step === "PICKUP" ? delivery.pickup_otp : delivery.delivery_otp;
@@ -220,12 +230,11 @@ class TrackingStore {
   }
 
   public getTrackingState(deliveryId: string): TrackingState | null {
-    const delivery = this.deliveries.get(deliveryId);
+    const delivery = this.data.deliveries.get(deliveryId);
     if (!delivery) return null;
 
-    const currentLoc = this.locations.get(deliveryId);
+    const currentLoc = this.data.locations.get(deliveryId);
 
-    // Target depends on whether food is picked up or heading to donor
     const isPickedUp = delivery.status === "FOOD_PICKED_UP" || delivery.status === "IN_TRANSIT" || delivery.status === "ARRIVED_AT_RECIPIENT";
     const targetLat = isPickedUp ? delivery.recipient_lat : delivery.donor_lat;
     const targetLng = isPickedUp ? delivery.recipient_lng : delivery.donor_lng;
@@ -258,12 +267,12 @@ class TrackingStore {
         distance_to_donor_m: distToDonorM,
         distance_to_recipient_m: distToRecipientM,
       },
-      events: this.events.get(deliveryId) ?? [],
+      events: this.data.events.get(deliveryId) ?? [],
     };
   }
 
   private addEvent(deliveryId: string, eventType: string, lat: number, lng: number, note?: string) {
-    const list = this.events.get(deliveryId) ?? [];
+    const list = this.data.events.get(deliveryId) ?? [];
     list.push({
       id: `evt_${Date.now()}`,
       delivery_id: deliveryId,
@@ -273,7 +282,7 @@ class TrackingStore {
       timestamp: new Date().toISOString(),
       note,
     });
-    this.events.set(deliveryId, list);
+    this.data.events.set(deliveryId, list);
   }
 }
 
