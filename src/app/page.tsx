@@ -146,9 +146,9 @@ export default async function LandingPage() {
             {/* Orbital Animation Right Side */}
             <div className="relative hidden lg:flex items-center justify-center w-full h-[400px]">
               
-              {/* Center AI Core */}
-              <div className="absolute z-10 flex flex-col items-center justify-center w-20 h-20 rounded-full bg-primary/10 border border-primary/20 shadow-[0_0_40px_rgba(var(--primary),0.2)] backdrop-blur">
-                <Brain className="w-8 h-8 text-primary animate-pulse" />
+              {/* Center Human Element */}
+              <div className="absolute z-10 flex flex-col items-center justify-center w-24 h-24 rounded-full border-4 border-background shadow-[0_0_40px_rgba(var(--primary),0.3)] overflow-hidden">
+                <img src="/orbit-person-1.png" alt="Person in need" className="w-full h-full object-cover" />
               </div>
               
               {/* Inner Orbit */}
@@ -164,7 +164,7 @@ export default async function LandingPage() {
                   <img src="/orbit-food-2.png" alt="Fresh vegetables" className="w-full h-full object-cover" />
                 </div>
                 <div className="absolute -right-6 top-1/2 -translate-y-1/2 w-12 h-12 bg-card border-2 border-background rounded-full overflow-hidden shadow-md animate-[spin_30s_linear_infinite]">
-                  <img src="/orbit-person-1.png" alt="Teenager holding empty bowl" className="w-full h-full object-cover" />
+                  <img src="/orbit-food-4.png" alt="Gourmet sandwiches" className="w-full h-full object-cover" />
                 </div>
               </div>
 
