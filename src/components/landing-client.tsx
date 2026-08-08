@@ -432,7 +432,7 @@ export function LandingClient({ stats, session, demo }: LandingClientProps) {
 
           <motion.div
             variants={fadeUpVariants}
-            className="fb-orbit-scene relative hidden lg:flex items-center justify-center w-full h-[420px] scale-90 xl:scale-100"
+            className="fb-orbit-scene relative flex items-center justify-center w-full h-[280px] sm:h-[350px] lg:h-[420px] scale-[0.65] sm:scale-75 lg:scale-90 xl:scale-100 mt-8 lg:mt-0"
           >
             <div className="fb-orbit-3d relative flex items-center justify-center w-full h-full">
               {/* Center Human Element */}
