@@ -12,19 +12,21 @@ import { usePathname } from "next/navigation";
 
 import type { UserRole } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/lib/i18n/context";
+import type { Translations } from "@/lib/i18n/translations";
 
 interface NavItem {
   href: string;
-  label: string;
+  translationKey: keyof Translations;
   icon: LucideIcon;
   roles?: UserRole[];
 }
 
 const ITEMS: NavItem[] = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/donations", label: "Donations", icon: PackageSearch },
-  { href: "/recipients", label: "Recipients", icon: Users, roles: ["donor"] },
-  { href: "/impact", label: "Impact", icon: BarChart3 },
+  { href: "/dashboard", translationKey: "navDashboard", icon: LayoutDashboard },
+  { href: "/donations", translationKey: "navDonations", icon: PackageSearch },
+  { href: "/recipients", translationKey: "navRecipients", icon: Users, roles: ["donor"] },
+  { href: "/impact", translationKey: "navImpact", icon: BarChart3 },
 ];
 
 export function MainNav({
@@ -35,6 +37,7 @@ export function MainNav({
   className?: string;
 }) {
   const pathname = usePathname();
+  const { t } = useLanguage();
   const items = ITEMS.filter((item) => !item.roles || item.roles.includes(role));
 
   return (
@@ -58,10 +61,11 @@ export function MainNav({
             )}
           >
             <item.icon className="size-4" aria-hidden />
-            <span className="hidden md:inline">{item.label}</span>
+            <span className="hidden md:inline">{t(item.translationKey)}</span>
           </Link>
         );
       })}
     </nav>
   );
 }
+

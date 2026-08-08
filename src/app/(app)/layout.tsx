@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 
 import { AccountMenu } from "@/components/shell/account-menu";
 import { MainNav } from "@/components/shell/main-nav";
+import { LanguageSwitcher } from "@/components/shell/language-switcher";
 import { getDb, isDemoMode } from "@/lib/db";
 import { getSession } from "@/lib/session";
 
@@ -36,6 +37,8 @@ export default async function AppLayout({
 
           <MainNav role={session.organisation.role} className="ml-2 flex-1" />
 
+          <LanguageSwitcher />
+
           <AccountMenu
             organisation={session.organisation}
             organisations={organisations}
@@ -48,3 +51,4 @@ export default async function AppLayout({
     </div>
   );
 }
+

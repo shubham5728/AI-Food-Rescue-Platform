@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 
 import { LoginForm } from "@/app/login/login-form";
 import { Button } from "@/components/ui/button";
+import { LanguageSwitcher } from "@/components/shell/language-switcher";
 import { getDb, isDemoMode } from "@/lib/db";
 import { DEMO_ACCOUNTS } from "@/lib/db/seed";
 import { getSession } from "@/lib/session";
@@ -40,25 +41,27 @@ export default async function LoginPage() {
           </Link>
 
           <div className="max-w-md">
-            <h2 className="text-3xl font-semibold leading-tight tracking-tight">
-              Every hour a tray of cooked food sits unclaimed, it gets closer to
-              being waste.
+            <h2 className="text-3xl font-bold leading-tight tracking-tight">
+              Rescue surplus food before it expires.
             </h2>
-            <p className="mt-4 leading-relaxed text-muted-foreground">
-              Sign in as a donor to post surplus and watch the AI score it, or as a
-              recipient to see what you can actually collect in time.
+            <p className="mt-3 leading-relaxed text-muted-foreground">
+              Sign in as a donor to list surplus food, or as a shelter to collect fresh meals in time.
             </p>
           </div>
 
-          <p className="text-sm text-muted-foreground">
+          <p className="text-xs text-muted-foreground">
             {isDemoMode()
-              ? "Demo mode · seeded in-memory data, resets on restart"
+              ? "Demo mode · seeded in-memory data"
               : "Connected to Supabase"}
           </p>
         </div>
       </div>
 
-      <div className="flex items-center justify-center p-6 sm:p-10">
+      <div className="relative flex items-center justify-center p-6 sm:p-10">
+        <div className="absolute top-6 right-6">
+          <LanguageSwitcher />
+        </div>
+
         <div className="w-full max-w-md">
           <Button asChild variant="ghost" size="sm" className="mb-6 -ml-3">
             <Link href="/">
@@ -67,17 +70,17 @@ export default async function LoginPage() {
             </Link>
           </Button>
 
-          <h1 className="text-2xl font-semibold tracking-tight">
-            Sign in to FoodBridge
+          <h1 className="text-2xl font-bold tracking-tight">
+            FoodBridge AI — Sign In
           </h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Enter the email your organisation is registered with, or pick one of the
-            demo organisations below.
+          <p className="mt-1.5 text-sm text-muted-foreground">
+            Select a demo profile or enter your organisation email.
           </p>
 
-          <LoginForm accounts={accounts} className="mt-7" />
+          <LoginForm accounts={accounts} className="mt-6" />
         </div>
       </div>
     </div>
   );
 }
+
