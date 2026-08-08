@@ -20,6 +20,9 @@ import {
 } from "@/components/actions/donation-actions";
 import { AcceptDonationButton } from "@/components/actions/donation-actions";
 import { MatchCard } from "@/components/match-card";
+import { AllocationPanel } from "@/components/allocation-panel";
+import { PickupVerification } from "@/components/actions/pickup-verification";
+import { RescueClock } from "@/components/rescue-clock";
 import { RiskPanel } from "@/components/risk-panel";
 import {
   AiSourceNote,
@@ -32,18 +35,22 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Progress } from "@/components/ui/progress";
+import { planAllocation } from "@/lib/ai/allocation";
 import { applyHardConstraints } from "@/lib/ai/constraints";
 import { rescoreForList } from "@/lib/ai/pipeline";
 import {
   DIETARY_LABELS,
   FOOD_CATEGORY_LABELS,
   QUANTITY_UNIT_LABELS,
+  SHELF_LIFE_MINUTES,
+  TERMINAL_STATUSES,
 } from "@/lib/constants";
 import { getDb } from "@/lib/db";
 import { getDonationWithRelations } from "@/lib/service";
 import { PRIORITY_STYLES } from "@/lib/signals";
 import { requireSession } from "@/lib/session";
 import { cn, formatDateTime, formatDuration, formatNumber } from "@/lib/utils";
+import { publicVerificationState } from "@/lib/verification";
 
 export const dynamic = "force-dynamic";
 
@@ -76,7 +83,27 @@ export default async function DonationDetailPage({
   // Risk and priority are functions of the clock, so the page always shows the
   // live value rather than whatever was true when the donation was analysed.
   const { risk, priority } = rescoreForList(donation, recipients, now);
-  const { rejected } = applyHardConstraints(donation, recipients, now);
+  const { viable, rejected } = applyHardConstraints(donation, recipients, now);
+
+  // Feature #6: only surfaced when the donation genuinely needs splitting.
+  // Uses partial matching, so recipients too small for the whole donation can
+  // still take a share.
+  const { viable: partialViable } = applyHardConstraints(
+    donation,
+    recipients,
+    now,
+    { allowPartial: true },
+  );
+  const allocation = planAllocation(donation, partialViable);
+
+  // Feature #9: which half of the handshake this viewer is on.
+  const verification = publicVerificationState(donation.id);
+
+  // Feature #3: the food expires on the earlier of these two.
+  const safeUntil = new Date(
+    new Date(donation.prepared_at).getTime() +
+      SHELF_LIFE_MINUTES[donation.food_type] * 60_000,
+  ).toISOString();
 
   const drifted =
     donation.analysed_at !== null &&
@@ -195,6 +222,11 @@ export default async function DonationDetailPage({
           </Card>
 
           {/* AI feature #1 ---------------------------------------------- */}
+          {/* AI feature #6 — only when a single recipient cannot take it all. */}
+          {!allocation.single_recipient && allocation.slices.length > 0 ? (
+            <AllocationPanel plan={allocation} />
+          ) : null}
+
           <RiskPanel
             risk={risk}
             explanation={donation.waste_risk_explanation}
@@ -283,6 +315,33 @@ export default async function DonationDetailPage({
 
         {/* -------------------------------------------------------------- */}
         <aside className="space-y-7">
+          {/* Feature #3 — the clock that actually ticks. */}
+          <RescueClock
+            pickupDeadline={donation.pickup_deadline}
+            safeUntil={safeUntil}
+            windowStart={donation.prepared_at}
+            frozen={TERMINAL_STATUSES.includes(donation.status)}
+          />
+
+          {/* Feature #9 — the handover handshake, shown to whoever acts next. */}
+          {canAct && donation.status === "pickup_assigned" ? (
+            <PickupVerification
+              donationId={donation.id}
+              stage="collection"
+              role={isDonor ? "issuer" : "redeemer"}
+              state={verification.collection}
+            />
+          ) : null}
+          {canAct &&
+          (donation.status === "picked_up" || donation.status === "in_transit") ? (
+            <PickupVerification
+              donationId={donation.id}
+              stage="delivery"
+              role={isMatchedRecipient ? "issuer" : "redeemer"}
+              state={verification.delivery}
+            />
+          ) : null}
+
           {/* AI feature #3 ---------------------------------------------- */}
           <Card>
             <CardHeader className="border-b border-border bg-muted/40">

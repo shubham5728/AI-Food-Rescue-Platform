@@ -33,12 +33,20 @@ export type DietaryType = "vegetarian" | "vegan" | "non_vegetarian";
 
 export type QuantityUnit = "meals" | "kg" | "litres" | "packets" | "trays";
 
+/**
+ * The full rescue lifecycle. `matched` is the moment a recipient accepts;
+ * everything after it tracks the physical handover, which is where donations
+ * actually go wrong in the field.
+ */
 export type DonationStatus =
   | "available"
   | "matched"
   | "pickup_scheduled"
+  | "pickup_assigned"
   | "picked_up"
+  | "in_transit"
   | "delivered"
+  | "completed"
   | "cancelled";
 
 export type RiskLevel = "LOW" | "MEDIUM" | "HIGH";
@@ -182,6 +190,136 @@ export interface ImpactStats {
   meals_at_risk: number;
   active_donations: number;
   high_risk_donations: number;
+
+  /** Meals that expired unclaimed — the counterfactual the platform exists to shrink. */
+  meals_lost: number;
+  /** Delivered as a share of everything that reached a terminal state, 0-100. */
+  rescue_success_rate: number;
+  active_donors: number;
+  active_recipients: number;
+}
+
+/** How well the AI layer is actually performing, not just how much it ran. */
+export interface AiPerformanceStats {
+  /** Donations where at least one viable recipient was found, 0-100. */
+  match_coverage: number;
+  /** Share of accepted donations that went to the AI's top-ranked recipient, 0-100. */
+  top_pick_acceptance: number;
+  /** Mean match score of accepted donations. */
+  average_accepted_score: number;
+  /** Donations flagged HIGH risk that were nevertheless delivered, 0-100. */
+  high_risk_save_rate: number;
+  /** Mean recipients removed by hard constraints per analysed donation. */
+  average_filtered_out: number;
+  analysed_donations: number;
+  /** Split between LLM-written and engine-written explanations. */
+  explained_by_llm: number;
+  explained_by_engine: number;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Pickup verification                                                        */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * A one-time code proving the right people met. Issued when a pickup is
+ * assigned, redeemed at the donor's door, and again on delivery — so a
+ * donation cannot be marked collected by someone who was never there.
+ */
+export interface PickupVerification {
+  donation_id: string;
+  /** 6-digit code read out at the door. */
+  code: string;
+  /** Payload encoded into the QR the collector scans. */
+  qr_payload: string;
+  stage: "collection" | "delivery";
+  issued_at: string;
+  expires_at: string;
+  verified_at: string | null;
+  attempts: number;
+}
+
+/* -------------------------------------------------------------------------- */
+/* AI feature outputs                                                         */
+/* -------------------------------------------------------------------------- */
+
+/** Forecast of surplus a donor is likely to have in an upcoming window. */
+export interface SurplusForecast {
+  organisation_id: string;
+  organisation_name: string;
+  /** 0-100 chance this donor produces surplus in the window. */
+  probability: number;
+  /** Expected meals, with a range because a point estimate would be false precision. */
+  expected_meals: number;
+  meals_low: number;
+  meals_high: number;
+  /** When the surplus is most likely to appear. */
+  window_start: string;
+  window_end: string;
+  /** Predicted waste risk if that surplus is posted and left unclaimed. */
+  projected_waste_risk: number;
+  confidence: "low" | "medium" | "high";
+  /** How many past donations the forecast is built from. */
+  sample_size: number;
+  reasons: string[];
+}
+
+/** One recipient's share when a donation is split across several. */
+export interface AllocationSlice {
+  recipient_id: string;
+  recipient_name: string;
+  meals: number;
+  match_score: number;
+  distance_km: number;
+  reason: string;
+}
+
+/** Result of splitting a donation that no single recipient can absorb. */
+export interface AllocationPlan {
+  donation_id: string;
+  total_meals: number;
+  allocated_meals: number;
+  leftover_meals: number;
+  slices: AllocationSlice[];
+  explanation: string;
+  /** True when one recipient can take everything — no split needed. */
+  single_recipient: boolean;
+}
+
+/** A stop on an optimised collection run. */
+export interface RouteStop {
+  donation_id: string;
+  label: string;
+  latitude: number;
+  longitude: number;
+  /** Cumulative driving minutes from the start of the run. */
+  eta_minutes: number;
+  leg_km: number;
+  meals: number;
+  deadline: string;
+  /** Minutes of slack at arrival; negative means the deadline is missed. */
+  slack_minutes: number;
+}
+
+export interface RoutePlan {
+  stops: RouteStop[];
+  total_km: number;
+  total_minutes: number;
+  /** Stops the route cannot reach before their deadline. */
+  missed: string[];
+  /** Distance saved versus collecting in the order the donations arrived. */
+  saved_km: number;
+}
+
+/** A cluster of unmet demand, used to show where to focus. */
+export interface DemandHotspot {
+  latitude: number;
+  longitude: number;
+  label: string;
+  /** Meals of unmet capacity in this cluster. */
+  unmet_meals: number;
+  recipients: number;
+  intensity: number;
 }
 
 export interface ImpactTimePoint {

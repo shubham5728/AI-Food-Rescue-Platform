@@ -30,10 +30,27 @@ export const donationStatusSchema = z.enum([
   "available",
   "matched",
   "pickup_scheduled",
+  "pickup_assigned",
   "picked_up",
+  "in_transit",
   "delivered",
+  "completed",
   "cancelled",
 ]);
+
+/** A 6-digit pickup code, or a scanned QR payload carrying one. */
+export const verifyPickupSchema = z.object({
+  stage: z.enum(["collection", "delivery"]),
+  code: z
+    .string()
+    .trim()
+    .min(4, "Enter the code shown by the other party")
+    .max(120),
+});
+
+export const issueVerificationSchema = z.object({
+  stage: z.enum(["collection", "delivery"]),
+});
 
 export const organisationTypeSchema = z.enum([
   ...DONOR_TYPES,

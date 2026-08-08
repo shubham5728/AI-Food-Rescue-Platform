@@ -1,6 +1,7 @@
 import type {
   DietaryType,
   DonationStatus,
+  PickupVerification,
   FoodCategory,
   OrganisationType,
   PriorityLevel,
@@ -29,6 +30,12 @@ export const KG_PER_MEAL = 0.7;
 
 /** Meals one person is served in a single distribution. */
 export const MEALS_PER_PERSON = 2;
+
+/**
+ * Smallest share worth allocating to a recipient. Below this the collection
+ * trip costs more than the food is worth, so the split refuses to go finer.
+ */
+export const MIN_ALLOCATION_SLICE_MEALS = 10;
 
 /**
  * Real-world logistics floor: even a perfectly matched pickup needs someone to
@@ -93,10 +100,13 @@ export const QUANTITY_UNIT_LABELS: Record<QuantityUnit, string> = {
 
 export const STATUS_LABELS: Record<DonationStatus, string> = {
   available: "Available",
-  matched: "Matched",
+  matched: "Accepted",
   pickup_scheduled: "Pickup Scheduled",
+  pickup_assigned: "Pickup Assigned",
   picked_up: "Picked Up",
+  in_transit: "In Transit",
   delivered: "Delivered",
+  completed: "Completed",
   cancelled: "Cancelled",
 };
 
@@ -105,19 +115,52 @@ export const STATUS_FLOW: DonationStatus[] = [
   "available",
   "matched",
   "pickup_scheduled",
+  "pickup_assigned",
   "picked_up",
+  "in_transit",
   "delivered",
+  "completed",
 ];
 
-/** Which statuses a donation may legally move to from its current one. */
+/**
+ * Which statuses a donation may legally move to from its current one.
+ *
+ * Backwards steps exist deliberately: a collector who arrives and finds the
+ * food already gone needs a way to release it, and a run that falls through
+ * should return to the queue rather than sit in a dead state.
+ */
 export const STATUS_TRANSITIONS: Record<DonationStatus, DonationStatus[]> = {
   available: ["matched", "cancelled"],
   matched: ["pickup_scheduled", "available", "cancelled"],
-  pickup_scheduled: ["picked_up", "matched", "cancelled"],
-  picked_up: ["delivered", "cancelled"],
-  delivered: [],
+  pickup_scheduled: ["pickup_assigned", "matched", "cancelled"],
+  pickup_assigned: ["picked_up", "pickup_scheduled", "cancelled"],
+  picked_up: ["in_transit", "delivered", "cancelled"],
+  in_transit: ["delivered", "cancelled"],
+  delivered: ["completed"],
+  completed: [],
   cancelled: [],
 };
+
+/**
+ * Steps that require a one-time code to be redeemed first. Collection is
+ * verified at the donor's door, delivery at the recipient's.
+ */
+export const VERIFIED_TRANSITIONS: Partial<
+  Record<DonationStatus, PickupVerification["stage"]>
+> = {
+  picked_up: "collection",
+  delivered: "delivery",
+};
+
+/** Statuses that count as a successful rescue for impact purposes. */
+export const RESCUED_STATUSES: DonationStatus[] = ["delivered", "completed"];
+
+/** Statuses where the donation is finished, successfully or not. */
+export const TERMINAL_STATUSES: DonationStatus[] = [
+  "delivered",
+  "completed",
+  "cancelled",
+];
 
 export const RISK_THRESHOLDS: { level: RiskLevel; min: number }[] = [
   { level: "HIGH", min: 70 },

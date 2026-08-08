@@ -1,3 +1,4 @@
+﻿import { TERMINAL_STATUSES } from "@/lib/constants";
 import type {
   Donation,
   DonationStatus,
@@ -57,7 +58,7 @@ export function matchesFilter(d: Donation, filter?: DonationFilter): boolean {
   )
     return false;
   if (filter.status && !filter.status.includes(d.status)) return false;
-  if (filter.activeOnly && (d.status === "delivered" || d.status === "cancelled"))
+  if (filter.activeOnly && TERMINAL_STATUSES.includes(d.status))
     return false;
   return true;
 }

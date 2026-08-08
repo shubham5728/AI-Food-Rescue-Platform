@@ -1,6 +1,7 @@
 import {
   PICKUP_LOGISTICS_FLOOR_MIN,
   SHELF_LIFE_MINUTES,
+  TERMINAL_STATUSES,
   riskLevelFor,
 } from "@/lib/constants";
 import type { Donation, RiskLevel } from "@/lib/types";
@@ -120,7 +121,7 @@ export function assessWasteRisk(
   // A settled donation carries no waste risk. Without this, a donation
   // delivered last month keeps accruing "time pressure" forever and reports
   // itself as high risk, which is both wrong and alarming on a dashboard.
-  if (donation.status === "delivered" || donation.status === "cancelled") {
+  if (TERMINAL_STATUSES.includes(donation.status)) {
     return {
       score: 0,
       level: "LOW",

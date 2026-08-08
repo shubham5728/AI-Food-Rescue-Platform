@@ -8,6 +8,7 @@ export interface Translations {
   navDonations: string;
   navRecipients: string;
   navImpact: string;
+  navOperations: string;
   navLogin: string;
   navSignOut: string;
   demoMode: string;
@@ -122,6 +123,7 @@ export const translations: Record<Language, Translations> = {
     navDonations: "Donations",
     navRecipients: "Recipients",
     navImpact: "Impact",
+    navOperations: "AI Operations",
     navLogin: "Sign In",
     navSignOut: "Sign Out",
     demoMode: "Demo Mode (In-Memory)",
@@ -224,6 +226,7 @@ export const translations: Record<Language, Translations> = {
     navDonations: "दान सूची",
     navRecipients: "प्राप्तकर्ता (NGO)",
     navImpact: "प्रभाव (Analytics)",
+    navOperations: "AI संचालन",
     navLogin: "साइन इन",
     navSignOut: "साइन आउट",
     demoMode: "डेमो मोड (इन-मेमोरी)",
@@ -326,6 +329,7 @@ export const translations: Record<Language, Translations> = {
     navDonations: "દાન યાદી",
     navRecipients: "મેળવનાર (NGO)",
     navImpact: "અસર (Analytics)",
+    navOperations: "AI સંચાલન",
     navLogin: "સાઇન ઇન",
     navSignOut: "સાઇન આઉટ",
     demoMode: "ડેમો મોડ (ઇન-મેમરી)",

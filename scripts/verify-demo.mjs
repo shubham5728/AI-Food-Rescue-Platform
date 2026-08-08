@@ -56,11 +56,11 @@ async function main() {
   line();
 
   /* -- Step 1: the donor ------------------------------------------------- */
-  const { organisation: donor } = await signIn("kitchen@greenleaf.demo");
-  check("signed in as Green Leaf Restaurant", donor.name === "Green Leaf Restaurant", donor.name);
+  const { organisation: donor } = await signIn("kitchen@agashiye.demo");
+  check("signed in as Agashiye", donor.name === "Agashiye - House of MG", donor.name);
 
   const before = await call("/api/impact");
-  check("baseline meals donated is 1200", before.stats.meals_donated === 1200, before.stats.meals_donated);
+  check("baseline meals donated is 1650", before.stats.meals_donated === 1650, before.stats.meals_donated);
   check("baseline donations completed is 48", before.stats.donations_completed === 48, before.stats.donations_completed);
 
   /* -- Step 2: create the donation --------------------------------------- */
@@ -98,8 +98,8 @@ async function main() {
 
   /* -- Step 4: AI matching ------------------------------------------------ */
   check("3 viable recipients", analysis.match_count === 3, analysis.match_count);
-  check("best match is Hope Community Kitchen", analysis.top_match?.name === "Hope Community Kitchen", analysis.top_match?.name);
-  check("best match 94-98", analysis.top_match?.score >= 94 && analysis.top_match?.score <= 98, analysis.top_match?.score);
+  check("best match is Manav Sadhna", analysis.top_match?.name === "Manav Sadhna (Sabarmati)", analysis.top_match?.name);
+  check("best match 91-97", analysis.top_match?.score >= 91 && analysis.top_match?.score <= 97, analysis.top_match?.score);
 
   /* -- Step 5: AI priority ------------------------------------------------ */
   check("pickup priority 92-98", analysis.priority_score >= 92 && analysis.priority_score <= 98, analysis.priority_score);
@@ -108,8 +108,8 @@ async function main() {
 
   /* -- Step 6: the recipient accepts -------------------------------------- */
   line();
-  const { organisation: recipient } = await signIn("coordinator@hopekitchen.demo");
-  check("signed in as Hope Community Kitchen", recipient.name === "Hope Community Kitchen", recipient.name);
+  const { organisation: recipient } = await signIn("kitchen@manavsadhna.demo");
+  check("signed in as Manav Sadhna", recipient.name === "Manav Sadhna (Sabarmati)", recipient.name);
 
   const accepted = await call(`/api/donations/${donation.id}/accept`, { method: "POST" });
   check("status Available -> Matched", accepted.donation.status === "matched", accepted.donation.status);
@@ -117,13 +117,73 @@ async function main() {
   check("priority drops once claimed", accepted.donation.priority_score < analysis.priority_score, `${analysis.priority_score} -> ${accepted.donation.priority_score}`);
 
   /* -- Step 7: walk the lifecycle ----------------------------------------- */
-  for (const status of ["pickup_scheduled", "picked_up", "delivered"]) {
+  // Collection and delivery are gated behind a one-time code, so the walk has
+  // to perform the real handshake at each of those two points.
+  const advance = async (status) => {
     const result = await call(`/api/donations/${donation.id}/status`, {
       method: "POST",
       body: JSON.stringify({ status }),
     });
     check(`status -> ${status}`, result.donation.status === status, result.donation.status);
+  };
+
+  await advance("pickup_scheduled");
+  await advance("pickup_assigned");
+
+  // Picking up without the donor's code must be refused.
+  let blocked = false;
+  try {
+    await call(`/api/donations/${donation.id}/status`, {
+      method: "POST",
+      body: JSON.stringify({ status: "picked_up" }),
+    });
+  } catch {
+    blocked = true;
   }
+  check("picked_up blocked without OTP", blocked, blocked ? "428" : "allowed");
+
+  // Donor issues the collection code, recipient redeems it.
+  await signIn("kitchen@agashiye.demo");
+  const collection = await call(`/api/donations/${donation.id}/verify`, {
+    method: "PUT",
+    body: JSON.stringify({ stage: "collection" }),
+  });
+  check("collection code issued", /^\d{6}$/.test(collection.code), collection.code);
+
+  await signIn("kitchen@manavsadhna.demo");
+  let wrongRejected = false;
+  try {
+    await call(`/api/donations/${donation.id}/verify`, {
+      method: "POST",
+      body: JSON.stringify({ stage: "collection", code: "000000" === collection.code ? "111111" : "000000" }),
+    });
+  } catch {
+    wrongRejected = true;
+  }
+  check("wrong OTP rejected", wrongRejected, wrongRejected ? "400" : "accepted");
+
+  const redeemed = await call(`/api/donations/${donation.id}/verify`, {
+    method: "POST",
+    body: JSON.stringify({ stage: "collection", code: collection.code }),
+  });
+  check("collection verified", Boolean(redeemed.verified_at), redeemed.verified_at ?? "no");
+
+  await advance("picked_up");
+  await advance("in_transit");
+
+  // Recipient issues the delivery code and redeems it on arrival.
+  const delivery = await call(`/api/donations/${donation.id}/verify`, {
+    method: "PUT",
+    body: JSON.stringify({ stage: "delivery" }),
+  });
+  await call(`/api/donations/${donation.id}/verify`, {
+    method: "POST",
+    body: JSON.stringify({ stage: "delivery", code: delivery.code }),
+  });
+  check("delivery verified", /^\d{6}$/.test(delivery.code), delivery.code);
+
+  await advance("delivered");
+  await advance("completed");
 
   /* -- Rejecting an illegal transition ------------------------------------ */
   let rejected = false;
@@ -135,12 +195,88 @@ async function main() {
   } catch {
     rejected = true;
   }
-  check("delivered -> available is refused", rejected, rejected ? "409" : "allowed");
+  check("completed -> available is refused", rejected, rejected ? "409" : "allowed");
+
+  /* -- The new AI features ------------------------------------------------ */
+  line();
+  const forecast = await call("/api/forecast?hours=24");
+  check(
+    "surplus forecast returns donors",
+    forecast.forecasts.length > 0,
+    `${forecast.forecasts.length} donors`,
+  );
+  const withHistory = forecast.forecasts.filter((f) => f.probability > 0);
+  check(
+    "forecast has probability + quantity + window",
+    withHistory.length > 0 &&
+      withHistory[0].expected_meals > 0 &&
+      Boolean(withHistory[0].window_start),
+    withHistory[0]
+      ? `${withHistory[0].probability}% / ${withHistory[0].expected_meals} meals`
+      : "none",
+  );
+
+  const pos = await call("/api/pos-signals");
+  check("POS connector labelled simulated", pos.mode === "simulated", pos.mode);
+  check("POS returns signals", pos.signals.length > 0, `${pos.signals.length} kitchens`);
+
+  const routePlan = await call("/api/route-plan");
+  check(
+    "route plan returns hotspots",
+    Array.isArray(routePlan.hotspots) && routePlan.hotspots.length > 0,
+    `${routePlan.hotspots?.length ?? 0} hotspots`,
+  );
+
+  const perf = await call("/api/ai-performance");
+  check(
+    "AI performance computed",
+    perf.performance.analysed_donations > 0,
+    `${perf.performance.analysed_donations} analysed, top-pick ${perf.performance.top_pick_acceptance}%`,
+  );
+
+  // A large donation should split rather than be forced on one recipient.
+  await signIn("kitchen@agashiye.demo");
+  const big = await call("/api/donations", {
+    method: "POST",
+    body: JSON.stringify({
+      food_name: "Wedding Buffet Surplus",
+      food_type: "cooked_meal",
+      quantity: 400,
+      quantity_unit: "meals",
+      meals: 400,
+      dietary_type: "vegetarian",
+      allergens: [],
+      prepared_at: local(now - 30 * MINUTE),
+      pickup_start: local(now - 5 * MINUTE),
+      pickup_deadline: local(now + 180 * MINUTE),
+      latitude: donor.latitude,
+      longitude: donor.longitude,
+      address: donor.address,
+      notes: null,
+    }),
+  });
+  const alloc = await call(`/api/donations/${big.donation.id}/allocation`);
+  check(
+    "400 meals split across recipients",
+    alloc.plan.slices.length > 1 && !alloc.plan.single_recipient,
+    `${alloc.plan.slices.length} recipients, ${alloc.plan.allocated_meals}/${alloc.plan.total_meals} meals`,
+  );
+  check(
+    "every allocated share is a whole number",
+    alloc.plan.slices.every((s) => Number.isInteger(s.meals)) &&
+      Number.isInteger(alloc.plan.allocated_meals),
+    alloc.plan.slices.map((s) => s.meals).join(" + "),
+  );
+  check(
+    "no share below the collection-worth minimum",
+    alloc.plan.slices.every((s) => s.meals >= 10),
+    `min ${Math.min(...alloc.plan.slices.map((s) => s.meals))}`,
+  );
 
   /* -- Step 8: impact updates --------------------------------------------- */
   line();
   const after = await call("/api/impact");
-  check("meals donated 1200 -> 1250", after.stats.meals_donated === 1250, after.stats.meals_donated);
+  check("meals donated 1650 -> 1700", after.stats.meals_donated === 1700, after.stats.meals_donated);
   check("donations completed 48 -> 49", after.stats.donations_completed === 49, after.stats.donations_completed);
   check("food saved increased", after.stats.food_saved_kg > before.stats.food_saved_kg, `${before.stats.food_saved_kg} -> ${after.stats.food_saved_kg} kg`);
   check("people served increased", after.stats.people_served > before.stats.people_served, `${before.stats.people_served} -> ${after.stats.people_served}`);

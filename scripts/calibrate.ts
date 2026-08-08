@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Calibration harness for the deterministic scoring engine.
  *
  * Run with `npm run calibrate`. It replays the demo scenario from the brief
@@ -18,13 +18,13 @@ const MINUTE = 60_000;
 
 const now = new Date();
 const seed = buildSeed(now);
-const greenLeaf = seed.organisations.find((o) => o.id === "org_green_leaf")!;
+const donorOrg = seed.organisations.find((o) => o.id === "org_agashiye")!;
 const recipients = seed.organisations.filter((o) => o.role === "recipient");
 
 /** Step 2 of the demo: 50 vegetarian meals, prepared 1h ago, 90 min window. */
 const demoDonation: Donation = {
   id: "don_demo",
-  donor_id: greenLeaf.id,
+  donor_id: donorOrg.id,
   food_name: "Vegetable Rice",
   food_type: "cooked_meal",
   quantity: 50,
@@ -36,9 +36,9 @@ const demoDonation: Donation = {
   prepared_at: new Date(now.getTime() - 60 * MINUTE).toISOString(),
   pickup_start: new Date(now.getTime() - 10 * MINUTE).toISOString(),
   pickup_deadline: new Date(now.getTime() + 90 * MINUTE).toISOString(),
-  latitude: greenLeaf.latitude,
-  longitude: greenLeaf.longitude,
-  address: greenLeaf.address,
+  latitude: donorOrg.latitude,
+  longitude: donorOrg.longitude,
+  address: donorOrg.address,
   notes: null,
   status: "available",
   matched_recipient_id: null,
@@ -81,7 +81,7 @@ for (const f of risk.factors) {
 }
 console.log(`\n   ${narrateWasteRisk(demoDonation, risk)}`);
 
-console.log(`\nSTEP 3  Recipient matching   [targets 96 / 84 / 72]`);
+console.log(`\nSTEP 3  Recipient matching   [targets 94 / 84 / 79]`);
 matches.forEach((m, i) => {
   console.log(`\n   #${i + 1} ${m.recipient.name} — ${m.score}%`);
   for (const f of m.factors) {
@@ -93,7 +93,7 @@ matches.forEach((m, i) => {
 });
 
 console.log(
-  `\nSTEP 4  Pickup priority: ${priority.score}/100 (${priority.level})   [target ~95 CRITICAL]`,
+  `\nSTEP 4  Pickup priority: ${priority.score}/100 (${priority.level})   [target ~96 CRITICAL]`,
 );
 console.log(`   ${priority.reason}`);
 
@@ -112,26 +112,47 @@ const totals = seed.donations
 
 console.log(
   `\nSEED IMPACT BASELINE  ${totals.meals} meals / ${totals.kg} kg / ${totals.count} completed` +
-    `   [targets 1200 / 850 / 48]`,
+    `   [targets 1650 / 1155 / 48]`,
 );
 console.log(
   `AFTER THE DEMO DELIVERY  ${totals.meals + 50} meals / ${totals.kg + demoDonation.weight_kg} kg / ${totals.count + 1} completed\n`,
+);
+
+/**
+ * The five rejections must stay distinct: the whole point of showing them is
+ * that a recipient can fail for reasons that have nothing to do with score.
+ */
+const rejectionKinds = new Set(
+  rejected.map((r) =>
+    /Capacity/.test(r.reason) ? "capacity"
+    : /outside their/.test(r.reason) ? "distance"
+    : /deadline is sooner|holding time/.test(r.reason) ? "timing"
+    : /Does not accept/.test(r.reason) ? "food type"
+    : /not verified/.test(r.reason) ? "verification"
+    : "other",
+  ),
 );
 
 const checks: [string, boolean, string][] = [
   ["waste risk 84-90 HIGH", risk.score >= 84 && risk.score <= 90, `${risk.score}`],
   ["priority 92-98 CRITICAL", priority.score >= 92 && priority.score <= 98, `${priority.score}`],
   ["3 viable recipients", viable.length === 3, `${viable.length}`],
+  ["5 ruled out by hard constraints", rejected.length === 5, `${rejected.length}`],
   [
-    "top match is Hope Community Kitchen",
-    matches[0]?.recipient.id === "org_hope_kitchen",
+    "each rejection a different reason",
+    rejectionKinds.size === 5,
+    [...rejectionKinds].join(", "),
+  ],
+  [
+    "top match is Manav Sadhna",
+    matches[0]?.recipient.id === "org_manav_sadhna",
     matches[0]?.recipient.name ?? "none",
   ],
-  ["top match 94-98", matches[0]?.score >= 94 && matches[0]?.score <= 98, `${matches[0]?.score}`],
+  ["top match 91-97", matches[0]?.score >= 91 && matches[0]?.score <= 97, `${matches[0]?.score}`],
   ["second match 81-87", matches[1]?.score >= 81 && matches[1]?.score <= 87, `${matches[1]?.score}`],
-  ["third match 69-75", matches[2]?.score >= 69 && matches[2]?.score <= 75, `${matches[2]?.score}`],
-  ["baseline 1200 meals", totals.meals === 1200, `${totals.meals}`],
-  ["baseline 850 kg", totals.kg === 850, `${totals.kg}`],
+  ["third match 76-82", matches[2]?.score >= 76 && matches[2]?.score <= 82, `${matches[2]?.score}`],
+  ["baseline 1650 meals", totals.meals === 1650, `${totals.meals}`],
+  ["baseline 1155 kg", totals.kg === 1155, `${totals.kg}`],
   ["baseline 48 completed", totals.count === 48, `${totals.count}`],
 ];
 

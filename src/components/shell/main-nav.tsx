@@ -4,6 +4,7 @@ import {
   BarChart3,
   LayoutDashboard,
   PackageSearch,
+  Radar,
   Users,
   type LucideIcon,
 } from "lucide-react";
@@ -26,6 +27,7 @@ const ITEMS: NavItem[] = [
   { href: "/dashboard", translationKey: "navDashboard", icon: LayoutDashboard },
   { href: "/donations", translationKey: "navDonations", icon: PackageSearch },
   { href: "/recipients", translationKey: "navRecipients", icon: Users, roles: ["donor"] },
+  { href: "/operations", translationKey: "navOperations", icon: Radar },
   { href: "/impact", translationKey: "navImpact", icon: BarChart3 },
 ];
 

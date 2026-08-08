@@ -1,10 +1,13 @@
 import {
+  BadgeCheck,
   CheckCircle2,
   CircleDashed,
   Clock,
   Handshake,
+  Navigation,
   PackageCheck,
   Truck,
+  UserCheck,
   XCircle,
   type LucideIcon,
 } from "lucide-react";
@@ -110,16 +113,34 @@ export const STATUS_STYLES: Record<
     icon: Clock,
     dot: "bg-signal-info",
   },
+  pickup_assigned: {
+    label: "Pickup Assigned",
+    variant: "info",
+    icon: UserCheck,
+    dot: "bg-signal-info",
+  },
   picked_up: {
     label: "Picked Up",
     variant: "high",
     icon: Truck,
     dot: "bg-signal-high",
   },
+  in_transit: {
+    label: "In Transit",
+    variant: "high",
+    icon: Navigation,
+    dot: "bg-signal-high",
+  },
   delivered: {
     label: "Delivered",
     variant: "low",
     icon: PackageCheck,
+    dot: "bg-signal-low",
+  },
+  completed: {
+    label: "Completed",
+    variant: "low",
+    icon: BadgeCheck,
     dot: "bg-signal-low",
   },
   cancelled: {
@@ -134,8 +155,11 @@ export const STATUS_ICONS = {
   available: CircleDashed,
   matched: Handshake,
   pickup_scheduled: Clock,
+  pickup_assigned: UserCheck,
   picked_up: Truck,
+  in_transit: Navigation,
   delivered: CheckCircle2,
+  completed: BadgeCheck,
   cancelled: XCircle,
 } satisfies Record<DonationStatus, LucideIcon>;
 

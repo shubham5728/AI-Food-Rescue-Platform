@@ -1,4 +1,8 @@
-import { PICKUP_LOGISTICS_FLOOR_MIN, priorityLevelFor } from "@/lib/constants";
+import {
+  PICKUP_LOGISTICS_FLOOR_MIN,
+  TERMINAL_STATUSES,
+  priorityLevelFor,
+} from "@/lib/constants";
 import type { Donation, PriorityLevel } from "@/lib/types";
 import { clamp, formatDuration } from "@/lib/utils";
 
@@ -39,7 +43,7 @@ export function assessPriority(
   bestMatchScore: number | null,
 ): PriorityAssessment {
   // Settled donations need no coordinator attention at all.
-  if (donation.status === "delivered" || donation.status === "cancelled") {
+  if (TERMINAL_STATUSES.includes(donation.status)) {
     return {
       score: 0,
       level: "LOW",

@@ -3,13 +3,21 @@ import { rankCandidates, type ScoredMatch } from "@/lib/ai/match";
 import { analyseDonation, rescoreForList } from "@/lib/ai/pipeline";
 import type { PriorityAssessment } from "@/lib/ai/priority";
 import type { RiskAssessment } from "@/lib/ai/risk";
+import { planAllocation } from "@/lib/ai/allocation";
+import { forecastAllDonors } from "@/lib/ai/forecast";
+import { findDemandHotspots, planBestRoute } from "@/lib/ai/route";
 import {
   KG_PER_MEAL,
   MEALS_PER_PERSON,
+  RESCUED_STATUSES,
   STATUS_TRANSITIONS,
+  TERMINAL_STATUSES,
 } from "@/lib/constants";
 import { getDb } from "@/lib/db";
 import type {
+  AiPerformanceStats,
+  AllocationPlan,
+  DemandHotspot,
   Donation,
   DonationStatus,
   DonationWithRelations,
@@ -18,9 +26,12 @@ import type {
   MatchWithRecipient,
   Organisation,
   RejectedCandidate,
+  RoutePlan,
+  SurplusForecast,
 } from "@/lib/types";
 import { newId } from "@/lib/utils";
 import type { CreateDonationInput } from "@/lib/validation";
+import { assertVerifiedFor, clearVerifications } from "@/lib/verification";
 
 /**
  * Application services.
@@ -159,7 +170,12 @@ export async function acceptDonation(
 export async function transitionStatus(
   donationId: string,
   next: DonationStatus,
-  options: { note?: string | null; recipientId?: string } = {},
+  options: {
+    note?: string | null;
+    recipientId?: string;
+    /** Only for flows that have already verified, or that never needed to. */
+    skipVerification?: boolean;
+  } = {},
 ): Promise<Donation> {
   const db = getDb();
   const donation = await db.getDonationById(donationId);
@@ -177,6 +193,12 @@ export async function transitionStatus(
     throw new ServiceError("A recipient is required to mark a donation matched");
   }
 
+  // Collection and delivery each need their one-time code redeemed first. This
+  // is what stops "picked up" from being a button anyone can press.
+  if (!options.skipVerification) {
+    assertVerifiedFor(donationId, next);
+  }
+
   const patch: Partial<Donation> = { status: next };
 
   if (options.recipientId) patch.matched_recipient_id = options.recipientId;
@@ -192,6 +214,9 @@ export async function transitionStatus(
     note: options.note ?? null,
     created_at: new Date().toISOString(),
   });
+
+  // Once the donation is finished, its one-time codes are dead weight.
+  if (TERMINAL_STATUSES.includes(next)) clearVerifications(donationId);
 
   // Risk and priority both depend on claim status, so re-score every move.
   const analysis = await analyseDonation(updated, await verifiedRecipients());
@@ -267,6 +292,94 @@ export async function getRejectedCandidates(
 }
 
 /* -------------------------------------------------------------------------- */
+/* AI feature #1 — surplus forecasting                                        */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Forecasts upcoming surplus for every donor. Each donor's history is grouped
+ * once rather than re-scanned per donor, because this runs on the dashboard.
+ */
+export async function getSurplusForecasts(
+  horizonHours = 24,
+): Promise<SurplusForecast[]> {
+  const db = getDb();
+  const [donors, all] = await Promise.all([
+    db.listOrganisations("donor"),
+    db.listDonations(),
+  ]);
+
+  const byDonor = new Map<string, Donation[]>();
+  for (const donation of all) {
+    const list = byDonor.get(donation.donor_id);
+    if (list) list.push(donation);
+    else byDonor.set(donation.donor_id, [donation]);
+  }
+
+  return forecastAllDonors(donors, byDonor, new Date(), horizonHours);
+}
+
+/* -------------------------------------------------------------------------- */
+/* AI feature #6 — smart allocation                                           */
+/* -------------------------------------------------------------------------- */
+
+/** Splits a donation across recipients when no single one can take it all. */
+export async function getAllocationPlan(
+  donationId: string,
+): Promise<AllocationPlan> {
+  const db = getDb();
+  const donation = await db.getDonationById(donationId);
+  if (!donation) throw new ServiceError("Donation not found", 404);
+
+  // Partial matching: a recipient qualifies if it can take a useful share,
+  // not only if it can swallow the whole donation.
+  const { viable } = applyHardConstraints(
+    donation,
+    await verifiedRecipients(),
+    new Date(),
+    { allowPartial: true },
+  );
+  return planAllocation(donation, viable);
+}
+
+/* -------------------------------------------------------------------------- */
+/* AI feature #8 — routing and hotspots                                       */
+/* -------------------------------------------------------------------------- */
+
+export interface RouteResult {
+  plan: RoutePlan;
+  strategy: "shortest" | "deadline-first";
+  note: string;
+}
+
+/**
+ * Builds a collection run for one recipient over the donations it has claimed
+ * but not yet collected. Starting point is the recipient's own address.
+ */
+export async function getCollectionRoute(
+  recipient: Organisation,
+): Promise<RouteResult> {
+  const db = getDb();
+  const claimed = await db.listDonations({
+    matched_recipient_id: recipient.id,
+    status: ["matched", "pickup_scheduled", "pickup_assigned"],
+  });
+
+  return planBestRoute(
+    { latitude: recipient.latitude, longitude: recipient.longitude },
+    claimed,
+  );
+}
+
+export async function getDemandHotspots(): Promise<DemandHotspot[]> {
+  const db = getDb();
+  const [recipients, active] = await Promise.all([
+    db.listOrganisations("recipient"),
+    db.listDonations({ activeOnly: true }),
+  ]);
+  return findDemandHotspots(recipients, active);
+}
+
+/* -------------------------------------------------------------------------- */
 /* Dashboards                                                                 */
 /* -------------------------------------------------------------------------- */
 
@@ -304,24 +417,99 @@ export async function getImpactStats(): Promise<ImpactStats> {
   const db = getDb();
   const all = await db.listDonations();
 
-  const delivered = all.filter((d) => d.status === "delivered");
-  const active = all.filter(
-    (d) => d.status !== "delivered" && d.status !== "cancelled",
-  );
+  const rescued = all.filter((d) => RESCUED_STATUSES.includes(d.status));
+  const active = all.filter((d) => !TERMINAL_STATUSES.includes(d.status));
+  const cancelled = all.filter((d) => d.status === "cancelled");
 
   const scoredActive = await scoreDonations(active);
   const highRisk = scoredActive.filter((s) => s.risk.level === "HIGH");
 
-  const meals_donated = delivered.reduce((sum, d) => sum + d.meals, 0);
+  const meals_donated = rescued.reduce((sum, d) => sum + d.meals, 0);
+
+  // Everything that reached an end state, so the success rate has a denominator
+  // that includes the failures rather than only counting the wins.
+  const settled = rescued.length + cancelled.length;
+  const rescue_success_rate =
+    settled === 0 ? 0 : Math.round((rescued.length / settled) * 100);
+
+  const donorIds = new Set(all.map((d) => d.donor_id));
+  const recipientIds = new Set(
+    all.map((d) => d.matched_recipient_id).filter((id): id is string => Boolean(id)),
+  );
 
   return {
     meals_donated,
-    food_saved_kg: delivered.reduce((sum, d) => sum + d.weight_kg, 0),
-    donations_completed: delivered.length,
+    food_saved_kg: rescued.reduce((sum, d) => sum + d.weight_kg, 0),
+    donations_completed: rescued.length,
     people_served: Math.round(meals_donated / MEALS_PER_PERSON),
     meals_at_risk: highRisk.reduce((sum, s) => sum + s.donation.meals, 0),
     active_donations: active.length,
     high_risk_donations: highRisk.length,
+    meals_lost: cancelled.reduce((sum, d) => sum + d.meals, 0),
+    rescue_success_rate,
+    active_donors: donorIds.size,
+    active_recipients: recipientIds.size,
+  };
+}
+
+/**
+ * How well the AI layer is actually doing — not how often it ran.
+ *
+ * The number that matters most here is `top_pick_acceptance`: if recipients
+ * routinely accept donations the engine ranked second or third, the ranking is
+ * not modelling what they care about, and that is worth knowing.
+ */
+export async function getAiPerformance(): Promise<AiPerformanceStats> {
+  const db = getDb();
+  const [all, recipients] = await Promise.all([
+    db.listDonations(),
+    verifiedRecipients(),
+  ]);
+
+  const analysed = all.filter((d) => d.analysed_at !== null);
+  const claimed = all.filter((d) => d.matched_recipient_id !== null);
+
+  let withViable = 0;
+  let filteredTotal = 0;
+  for (const donation of analysed) {
+    const { viable, rejected } = applyHardConstraints(donation, recipients);
+    if (viable.length > 0) withViable += 1;
+    filteredTotal += rejected.length;
+  }
+
+  let topPickHits = 0;
+  let scoreTotal = 0;
+  let scoreCount = 0;
+  for (const donation of claimed) {
+    const matches = await db.listMatches(donation.id);
+    if (matches.length === 0) continue;
+    const chosen = matches.find((m) => m.recipient_id === donation.matched_recipient_id);
+    if (!chosen) continue;
+    scoreTotal += chosen.match_score;
+    scoreCount += 1;
+    if (chosen.rank === 1) topPickHits += 1;
+  }
+
+  const highRiskDonations = all.filter((d) => d.waste_risk_level === "HIGH");
+  const highRiskSaved = highRiskDonations.filter((d) =>
+    RESCUED_STATUSES.includes(d.status),
+  );
+
+  const pct = (part: number, whole: number) =>
+    whole === 0 ? 0 : Math.round((part / whole) * 100);
+
+  return {
+    match_coverage: pct(withViable, analysed.length),
+    top_pick_acceptance: pct(topPickHits, scoreCount),
+    average_accepted_score: scoreCount === 0 ? 0 : Math.round(scoreTotal / scoreCount),
+    high_risk_save_rate: pct(highRiskSaved.length, highRiskDonations.length),
+    average_filtered_out:
+      analysed.length === 0
+        ? 0
+        : Number((filteredTotal / analysed.length).toFixed(1)),
+    analysed_donations: analysed.length,
+    explained_by_llm: analysed.filter((d) => d.ai_source === "openai").length,
+    explained_by_engine: analysed.filter((d) => d.ai_source === "engine").length,
   };
 }
 

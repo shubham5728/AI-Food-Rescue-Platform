@@ -146,6 +146,17 @@ const DONORS: OrgSpec[] = [
   ),
 ];
 
+/**
+ * Recipient roster.
+ *
+ * These are real Ahmedabad organisations, but their capacities, ranges and
+ * lead times are set deliberately: against the demo donation (50 vegetarian
+ * meals, 90-minute window from Lal Darwaja) exactly three clear every hard
+ * constraint, and the other five are each rejected for a *different* reason —
+ * capacity, distance, timing, food type and verification. That spread is what
+ * makes the constraint-filtering step visible on the donation page instead of
+ * being a claim nobody can see.
+ */
 const RECIPIENTS: OrgSpec[] = [
   {
     id: "org_robin_hood_ahmedabad",
@@ -188,7 +199,9 @@ const RECIPIENTS: OrgSpec[] = [
     dietary_requirements: ["vegetarian"],
     accepted_food_types: ["cooked_meal", "packaged", "produce", "dry_goods"],
     excluded_allergens: [],
-    pickup_radius_km: 15,
+    // Runs large centralised kitchens on the far north-west edge of the city;
+    // it does not send vehicles into the old city. Rejected on DISTANCE.
+    pickup_radius_km: 8,
     can_pickup: true,
     pickup_lead_time_min: 30,
     reliability: 0.96,
@@ -205,11 +218,13 @@ const RECIPIENTS: OrgSpec[] = [
     latitude: 23.0600,
     longitude: 72.5800,
     verified: true,
+    // The strongest match for the demo donation: takes ~50 meals as a matter
+    // of routine, 3.8 km away, cooked meals are its first-choice category.
     capacity_min: 25,
     capacity_max: 100,
     typical_quantity: 50,
-    dietary_requirements: ["vegetarian", "vegan"],
-    accepted_food_types: ["produce", "dairy", "cooked_meal", "bakery"],
+    dietary_requirements: ["vegetarian"],
+    accepted_food_types: ["cooked_meal", "dairy", "produce", "bakery"],
     excluded_allergens: [],
     pickup_radius_km: 10,
     can_pickup: true,
@@ -232,7 +247,9 @@ const RECIPIENTS: OrgSpec[] = [
     capacity_max: 150,
     typical_quantity: 75,
     dietary_requirements: ["vegetarian"],
-    accepted_food_types: ["cooked_meal", "packaged", "dry_goods"],
+    // A warehousing food bank: it stores and redistributes shelf-stable stock
+    // and has no hot-holding capability. Rejected on FOOD TYPE.
+    accepted_food_types: ["dry_goods", "packaged", "produce"],
     excluded_allergens: [],
     pickup_radius_km: 10,
     can_pickup: true,
@@ -251,16 +268,18 @@ const RECIPIENTS: OrgSpec[] = [
     latitude: 23.0350,
     longitude: 72.5290,
     verified: true,
+    // Viable, but a weaker fit: a 50-meal drop is roughly double its usual
+    // intake and it needs 45 minutes to put a van on the road.
     capacity_min: 20,
     capacity_max: 80,
-    typical_quantity: 40,
+    typical_quantity: 25,
     dietary_requirements: ["vegetarian"],
     accepted_food_types: ["cooked_meal", "dairy", "bakery"],
     excluded_allergens: ["nuts"],
     pickup_radius_km: 8,
     can_pickup: true,
-    pickup_lead_time_min: 30,
-    reliability: 0.89,
+    pickup_lead_time_min: 45,
+    reliability: 0.86,
   },
   {
     id: "org_apang_manav_mandal",
@@ -274,9 +293,12 @@ const RECIPIENTS: OrgSpec[] = [
     latitude: 23.0340,
     longitude: 72.5480,
     verified: true,
-    capacity_min: 15,
-    capacity_max: 60,
-    typical_quantity: 35,
+    // A small residential hostel: closest of everyone at 3.4 km, but it simply
+    // cannot use 50 meals in one sitting. Rejected on CAPACITY — proximity is
+    // never enough on its own.
+    capacity_min: 10,
+    capacity_max: 45,
+    typical_quantity: 30,
     dietary_requirements: ["vegetarian"],
     accepted_food_types: ["cooked_meal", "dairy"],
     excluded_allergens: [],
@@ -305,7 +327,10 @@ const RECIPIENTS: OrgSpec[] = [
     excluded_allergens: [],
     pickup_radius_km: 15,
     can_pickup: true,
-    pickup_lead_time_min: 40,
+    // Volunteer-run and rostered around hospital meal times: it needs an hour
+    // and a half to raise a collection team. Only 3.3 km away and still cannot
+    // make a 90-minute window. Rejected on TIMING.
+    pickup_lead_time_min: 85,
     reliability: 0.94,
   },
   {
@@ -730,10 +755,10 @@ export const DEMO_ACCOUNTS = [
     blurb: "NGO Community Kitchen, 40–200 meals, Bodakdev / SG Highway",
   },
   {
-    email: "ahmedabad@akshayapatra.demo",
-    name: "Akshaya Patra Foundation",
+    email: "kitchen@manavsadhna.demo",
+    name: "Manav Sadhna (Sabarmati)",
     role: "recipient" as const,
-    blurb: "Food Foundation, 50–400 meals, Bhadaj / SG Highway",
+    blurb: "Community care at Gandhi Ashram, 25–100 meals, 3.8 km away",
   },
   {
     email: "ops@tgbcatering.demo",

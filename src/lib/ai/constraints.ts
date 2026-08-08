@@ -1,4 +1,7 @@
-import { SHELF_LIFE_MINUTES } from "@/lib/constants";
+import {
+  MIN_ALLOCATION_SLICE_MEALS,
+  SHELF_LIFE_MINUTES,
+} from "@/lib/constants";
 import { haversineKm, travelMinutes } from "@/lib/geo";
 import type {
   DietaryType,
@@ -60,10 +63,25 @@ export interface ConstraintResult {
  * rejected list is kept (rather than discarded) so the donation page can show
  * a judge *why* eleven organisations were never considered.
  */
+export interface ConstraintOptions {
+  /**
+   * Judge capacity against a usable *share* rather than the whole donation.
+   *
+   * Needed by smart allocation: a 400-meal wedding surplus exceeds every
+   * recipient's capacity, so the strict check rejects all of them and leaves
+   * nothing to split. Under partial matching a recipient qualifies if they can
+   * absorb a share worth collecting; every other constraint still applies in
+   * full, because diet, distance and timing do not become negotiable just
+   * because the food is being divided.
+   */
+  allowPartial?: boolean;
+}
+
 export function applyHardConstraints(
   donation: Donation,
   recipients: Organisation[],
   now: Date = new Date(),
+  options: ConstraintOptions = {},
 ): ConstraintResult {
   const viable: CandidateContext[] = [];
   const rejected: RejectedCandidate[] = [];
@@ -98,10 +116,16 @@ export function applyHardConstraints(
     }
 
     const capacity = recipient.capacity_max ?? 0;
-    if (capacity < donation.meals) {
+    const requiredCapacity = options.allowPartial
+      ? MIN_ALLOCATION_SLICE_MEALS
+      : donation.meals;
+
+    if (capacity < requiredCapacity) {
       reject(
         recipient,
-        `Capacity is ${capacity} meals, donation is ${donation.meals}`,
+        options.allowPartial
+          ? `Capacity is ${capacity} meals, below the ${MIN_ALLOCATION_SLICE_MEALS}-meal minimum share`
+          : `Capacity is ${capacity} meals, donation is ${donation.meals}`,
       );
       continue;
     }
