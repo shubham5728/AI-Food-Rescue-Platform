@@ -296,7 +296,9 @@ function OrbitItem3D({
             className="w-full h-full hover:scale-110 transition-transform duration-300 cursor-pointer rounded-full overflow-hidden bg-gradient-to-b from-white to-neutral-50 shadow-[0_15px_30px_-10px_rgba(0,0,0,0.15),0_0_20px_rgba(16,185,129,0.08),inset_0_2px_4px_rgba(255,255,255,1)] p-2 flex items-center justify-center border border-black/5 ring-1 ring-white/60"
             style={{ transform: `rotateY(${-angle}deg) rotateX(${-ORBIT_TILT_DEG}deg) translateZ(1px)`, WebkitBackfaceVisibility: 'hidden' }}
           >
-            {children}
+            <div className="w-full h-full rounded-full overflow-hidden flex items-center justify-center relative">
+              {children}
+            </div>
           </div>
         </div>
       </div>
