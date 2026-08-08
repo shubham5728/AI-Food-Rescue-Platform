@@ -15,6 +15,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
+import { motion, AnimatePresence } from "framer-motion";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -105,6 +106,7 @@ export function CreateDonationForm({
   const [autoDetected, setAutoDetected] = useState(true);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
+  const [step, setStep] = useState(1);
   const [result, setResult] = useState<{
     donation: Donation;
     analysis: AnalysisResult;
@@ -151,8 +153,11 @@ export function CreateDonationForm({
       const fields = fieldErrors(parsed.error);
       setErrors(fields);
       toast.error("Please correct the highlighted fields.");
-      const first = document.querySelector<HTMLElement>("[aria-invalid='true']");
-      first?.focus();
+      // If error is in step 1 fields, go back to step 1
+      const step1Fields = ["food_name", "food_type", "dietary_type", "quantity", "quantity_unit", "meals"];
+      if (Object.keys(fields).some(f => step1Fields.includes(f))) {
+        setStep(1);
+      }
       return;
     }
 
@@ -192,11 +197,48 @@ export function CreateDonationForm({
 
   const err = (key: string) => errors[key];
 
+  const slideVariants = {
+    enter: (direction: number) => ({
+      x: direction > 0 ? 50 : -50,
+      opacity: 0,
+    }),
+    center: {
+      zIndex: 1,
+      x: 0,
+      opacity: 1,
+    },
+    exit: (direction: number) => ({
+      zIndex: 0,
+      x: direction < 0 ? 50 : -50,
+      opacity: 0,
+    }),
+  };
+
   return (
-    <form noValidate onSubmit={submit} className={cn("space-y-6", className)}>
-      {/* ---------------------------------------------------------------- */}
-      <Card>
-        <CardContent className="space-y-5 pt-5">
+    <div className={cn("max-w-2xl mx-auto", className)}>
+      <div className="mb-8">
+        <div className="flex items-center justify-between text-sm font-medium mb-3">
+          <span className={step === 1 ? "text-primary" : "text-muted-foreground"}>Step 1: Food Details</span>
+          <span className={step === 2 ? "text-primary" : "text-muted-foreground"}>Step 2: Logistics</span>
+        </div>
+        <Progress value={step === 1 ? 50 : 100} className="h-2 transition-all duration-500" />
+      </div>
+
+      <form noValidate onSubmit={submit} className="space-y-6">
+        <AnimatePresence mode="wait" custom={step}>
+          {step === 1 && (
+            <motion.div
+              key="step1"
+              custom={1}
+              variants={slideVariants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              className="space-y-6"
+            >
+              <Card className="border-border/50 shadow-sm">
+                <CardContent className="space-y-5 pt-5">
           <SectionTitle icon={Utensils}>What is the food?</SectionTitle>
 
           <Field label="Food name or type" htmlFor="food_name" error={err("food_name")}>
@@ -405,9 +447,22 @@ export function CreateDonationForm({
           </div>
         </CardContent>
       </Card>
+      </motion.div>
+      )}
 
+      {step === 2 && (
+        <motion.div
+          key="step2"
+          custom={-1}
+          variants={slideVariants}
+          initial="enter"
+          animate="center"
+          exit="exit"
+          transition={{ type: "spring", stiffness: 300, damping: 30 }}
+          className="space-y-6"
+        >
       {/* ---------------------------------------------------------------- */}
-      <Card>
+      <Card className="border-border/50 shadow-sm">
         <CardContent className="space-y-5 pt-5">
           <SectionTitle icon={Flame}>When can it be collected?</SectionTitle>
 
@@ -458,7 +513,7 @@ export function CreateDonationForm({
       </Card>
 
       {/* ---------------------------------------------------------------- */}
-      <Card>
+      <Card className="border-border/50 shadow-sm">
         <CardContent className="space-y-5 pt-5">
           <SectionTitle icon={MapPin}>Where is it?</SectionTitle>
 
@@ -512,27 +567,45 @@ export function CreateDonationForm({
           </Field>
         </CardContent>
       </Card>
+      </motion.div>
+      )}
+      </AnimatePresence>
 
       {errors._form ? (
-        <p role="alert" className="text-sm text-destructive">
+        <p role="alert" className="text-sm text-destructive font-medium bg-destructive/10 p-3 rounded-md">
           {errors._form}
         </p>
       ) : null}
 
-      <div className="flex flex-wrap items-center gap-3">
-        <Button type="submit" size="lg" disabled={submitting}>
-          {submitting ? (
-            <Loader2 className="size-4 animate-spin" aria-hidden />
-          ) : (
-            <Wand2 className="size-4" aria-hidden />
-          )}
-          {submitting ? "Analysing…" : "Submit and analyse"}
-        </Button>
-        <Button asChild type="button" variant="ghost" size="lg">
-          <Link href="/dashboard">Cancel</Link>
-        </Button>
+      <div className="flex flex-wrap items-center gap-3 pt-4 border-t border-border/50">
+        {step === 1 ? (
+          <>
+            <Button type="button" size="lg" className="font-bold shadow-md" onClick={() => setStep(2)}>
+              Next Step
+              <ArrowRight className="size-4 ml-2" aria-hidden />
+            </Button>
+            <Button asChild type="button" variant="ghost" size="lg">
+              <Link href="/dashboard">Cancel</Link>
+            </Button>
+          </>
+        ) : (
+          <>
+            <Button type="button" variant="outline" size="lg" onClick={() => setStep(1)}>
+              Back
+            </Button>
+            <Button type="submit" size="lg" disabled={submitting} className="font-bold shadow-md">
+              {submitting ? (
+                <Loader2 className="size-4 animate-spin mr-2" aria-hidden />
+              ) : (
+                <Wand2 className="size-4 mr-2" aria-hidden />
+              )}
+              {submitting ? "Analysing…" : "Submit & Analyse"}
+            </Button>
+          </>
+        )}
       </div>
     </form>
+    </div>
   );
 }
 

@@ -41,19 +41,20 @@ export function DonationCard({
   return (
     <Card
       className={cn(
-        "group relative p-4 transition-shadow hover:shadow-lift flex flex-col gap-3",
+        "group relative overflow-hidden p-5 transition-all duration-300 hover:shadow-xl hover:shadow-primary/5 hover:-translate-y-0.5 border-border/40 bg-card/50 backdrop-blur-sm flex flex-col gap-4",
         className,
       )}
     >
-      <div className="flex gap-4">
+      <div className="absolute inset-0 bg-gradient-to-br from-transparent to-muted/20 pointer-events-none" />
+      <div className="relative flex gap-5">
         {donation.image_url && (
-          <div className="shrink-0 relative size-16 sm:size-20 rounded-md overflow-hidden border bg-muted">
+          <div className="shrink-0 relative size-20 sm:size-24 rounded-xl overflow-hidden border border-border/50 bg-muted shadow-sm group-hover:shadow-md transition-all duration-300">
             <Image
               src={donation.image_url}
               alt={donation.food_name}
               fill
-              className="object-cover"
-              sizes="80px"
+              className="object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+              sizes="96px"
             />
           </div>
         )}
