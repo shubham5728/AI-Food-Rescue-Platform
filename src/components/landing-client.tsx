@@ -180,6 +180,105 @@ const AHMEDABAD_LANDING_ROUTES: MapRouteItem[] = [
 ];
 
 
+/**
+ * How far each orbit is tipped away from the viewer. One shared value keeps
+ * the rings on a common ground plane; give each a different tilt and they stop
+ * reading as one system.
+ */
+const ORBIT_TILT_DEG = 62;
+
+/**
+ * A ring in real 3D.
+ *
+ * The tilt and the spin live on separate elements on purpose: a CSS animation
+ * on `transform` replaces the whole property, so a single element cannot hold
+ * a static rotateX and an animated rotateY at once.
+ */
+function Orbit3D({
+  radius,
+  duration,
+  reverse = false,
+  faint = false,
+  children,
+}: {
+  radius: number;
+  duration: number;
+  reverse?: boolean;
+  /** The outermost ring sits back a little so it does not compete. */
+  faint?: boolean;
+  children: React.ReactNode;
+}) {
+  const size = radius * 2;
+
+  return (
+    <div
+      className="fb-orbit-3d absolute"
+      style={{ transform: `rotateX(${ORBIT_TILT_DEG}deg)` }}
+    >
+      <div
+        className="fb-orbit-3d relative"
+        style={{
+          width: size,
+          height: size,
+          animation: `${reverse ? "fb-orbit-spin-reverse" : "fb-orbit-spin"} ${duration}s linear infinite`,
+        }}
+      >
+        {/* The ring itself. Tilted, a circle draws as an ellipse — the 3D cue. */}
+        <div
+          className={`absolute inset-0 rounded-full border border-dashed ${
+            faint ? "border-border/70" : "border-border"
+          }`}
+        />
+        {children}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * One item on a ring.
+ *
+ * Placed with `rotateY(angle) translateZ(radius)`, which puts it on the
+ * circumference in depth. Two nested counter-rotations then turn it back to
+ * face the viewer: the animated one cancels the ring's spin, the static one
+ * cancels the ring's tilt. Perspective does the rest — the far side of the
+ * orbit renders smaller and passes behind the centre figure.
+ */
+function OrbitItem3D({
+  angle,
+  radius,
+  duration,
+  reverse = false,
+  children,
+}: {
+  angle: number;
+  radius: number;
+  duration: number;
+  reverse?: boolean;
+  children: React.ReactNode;
+}) {
+  return (
+    <div
+      className="fb-orbit-3d absolute left-1/2 top-1/2 w-16 h-16 -ml-8 -mt-8"
+      style={{ transform: `rotateY(${angle}deg) translateZ(${radius}px)` }}
+    >
+      <div
+        className="fb-orbit-3d w-full h-full"
+        style={{
+          animation: `${reverse ? "fb-orbit-counter-reverse" : "fb-orbit-counter"} ${duration}s linear infinite`,
+        }}
+      >
+        <div
+          className="w-full h-full hover:scale-110 transition-transform duration-300 cursor-pointer rounded-full overflow-hidden bg-white shadow-md p-1.5 flex items-center justify-center"
+          style={{ transform: `rotateY(${-angle}deg) rotateX(${-ORBIT_TILT_DEG}deg)` }}
+        >
+          {children}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 interface LandingClientProps {
   stats: {
     meals_donated: number;
@@ -314,46 +413,51 @@ export function LandingClient({ stats, session, demo }: LandingClientProps) {
             </motion.div>
           </div>
 
-          <motion.div variants={fadeUpVariants} className="relative hidden lg:flex items-center justify-center w-full h-[420px] scale-90 xl:scale-100">
-            {/* Center Human Element */}
-            <div className="absolute z-10 flex flex-col items-center justify-center w-32 h-32 rounded-full shadow-[0_0_40px_rgba(16,185,129,0.15)] overflow-hidden" style={{ transform: 'translateZ(0)', WebkitBackfaceVisibility: 'hidden' }}>
-              <img src="/orbit-person-2.png" alt="Person in need" className="w-full h-full object-cover" />
-            </div>
-            
-            {/* Inner Orbit */}
-            <div className="absolute w-[200px] h-[200px] rounded-full border border-dashed border-border" style={{ animation: 'spin 60s linear infinite', transform: 'translateZ(0)', WebkitBackfaceVisibility: 'hidden' }}>
-              <div style={{ left: '68px', top: '-32px', animation: 'spin 60s linear infinite reverse', transform: 'translateZ(0)' }} className="absolute w-16 h-16 hover:scale-110 transition-transform duration-300 cursor-pointer">
-                <img src="/orbit-food-1.png" alt="Fresh salad" className="w-full h-full object-contain drop-shadow-md" />
+          <motion.div
+            variants={fadeUpVariants}
+            className="fb-orbit-scene relative hidden lg:flex items-center justify-center w-full h-[420px] scale-90 xl:scale-100"
+          >
+            <div className="fb-orbit-3d relative flex items-center justify-center w-full h-full">
+              {/* Center Human Element */}
+              <div className="fb-orbit-3d absolute z-10 flex flex-col items-center justify-center w-32 h-32 rounded-full shadow-[0_0_40px_rgba(16,185,129,0.15)] overflow-hidden">
+                <img src="/orbit-person-2.png" alt="Person in need" className="w-full h-full object-cover" />
               </div>
-            </div>
 
-            {/* Middle Orbit */}
-            <div className="absolute w-[320px] h-[320px] rounded-full border border-dashed border-border" style={{ animation: 'spin 90s linear infinite reverse', transform: 'translateZ(0)', WebkitBackfaceVisibility: 'hidden' }}>
-              <div style={{ left: '288px', top: '128px', animation: 'spin 90s linear infinite', transform: 'translateZ(0)' }} className="absolute w-16 h-16 hover:scale-110 transition-transform duration-300 cursor-pointer">
-                <img src="/orbit-food-2.png" alt="Fresh vegetables" className="w-full h-full object-contain drop-shadow-md" />
-              </div>
-              <div style={{ left: '-32px', top: '128px', animation: 'spin 90s linear infinite', transform: 'translateZ(0)' }} className="absolute w-16 h-16 hover:scale-110 transition-transform duration-300 cursor-pointer">
-                <img src="/orbit-food-4.png" alt="Gourmet sandwiches" className="w-full h-full object-contain drop-shadow-md" />
-              </div>
-            </div>
+              {/* Inner Orbit */}
+              <Orbit3D radius={100} duration={60}>
+                <OrbitItem3D angle={0} radius={100} duration={60}>
+                  <img src="/orbit-food-1.png" alt="Fresh salad" className="w-full h-full object-contain scale-110" />
+                </OrbitItem3D>
+              </Orbit3D>
 
-            {/* Outer Orbit (5 items) */}
-            <div className="absolute w-[440px] h-[440px] rounded-full border border-dashed border-border/70" style={{ animation: 'spin 120s linear infinite', transform: 'translateZ(0)', WebkitBackfaceVisibility: 'hidden' }}>
-              <div style={{ left: '408px', top: '188px', animation: 'spin 120s linear infinite reverse', transform: 'translateZ(0)' }} className="absolute w-16 h-16 hover:scale-110 transition-transform duration-300 cursor-pointer">
-                <img src="/orbit-food-5.png" alt="Hot catering meal" className="w-full h-full object-contain drop-shadow-md" />
-              </div>
-              <div style={{ left: '256px', top: '397px', animation: 'spin 120s linear infinite reverse', transform: 'translateZ(0)' }} className="absolute w-16 h-16 hover:scale-110 transition-transform duration-300 cursor-pointer">
-                <img src="/orbit-food-3.png" alt="Artisanal bread" className="w-full h-full object-contain drop-shadow-md" />
-              </div>
-              <div style={{ left: '10px', top: '317px', animation: 'spin 120s linear infinite reverse', transform: 'translateZ(0)' }} className="absolute w-16 h-16 hover:scale-110 transition-transform duration-300 cursor-pointer">
-                <img src="/orbit-food-6.png" alt="Fresh fruits" className="w-full h-full object-contain drop-shadow-md" />
-              </div>
-              <div style={{ left: '10px', top: '59px', animation: 'spin 120s linear infinite reverse', transform: 'translateZ(0)' }} className="absolute w-16 h-16 hover:scale-110 transition-transform duration-300 cursor-pointer">
-                <img src="/orbit-food-7.png" alt="Bakery pastries" className="w-full h-full object-contain drop-shadow-md" />
-              </div>
-              <div style={{ left: '256px', top: '-21px', animation: 'spin 120s linear infinite reverse', transform: 'translateZ(0)' }} className="absolute w-16 h-16 hover:scale-110 transition-transform duration-300 cursor-pointer">
-                <img src="/orbit-food-8.png" alt="Dairy products" className="w-full h-full object-contain drop-shadow-md" />
-              </div>
+              {/* Middle Orbit */}
+              <Orbit3D radius={160} duration={90} reverse>
+                <OrbitItem3D angle={90} radius={160} duration={90} reverse>
+                  <img src="/orbit-food-2.png" alt="Fresh vegetables" className="w-full h-full object-contain scale-110" />
+                </OrbitItem3D>
+                <OrbitItem3D angle={270} radius={160} duration={90} reverse>
+                  <img src="/orbit-food-4.png" alt="Gourmet sandwiches" className="w-full h-full object-contain scale-110" />
+                </OrbitItem3D>
+              </Orbit3D>
+
+              {/* Outer Orbit (5 items) */}
+              <Orbit3D radius={220} duration={120} faint>
+                <OrbitItem3D angle={90} radius={220} duration={120}>
+                  <img src="/orbit-food-5.png" alt="Hot catering meal" className="w-full h-full object-contain scale-110" />
+                </OrbitItem3D>
+                <OrbitItem3D angle={162} radius={220} duration={120}>
+                  <img src="/orbit-food-3.png" alt="Artisanal bread" className="w-full h-full object-contain scale-110" />
+                </OrbitItem3D>
+                <OrbitItem3D angle={234} radius={220} duration={120}>
+                  <img src="/orbit-food-6.png" alt="Fresh fruits" className="w-full h-full object-contain scale-110" />
+                </OrbitItem3D>
+                <OrbitItem3D angle={306} radius={220} duration={120}>
+                  <img src="/orbit-food-7.png" alt="Bakery pastries" className="w-full h-full object-contain scale-110" />
+                </OrbitItem3D>
+                <OrbitItem3D angle={18} radius={220} duration={120}>
+                  <img src="/orbit-food-8.png" alt="Dairy products" className="w-full h-full object-contain scale-110" />
+                </OrbitItem3D>
+              </Orbit3D>
             </div>
           </motion.div>
         </motion.div>
