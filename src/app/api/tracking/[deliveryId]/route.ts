@@ -10,7 +10,7 @@ export async function GET(
 ) {
   try {
     const { deliveryId } = await params;
-    const trackingState = trackingStore.getTrackingState(deliveryId);
+    const trackingState = await trackingStore.getTrackingState(deliveryId);
 
     if (!trackingState) {
       return NextResponse.json(
@@ -43,13 +43,13 @@ export async function POST(
       );
     }
 
-    const updatedDelivery = trackingStore.updateDeliveryStatus(
+    const updatedDelivery = await trackingStore.updateDeliveryStatus(
       deliveryId,
       body.status,
       body.note,
     );
 
-    const updatedState = trackingStore.getTrackingState(deliveryId);
+    const updatedState = await trackingStore.getTrackingState(deliveryId);
     return NextResponse.json({ delivery: updatedDelivery, trackingState: updatedState });
   } catch (error) {
     return apiError(error);

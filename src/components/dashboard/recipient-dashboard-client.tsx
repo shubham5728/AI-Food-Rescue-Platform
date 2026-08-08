@@ -95,31 +95,33 @@ export function RecipientDashboardClient({
       </header>
 
       {/* Live GPS Delivery Tracking Banner Card */}
-      <Card className="border border-emerald-500/30 bg-emerald-500/5 p-4 sm:p-5 shadow-md">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="flex size-11 items-center justify-center rounded-xl bg-emerald-600 text-white font-bold shadow">
-              <Truck className="size-6" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2 mb-0.5">
-                <span className="font-extrabold text-base text-foreground">{t("incomingDeliveryTransit")}</span>
-                <Badge className="bg-emerald-600 text-white font-bold text-[10px]">
-                  <Radio className="size-3 mr-1 animate-pulse" /> {t("liveTrackingActive")}
-                </Badge>
+      {openCommitments.length > 0 && (
+        <Card className="border border-emerald-500/30 bg-emerald-500/5 p-4 sm:p-5 shadow-md">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="flex size-11 items-center justify-center rounded-xl bg-emerald-600 text-white font-bold shadow">
+                <Truck className="size-6" />
               </div>
-              <p className="text-xs sm:text-sm text-muted-foreground">
-                {t("driverStatusRecipient")}
-              </p>
+              <div>
+                <div className="flex items-center gap-2 mb-0.5">
+                  <span className="font-extrabold text-base text-foreground">{t("incomingDeliveryTransit")}</span>
+                  <Badge className="bg-emerald-600 text-white font-bold text-[10px]">
+                    <Radio className="size-3 mr-1 animate-pulse" /> {t("liveTrackingActive")}
+                  </Badge>
+                </div>
+                <p className="text-xs sm:text-sm text-muted-foreground">
+                  {t("driverStatusRecipient")}
+                </p>
+              </div>
             </div>
+            <Button asChild size="sm" className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold shadow">
+              <Link href={`/tracking/${openCommitments[0].donation.id}`}>
+                {t("trackIncomingLive")}
+              </Link>
+            </Button>
           </div>
-          <Button asChild size="sm" className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold shadow">
-            <Link href="/tracking/del_demo01">
-              {t("trackIncomingLive")}
-            </Link>
-          </Button>
-        </div>
-      </Card>
+        </Card>
+      )}
 
       {/* Satellite Dispatch Map for Recipient */}
       <section aria-label="Satellite Dispatch Map" className="space-y-3">

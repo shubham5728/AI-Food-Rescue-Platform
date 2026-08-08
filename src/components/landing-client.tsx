@@ -539,13 +539,13 @@ export function LandingClient({ stats, session, demo }: LandingClientProps) {
         <div className="mx-auto max-w-6xl space-y-4 text-center">
           <Badge variant="outline" className="px-3 py-1 text-xs border-primary/30 text-primary">
             <Sparkles className="size-3.5 mr-1" aria-hidden />
-            {t.videoBadge}
+            {t("videoBadge")}
           </Badge>
           <h2 className="text-2xl font-bold tracking-tight sm:text-4xl text-foreground">
-            {t.videoTitle}
+            {t("videoTitle")}
           </h2>
           <p className="mx-auto max-w-2xl text-sm sm:text-base text-muted-foreground leading-relaxed">
-            {t.videoSub}
+            {t("videoSub")}
           </p>
 
           <div className="relative mt-6 overflow-hidden rounded-3xl bg-black shadow-2xl">
@@ -558,7 +558,7 @@ export function LandingClient({ stats, session, demo }: LandingClientProps) {
               playsInline
               className="w-full aspect-video rounded-3xl object-cover"
             >
-              {t.videoFallback}
+              {t("videoFallback")}
             </video>
           </div>
         </div>

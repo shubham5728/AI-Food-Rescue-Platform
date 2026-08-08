@@ -23,7 +23,7 @@ export async function POST(
       );
     }
 
-    const result = trackingStore.verifyOtp(
+    const result = await trackingStore.verifyOtp(
       deliveryId,
       body.step,
       body.otp,
@@ -38,7 +38,7 @@ export async function POST(
       );
     }
 
-    const trackingState = trackingStore.getTrackingState(deliveryId);
+    const trackingState = await trackingStore.getTrackingState(deliveryId);
     return NextResponse.json({
       success: true,
       message: result.message,

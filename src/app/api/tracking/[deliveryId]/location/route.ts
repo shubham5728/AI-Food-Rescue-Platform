@@ -25,7 +25,7 @@ export async function POST(
       );
     }
 
-    const updatedState = trackingStore.updateDriverLocation(deliveryId, {
+    const updatedState = await trackingStore.updateDriverLocation(deliveryId, {
       driver_id: "drv_rahul",
       latitude: body.latitude,
       longitude: body.longitude,

@@ -170,31 +170,33 @@ export function DonorDashboardClient({
       </motion.header>
 
       {/* Live GPS Delivery Tracking Banner Card */}
-      <Card className="border border-primary/30 bg-primary/5 p-4 sm:p-5 shadow-md">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="flex size-11 items-center justify-center rounded-xl bg-primary text-primary-foreground font-bold shadow">
-              <Truck className="size-6" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2 mb-0.5">
-                <span className="font-extrabold text-base text-foreground">{t("liveRescueTracking")}</span>
-                <Badge className="bg-emerald-600 text-white font-bold text-[10px]">
-                  <Radio className="size-3 mr-1 animate-pulse" /> {t("liveGPSConnected")}
-                </Badge>
+      {myActive.length > 0 && (
+        <Card className="border border-primary/30 bg-primary/5 p-4 sm:p-5 shadow-md">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="flex size-11 items-center justify-center rounded-xl bg-primary text-primary-foreground font-bold shadow">
+                <Truck className="size-6" />
               </div>
-              <p className="text-xs sm:text-sm text-muted-foreground">
-                {t("driverStatusDonor")}
-              </p>
+              <div>
+                <div className="flex items-center gap-2 mb-0.5">
+                  <span className="font-extrabold text-base text-foreground">{t("liveRescueTracking")}</span>
+                  <Badge className="bg-emerald-600 text-white font-bold text-[10px]">
+                    <Radio className="size-3 mr-1 animate-pulse" /> {t("liveGPSConnected")}
+                  </Badge>
+                </div>
+                <p className="text-xs sm:text-sm text-muted-foreground">
+                  {t("driverStatusDonor")}
+                </p>
+              </div>
             </div>
+            <Button asChild size="sm" className="font-bold shadow">
+              <Link href={`/tracking/${myActive[0].donation.id}`}>
+                {t("openLiveMap")}
+              </Link>
+            </Button>
           </div>
-          <Button asChild size="sm" className="font-bold shadow">
-            <Link href="/tracking/del_demo01">
-              {t("openLiveMap")}
-            </Link>
-          </Button>
-        </div>
-      </Card>
+        </Card>
+      )}
 
       {/* Main KPI Stat Tiles */}
       <motion.section variants={itemAnim} aria-label="Impact">

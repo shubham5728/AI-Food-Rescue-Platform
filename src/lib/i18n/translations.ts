@@ -165,12 +165,8 @@ export interface Translations {
   unverifiedNote: string;
   createProfileBtn: string;
 
-  // Navigation
-  navDashboard: string;
+  // Navigation (Duplicates removed)
   navGPS: string;
-  navDonations: string;
-  navRecipients: string;
-  navImpact: string;
 
   // Account Menu
   signedInAs: string;
@@ -209,10 +205,8 @@ export interface Translations {
   ngoSubtitle: string;
 
   // Phase 3: Secondary Pages
-  tabDonations: string;
   tabPending: string;
   donationsCountSub: string;
-  filterAll: string;
   impactSubtitle: string;
   impactExplanation: string;
   impactDelivered: string;
@@ -249,7 +243,6 @@ export interface Translations {
   confirmDeliveryHandover: string;
   safeOnTime: string;
   highRisk: string;
-  liveGPSConnected: string;
 
   // Common UI
   loading: string;
@@ -409,12 +402,7 @@ export const translations: Record<Language, Translations> = {
     weCanCollect: "We can collect food ourselves",
     unverifiedNote: "New organisations start unverified. Unverified recipients are never recommended by the matching engine — that filter is deliberate.",
     createProfileBtn: "Create profile",
-
-    navDashboard: "Dashboard",
     navGPS: "GPS Dispatch",
-    navDonations: "Donations",
-    navRecipients: "Recipients",
-    navImpact: "Impact",
 
     signedInAs: "Now signed in as ",
     couldNotSwitch: "Could not switch organisation",
@@ -450,10 +438,8 @@ export const translations: Record<Language, Translations> = {
     yourOrg: "Your Organisation",
     ngoSubtitle: "Your Verified NGO Shelter",
 
-    tabDonations: "My donations",
     tabPending: "Pending match",
     donationsCountSub: "active surplus food listings",
-    filterAll: "All",
     impactSubtitle: "Every figure below is derived from donations that actually reached",
     impactExplanation: "Meals donated and food saved sum the meal count and estimated mass of every donation with status Delivered. A donation that is matched but not yet collected contributes nothing.",
     impactDelivered: "Delivered",
@@ -489,7 +475,6 @@ export const translations: Record<Language, Translations> = {
     confirmDeliveryHandover: "Confirm Delivery Handover",
     safeOnTime: "🟢 SAFE / ON TIME",
     highRisk: "🔴 HIGH RISK",
-    liveGPSConnected: "Live GPS Connected",
 
     loading: "Loading...",
     close: "Close",
@@ -646,12 +631,7 @@ export const translations: Record<Language, Translations> = {
     weCanCollect: "हम खुद खाना इकट्ठा कर सकते हैं",
     unverifiedNote: "नए संगठन असत्यापित शुरू होते हैं। असत्यापित प्राप्तकर्ताओं को कभी भी मिलान इंजन द्वारा अनुशंसित नहीं किया जाता है — यह फ़िल्टर जानबूझकर है।",
     createProfileBtn: "प्रोफ़ाइल बनाएं",
-
-    navDashboard: "डैशबोर्ड",
     navGPS: "जीपीएस डिस्पैच",
-    navDonations: "दान (Donations)",
-    navRecipients: "प्राप्तकर्ता (Recipients)",
-    navImpact: "प्रभाव (Impact)",
 
     signedInAs: "के रूप में साइन इन हैं: ",
     couldNotSwitch: "संगठन नहीं बदल सका",
@@ -687,10 +667,8 @@ export const translations: Record<Language, Translations> = {
     yourOrg: "आपका संगठन",
     ngoSubtitle: "आपका सत्यापित एनजीओ आश्रय",
 
-    tabDonations: "मेरे दान",
     tabPending: "मिलान लंबित",
     donationsCountSub: "सक्रिय अतिरिक्त भोजन सूची",
-    filterAll: "सभी",
     impactSubtitle: "नीचे दिया गया हर आंकड़ा उन दानों से लिया गया है जो वास्तव में पहुंचे हैं",
     impactExplanation: "दान किए गए भोजन और बचाए गए भोजन को 'वितरित' स्थिति वाले प्रत्येक दान के भोजन की संख्या और अनुमानित द्रव्यमान का योग माना जाता है। एक दान जिसका मिलान हो गया है लेकिन अभी तक एकत्र नहीं किया गया है, वह कुछ भी योगदान नहीं देता है।",
     impactDelivered: "वितरित (Delivered)",
@@ -726,7 +704,6 @@ export const translations: Record<Language, Translations> = {
     confirmDeliveryHandover: "डिलीवरी हैंडओवर की पुष्टि करें",
     safeOnTime: "🟢 सुरक्षित / समय पर",
     highRisk: "🔴 उच्च जोखिम",
-    liveGPSConnected: "लाइव जीपीएस कनेक्टेड",
 
     loading: "लोड हो रहा है...",
     close: "बंद करें",
@@ -883,14 +860,9 @@ export const translations: Record<Language, Translations> = {
     weCanCollect: "અમે જાતે ખોરાક એકત્ર કરી શકીએ છીએ",
     unverifiedNote: "નવી સંસ્થાઓ ચકાસ્યા વગર શરૂ થાય છે. અચકાસાયેલ પ્રાપ્તકર્તાઓને મેચિંગ એન્જિન દ્વારા ક્યારેય ભલામણ કરવામાં આવતી નથી.",
     createProfileBtn: "પ્રોફાઇલ બનાવો",
+    navGPS: "જીપીએસ ડિસ્પેચ",
 
-    navDashboard: "ડેશબોર્ડ",
-    navGPS: "જીપીએસ ડિસ્પેચ (GPS)",
-    navDonations: "દાન (Donations)",
-    navRecipients: "પ્રાપ્તકર્તા (Recipients)",
-    navImpact: "પ્રભાવ (Impact)",
-
-    signedInAs: "તરીકે સાઇન ઇન કર્યું છે: ",
+    signedInAs: "તરીકે સાઇન ઇન છો: ",
     couldNotSwitch: "સંસ્થા બદલી શક્યા નથી",
     verified: "ચકાસાયેલ",
     pendingVerification: "ચકાસણી બાકી છે",
@@ -924,10 +896,8 @@ export const translations: Record<Language, Translations> = {
     yourOrg: "તમારી સંસ્થા",
     ngoSubtitle: "તમારો ચકાસાયેલ NGO આશ્રય",
 
-    tabDonations: "મારા દાન",
     tabPending: "મેચિંગ બાકી",
     donationsCountSub: "સક્રિય ખોરાક લિસ્ટિંગ",
-    filterAll: "બધા",
     impactSubtitle: "નીચેનો દરેક આંકડો એવા દાનમાંથી લેવામાં આવ્યો છે જે ખરેખર પહોંચ્યા છે",
     impactExplanation: "દાન કરેલ ભોજન અને બચાવેલ ખોરાક 'વિતરિત' સ્થિતિ ધરાવતા દરેક દાનના ભોજનની ગણતરી અને અંદાજિત વજનનો સરવાળો છે. એક દાન જે મેળ ખાતું હોય પરંતુ હજુ સુધી એકત્રિત કરવામાં આવ્યું ન હોય તે કંઈપણ ફાળો આપતું નથી.",
     impactDelivered: "વિતરિત (Delivered)",
@@ -963,7 +933,6 @@ export const translations: Record<Language, Translations> = {
     confirmDeliveryHandover: "ડિલિવરી હેન્ડઓવરની પુષ્ટિ કરો",
     safeOnTime: "🟢 સુરક્ષિત / સમયસર",
     highRisk: "🔴 ઉચ્ચ જોખમ",
-    liveGPSConnected: "લાઇવ જીપીએસ કનેક્ટેડ",
 
     loading: "લોડ થઈ રહ્યું છે...",
     close: "બંધ કરો",
