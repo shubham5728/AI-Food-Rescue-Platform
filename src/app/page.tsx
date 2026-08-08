@@ -148,7 +148,7 @@ export default async function LandingPage() {
               
               {/* Center Human Element */}
               <div className="absolute z-10 flex flex-col items-center justify-center w-32 h-32 rounded-full shadow-[0_0_50px_rgba(var(--primary),0.2)] overflow-hidden">
-                <img src="/orbit-person-1.png" alt="Person in need" className="w-full h-full object-cover mix-blend-multiply" />
+                <img src="/orbit-person-2.png" alt="Person in need" className="w-full h-full object-cover mix-blend-multiply" />
               </div>
               
               {/* Inner Orbit */}
