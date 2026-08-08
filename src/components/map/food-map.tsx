@@ -76,9 +76,9 @@ function createPinIcon(color: string, symbol: string, isUrgent = false) {
   });
 }
 
-const DONOR_ICON = createPinIcon("#10b981", "🍽️");
-const RECIPIENT_ICON = createPinIcon("#3b82f6", "🛡️");
-const URGENT_ICON = createPinIcon("#ef4444", "🚨", true);
+const DONOR_ICON = createPinIcon("#10b981", "🏪");
+const RECIPIENT_ICON = createPinIcon("#3b82f6", "🏢");
+const URGENT_ICON = createPinIcon("#ef4444", "🔥", true);
 
 export function FoodMap({
   markers = [],
@@ -170,7 +170,16 @@ export function FoodMap({
       map.fitBounds(bounds, { padding: [50, 50] });
     }
 
+    // Fix for Leaflet + React rendering glitches (markers off-center)
+    const timeout = setTimeout(() => {
+      map.invalidateSize();
+      if (markers.length > 1) {
+        map.fitBounds(bounds, { padding: [50, 50] });
+      }
+    }, 400);
+
     return () => {
+      clearTimeout(timeout);
       map.remove();
     };
   }, [markers, routes, center, zoom, tileMode, t]);
