@@ -151,27 +151,24 @@ export default async function LandingPage() {
                 <Brain className="w-8 h-8 text-primary animate-pulse" />
               </div>
               
-              {/* Inner Orbit (Donor) */}
+              {/* Inner Orbit */}
               <div className="absolute w-[200px] h-[200px] rounded-full border border-dashed border-border animate-[spin_20s_linear_infinite]">
-                <div className="absolute -top-5 left-1/2 -translate-x-1/2 w-10 h-10 bg-card border border-border rounded-xl flex items-center justify-center shadow-sm animate-[spin_20s_linear_infinite_reverse]">
-                  <Store className="w-4 h-4 text-muted-foreground" />
+                <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-12 h-12 bg-card border-2 border-background rounded-full overflow-hidden shadow-md animate-[spin_20s_linear_infinite_reverse]">
+                  <img src="/orbit-food-1.png" alt="Fresh salad" className="w-full h-full object-cover" />
                 </div>
               </div>
 
-              {/* Middle Orbit (Transport/Logistics) */}
+              {/* Middle Orbit */}
               <div className="absolute w-[320px] h-[320px] rounded-full border border-dashed border-border animate-[spin_30s_linear_infinite_reverse]">
-                <div className="absolute -left-5 top-1/2 -translate-y-1/2 w-10 h-10 bg-card border border-border rounded-xl flex items-center justify-center shadow-sm animate-[spin_30s_linear_infinite]">
-                  <Truck className="w-4 h-4 text-muted-foreground" />
-                </div>
-                <div className="absolute -right-5 top-1/2 -translate-y-1/2 w-10 h-10 bg-card border border-border rounded-xl flex items-center justify-center shadow-sm animate-[spin_30s_linear_infinite]">
-                  <Flame className="w-4 h-4 text-signal-critical" />
+                <div className="absolute -left-6 top-1/2 -translate-y-1/2 w-12 h-12 bg-card border-2 border-background rounded-full overflow-hidden shadow-md animate-[spin_30s_linear_infinite]">
+                  <img src="/orbit-food-2.png" alt="Fresh vegetables" className="w-full h-full object-cover" />
                 </div>
               </div>
 
-              {/* Outer Orbit (Recipient) */}
+              {/* Outer Orbit */}
               <div className="absolute w-[440px] h-[440px] rounded-full border border-dashed border-border/70 animate-[spin_40s_linear_infinite]">
-                <div className="absolute -bottom-5 left-1/2 -translate-x-1/2 w-10 h-10 bg-card border border-border rounded-xl flex items-center justify-center shadow-sm animate-[spin_40s_linear_infinite_reverse]">
-                  <Heart className="w-4 h-4 text-muted-foreground" />
+                <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-12 h-12 bg-card border-2 border-background rounded-full overflow-hidden shadow-md animate-[spin_40s_linear_infinite_reverse]">
+                  <img src="/orbit-food-3.png" alt="Artisanal bread" className="w-full h-full object-cover" />
                 </div>
               </div>
 
