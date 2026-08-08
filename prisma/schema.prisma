@@ -1,0 +1,121 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id         String   @id @default(uuid())
+  email      String   @unique
+  role       String
+  created_at DateTime @default(now())
+
+  organisations Organisation[]
+}
+
+model Organisation {
+  id                   String   @id @default(uuid())
+  user_id              String
+  name                 String
+  type                 String
+  role                 String
+  contact_person       String
+  phone                String
+  email                String
+  address              String
+  latitude             Float
+  longitude            Float
+  verified             Boolean  @default(false)
+  
+  // Recipient-only fields
+  capacity_min         Float?
+  capacity_max         Float?
+  typical_quantity     Float?
+  dietary_requirements String // JSON string
+  accepted_food_types  String // JSON string
+  excluded_allergens   String // JSON string
+  pickup_radius_km     Float?
+  can_pickup           Boolean  @default(false)
+  pickup_lead_time_min Int?
+  reliability          Float    @default(0)
+
+  created_at           DateTime @default(now())
+
+  user                 User     @relation(fields: [user_id], references: [id])
+  donations            Donation[] @relation("DonorDonations")
+  received_donations   Donation[] @relation("RecipientDonations")
+  matches              Match[]
+}
+
+model Donation {
+  id                     String   @id @default(uuid())
+  donor_id               String
+  food_name              String
+  food_type              String
+  quantity               Float
+  quantity_unit          String
+  meals                  Int
+  weight_kg              Float
+  dietary_type           String
+  allergens              String // JSON string
+  prepared_at            String // ISO string
+  pickup_start           String // ISO string
+  pickup_deadline        String // ISO string
+  latitude               Float
+  longitude              Float
+  address                String
+  notes                  String?
+
+  status                 String
+  matched_recipient_id   String?
+
+  waste_risk_score       Float
+  waste_risk_level       String
+  waste_risk_reasons     String // JSON string
+  waste_risk_explanation String
+
+  priority_score         Float
+  priority_level         String
+  priority_reason        String
+
+  ai_source              String
+  analysed_at            String? // ISO string
+
+  created_at             DateTime @default(now())
+  updated_at             DateTime @updatedAt
+
+  donor                  Organisation  @relation("DonorDonations", fields: [donor_id], references: [id])
+  matched_recipient      Organisation? @relation("RecipientDonations", fields: [matched_recipient_id], references: [id])
+  matches                Match[]
+  history                DonationStatusHistory[]
+}
+
+model Match {
+  id              String   @id @default(uuid())
+  donation_id     String
+  recipient_id    String
+  match_score     Float
+  explanation     String
+  reasons         String // JSON string
+  rank            Int
+  distance_km     Float
+  time_buffer_min Int
+  ai_source       String
+  created_at      DateTime @default(now())
+
+  donation        Donation     @relation(fields: [donation_id], references: [id], onDelete: Cascade)
+  recipient       Organisation @relation(fields: [recipient_id], references: [id], onDelete: Cascade)
+}
+
+model DonationStatusHistory {
+  id          String   @id @default(uuid())
+  donation_id String
+  status      String
+  note        String?
+  created_at  DateTime @default(now())
+
+  donation    Donation @relation(fields: [donation_id], references: [id], onDelete: Cascade)
+}

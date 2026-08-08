@@ -36,6 +36,11 @@
     ".next-verify/types/**/*.ts"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "prisma.config.ts",
+    "src/lib/db/prisma.ts",
+    "scripts/seed-sqlite.ts",
+    "scripts/test-prisma.ts",
+    "generated/**/*"
   ]
 }

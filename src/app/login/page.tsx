@@ -16,7 +16,7 @@ export const dynamic = "force-dynamic";
 export default async function LoginPage() {
   if (await getSession()) redirect("/dashboard");
 
-  // Only offer the one-click accounts that actually exist in this database.
+  // Offer the demo accounts available
   const db = getDb();
   const existing = await Promise.all(
     DEMO_ACCOUNTS.map(async (account) => ({
@@ -52,7 +52,7 @@ export default async function LoginPage() {
           <p className="text-xs text-muted-foreground">
             {isDemoMode()
               ? "Demo mode · seeded in-memory data"
-              : "Connected to Supabase"}
+              : "Connected to Database"}
           </p>
         </div>
       </div>
@@ -74,7 +74,7 @@ export default async function LoginPage() {
             FoodBridge AI — Sign In
           </h1>
           <p className="mt-1.5 text-sm text-muted-foreground">
-            Select a demo profile or enter your organisation email.
+            Enter your email & password or select a 1-click demo profile.
           </p>
 
           <LoginForm accounts={accounts} className="mt-6" />
@@ -83,4 +83,3 @@ export default async function LoginPage() {
     </div>
   );
 }
-

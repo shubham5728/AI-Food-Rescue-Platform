@@ -52,7 +52,6 @@ export function LoginForm({
         body: JSON.stringify({ email: targetEmail.trim(), password }),
       });
       toast.success("✅ Signed in! Redirecting to Dashboard...");
-      // Bulletproof redirect to dashboard
       window.location.href = "/dashboard";
     } catch (err) {
       const message =
