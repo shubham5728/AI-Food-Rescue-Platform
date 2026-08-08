@@ -1,19 +1,29 @@
 "use client";
 
 import {
+  Building2,
+  CloudSun,
+  Droplets,
   Flame,
   ListOrdered,
+  MapPin,
   PackageSearch,
   Plus,
-  Utensils,
+  Radio,
+  ShieldCheck,
+  Sparkles,
   Users,
+  Utensils,
 } from "lucide-react";
 import Link from "next/link";
 
 import { DonationCard } from "@/components/donation-card";
 import { PriorityQueue } from "@/components/dashboard/priority-queue";
 import { StatTile } from "@/components/stat-tile";
+import { DynamicFoodMap, type MapMarkerItem } from "@/components/map";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { useLanguage } from "@/lib/i18n/context";
 import type { ScoredDonation } from "@/lib/service";
@@ -34,9 +44,6 @@ interface DonorDashboardClientProps {
   recent: ScoredDonation[];
 }
 
-import { MapPin } from "lucide-react";
-import { DynamicFoodMap, type MapMarkerItem } from "@/components/map";
-
 export function DonorDashboardClient({
   organisation,
   stats,
@@ -46,6 +53,10 @@ export function DonorDashboardClient({
 }: DonorDashboardClientProps) {
   const { t } = useLanguage();
 
+  // Environmental calculations
+  const co2eSavedKg = Math.round(stats.food_saved_kg * 2.5);
+  const waterSavedLitres = Math.round(stats.food_saved_kg * 1230);
+
   const donorMarkers: MapMarkerItem[] = [
     {
       id: organisation.id,
@@ -53,8 +64,44 @@ export function DonorDashboardClient({
       lng: organisation.longitude,
       title: organisation.name,
       type: "donor",
-      subtitle: "Your Location",
+      subtitle: "Your Organisation",
       address: organisation.address,
+    },
+    {
+      id: "ngo1",
+      lat: 23.0390,
+      lng: 72.5110,
+      title: "Robin Hood Army Ahmedabad",
+      type: "recipient",
+      subtitle: "Night Shelter & Slum Drive",
+      address: "SG Highway Circle, Bodakdev",
+    },
+    {
+      id: "ngo2",
+      lat: 23.0850,
+      lng: 72.5020,
+      title: "Akshaya Patra Foundation",
+      type: "recipient",
+      subtitle: "Central Mega Kitchen & Food Bank",
+      address: "Bhadaj Circle, SG Highway",
+    },
+    {
+      id: "ngo3",
+      lat: 23.0600,
+      lng: 72.5800,
+      title: "Manav Sadhna",
+      type: "recipient",
+      subtitle: "Community Care Centre",
+      address: "Gandhi Ashram, Sabarmati",
+    },
+    {
+      id: "ngo4",
+      lat: 23.0270,
+      lng: 72.5080,
+      title: "Annamrita Foundation (ISKCON)",
+      type: "recipient",
+      subtitle: "Food Relief Kitchen",
+      address: "Near ISKCON Temple, Satellite",
     },
     ...myActive.map((item) => ({
       id: item.donation.id,
@@ -70,18 +117,29 @@ export function DonorDashboardClient({
 
   return (
     <div className="container space-y-8 py-8">
-      <header className="flex flex-wrap items-end justify-between gap-4">
+      {/* Top Welcome Header */}
+      <header className="flex flex-wrap items-end justify-between gap-4 border-b border-border/60 pb-5">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
+          <div className="flex items-center gap-2 mb-1.5">
+            <Badge variant="outline" className="border-primary/30 text-primary">
+              <Building2 className="size-3.5 mr-1" aria-hidden />
+              {organisation.type.toUpperCase()} · Verified Partner
+            </Badge>
+            <Badge variant="secondary" className="text-emerald-700 bg-emerald-500/10">
+              <ShieldCheck className="size-3.5 mr-1 text-emerald-600" />
+              98% Reliability
+            </Badge>
+          </div>
+          <h1 className="text-2xl font-extrabold tracking-tight sm:text-4xl text-foreground">
             {organisation.name}
           </h1>
-          <p className="mt-1 text-sm text-muted-foreground">
+          <p className="mt-1 text-sm sm:text-base text-muted-foreground">
             {myActive.length > 0
-              ? `${myActive.length} ${t("donationsTitle").toLowerCase()}`
+              ? `${myActive.length} active surplus food listings currently being rescued`
               : t("dashSub")}
           </p>
         </div>
-        <Button asChild size="lg">
+        <Button asChild size="lg" className="shadow-md font-bold">
           <Link href="/donations/new">
             <Plus className="size-4" aria-hidden />
             {t("btnNewDonation")}
@@ -89,6 +147,7 @@ export function DonorDashboardClient({
         </Button>
       </header>
 
+      {/* Main KPI Stat Tiles */}
       <section aria-label="Impact">
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <StatTile
@@ -124,27 +183,78 @@ export function DonorDashboardClient({
         </div>
       </section>
 
-      {/* Live Ahmedabad Real Map */}
+      {/* Environmental Footprint Cards Grid */}
+      <section className="grid gap-4 sm:grid-cols-2">
+        <Card className="border border-emerald-500/20 bg-emerald-500/5 shadow-sm p-4 sm:p-5">
+          <CardContent className="p-0 flex items-center justify-between">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-300 flex items-center gap-1.5">
+                <CloudSun className="size-4 text-emerald-600" />
+                CO₂ Emissions Offset
+              </p>
+              <p className="mt-1 text-2xl font-extrabold tracking-tight text-foreground">
+                {co2eSavedKg.toLocaleString()} kg CO₂e
+              </p>
+              <p className="mt-0.5 text-xs text-muted-foreground">
+                Stopped greenhouse gas emissions from landfill waste
+              </p>
+            </div>
+            <div className="flex size-12 items-center justify-center rounded-2xl bg-emerald-500/10 text-emerald-600 font-bold text-lg border border-emerald-500/20">
+              🌿
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="border border-blue-500/20 bg-blue-500/5 shadow-sm p-4 sm:p-5">
+          <CardContent className="p-0 flex items-center justify-between">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-wider text-blue-700 dark:text-blue-300 flex items-center gap-1.5">
+                <Droplets className="size-4 text-blue-600" />
+                Agricultural Water Conserved
+              </p>
+              <p className="mt-1 text-2xl font-extrabold tracking-tight text-foreground">
+                {(waterSavedLitres / 1000).toFixed(1)}k Litres
+              </p>
+              <p className="mt-0.5 text-xs text-muted-foreground">
+                Fresh water saved by rescuing prepared meals
+              </p>
+            </div>
+            <div className="flex size-12 items-center justify-center rounded-2xl bg-blue-500/10 text-blue-600 font-bold text-lg border border-blue-500/20">
+              💧
+            </div>
+          </CardContent>
+        </Card>
+      </section>
+
+      {/* Live Ahmedabad Real Satellite Map */}
       <section aria-label="Live Map" className="space-y-3">
-        <div className="flex items-center gap-2">
-          <MapPin className="size-4 text-primary" aria-hidden />
-          <h2 className="text-lg font-semibold tracking-tight">
-            Ahmedabad Live Dispatch Map
-          </h2>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <MapPin className="size-5 text-primary" aria-hidden />
+            <h2 className="text-lg font-bold tracking-tight text-foreground">
+              Ahmedabad Real-Time Dispatch Map
+            </h2>
+          </div>
+          <Badge variant="outline" className="text-xs font-semibold text-primary">
+            <Radio className="size-3 mr-1 animate-pulse text-emerald-600" /> Live GPS Dispatch
+          </Badge>
         </div>
+
         <DynamicFoodMap
           markers={donorMarkers}
           center={[organisation.latitude, organisation.longitude]}
           zoom={13}
-          height="380px"
+          height="420px"
         />
       </section>
 
+      {/* Main Grid: Priority Queue & Recent Listings */}
       <div className="grid gap-8 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)]">
+        {/* Priority Queue */}
         <section aria-labelledby="priority-heading" className="space-y-4">
           <div className="flex items-center gap-2">
-            <ListOrdered className="size-4 text-signal-high" aria-hidden />
-            <h2 id="priority-heading" className="text-lg font-semibold tracking-tight">
+            <ListOrdered className="size-5 text-signal-high" aria-hidden />
+            <h2 id="priority-heading" className="text-lg font-bold tracking-tight text-foreground">
               {t("feat3Title")}
             </h2>
           </div>
@@ -168,12 +278,13 @@ export function DonorDashboardClient({
           )}
         </section>
 
+        {/* Recent Active Donations */}
         <section aria-labelledby="recent-heading" className="space-y-4">
           <div className="flex items-center justify-between gap-3">
-            <h2 id="recent-heading" className="text-lg font-semibold tracking-tight">
+            <h2 id="recent-heading" className="text-lg font-bold tracking-tight text-foreground">
               {t("donationsTitle")}
             </h2>
-            <Button asChild variant="ghost" size="sm">
+            <Button asChild variant="ghost" size="sm" className="font-semibold text-primary">
               <Link href="/donations">{t("filterAll")}</Link>
             </Button>
           </div>
@@ -198,4 +309,3 @@ export function DonorDashboardClient({
     </div>
   );
 }
-

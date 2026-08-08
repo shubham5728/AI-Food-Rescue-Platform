@@ -33,6 +33,8 @@ interface RecipientDashboardClientProps {
   openCommitments: ScoredDonation[];
 }
 
+import { DynamicFoodMap, type MapMarkerItem } from "@/components/map";
+
 export function RecipientDashboardClient({
   organisation,
   offers,
@@ -40,37 +42,75 @@ export function RecipientDashboardClient({
 }: RecipientDashboardClientProps) {
   const { t } = useLanguage();
 
+  const recipientMapMarkers: MapMarkerItem[] = [
+    {
+      id: organisation.id,
+      lat: organisation.latitude,
+      lng: organisation.longitude,
+      title: organisation.name,
+      type: "recipient",
+      subtitle: "Your Verified NGO Shelter",
+      address: organisation.address,
+    },
+    ...offers.map(({ donation }) => ({
+      id: donation.id,
+      lat: donation.latitude,
+      lng: donation.longitude,
+      title: donation.food_name,
+      type: "donation" as const,
+      meals: donation.meals,
+      address: donation.address,
+    })),
+  ];
+
   return (
     <div className="container space-y-8 py-8">
-      <header className="flex flex-wrap items-end justify-between gap-4">
+      <header className="flex flex-wrap items-end justify-between gap-4 border-b border-border/60 pb-5">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
+          <h1 className="text-2xl font-extrabold tracking-tight sm:text-4xl text-foreground">
             {organisation.name}
           </h1>
-          <p className="mt-1 text-sm text-muted-foreground">
+          <p className="mt-1 text-sm sm:text-base text-muted-foreground">
             {offers.length > 0
-              ? `${offers.length} ${t("donationsSub")}`
+              ? `${offers.length} active surplus meal offers available for immediate pickup`
               : t("recipientsSub")}
           </p>
         </div>
 
         <div className="flex flex-wrap gap-2">
-          <Badge variant="outline">
-            <Utensils className="size-3.5" aria-hidden />
-            {t("capacity")}: {organisation.capacity_min}–{organisation.capacity_max}
+          <Badge variant="outline" className="border-primary/30 text-primary font-semibold">
+            <Utensils className="size-3.5 mr-1" aria-hidden />
+            {t("capacity")}: {organisation.capacity_min}–{organisation.capacity_max} meals
           </Badge>
-          <Badge variant="outline">
-            <MapPin className="size-3.5" aria-hidden />
-            {organisation.pickup_radius_km} km
+          <Badge variant="outline" className="border-primary/30 text-primary font-semibold">
+            <MapPin className="size-3.5 mr-1" aria-hidden />
+            {organisation.pickup_radius_km} km radius
           </Badge>
-          <Badge variant="outline">
-            <Clock className="size-3.5" aria-hidden />
-            {organisation.pickup_lead_time_min} min
+          <Badge variant="outline" className="border-primary/30 text-primary font-semibold">
+            <Clock className="size-3.5 mr-1" aria-hidden />
+            {organisation.pickup_lead_time_min} min lead time
           </Badge>
         </div>
       </header>
 
+      {/* Satellite Dispatch Map for Recipient */}
+      <section aria-label="Satellite Dispatch Map" className="space-y-3">
+        <div className="flex items-center gap-2">
+          <MapPin className="size-5 text-primary" aria-hidden />
+          <h2 className="text-lg font-bold tracking-tight text-foreground">
+            Ahmedabad Live Dispatch & Pickup Map
+          </h2>
+        </div>
+        <DynamicFoodMap
+          markers={recipientMapMarkers}
+          center={[organisation.latitude, organisation.longitude]}
+          zoom={13}
+          height="380px"
+        />
+      </section>
+
       {/* Offers */}
+
       <section aria-labelledby="offers-heading" className="space-y-4">
         <div className="flex items-center gap-2">
           <Sparkles className="size-4 text-primary" aria-hidden />
