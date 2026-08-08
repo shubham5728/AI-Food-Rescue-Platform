@@ -24,7 +24,7 @@ export interface DonationFilter {
 }
 
 export interface Repository {
-  readonly kind: "memory" | "supabase";
+  readonly kind: "memory" | "supabase" | "sqlite";
 
   getUserById(id: string): Promise<User | null>;
   getUserByEmail(email: string): Promise<User | null>;

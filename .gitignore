@@ -12,3 +12,5 @@ next-env.d.ts
 
 # Isolated production build used by scripts/verify-demo.mjs
 .next-verify/
+
+/src/generated/prisma
