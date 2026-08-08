@@ -4,11 +4,14 @@ import {
   ArrowLeft,
   Building2,
   CheckCircle2,
+  Eye,
+  EyeOff,
   KeyRound,
   Loader2,
   LogIn,
   Mail,
   RotateCcw,
+  Sparkles,
   Store,
 } from "lucide-react";
 import Link from "next/link";
@@ -28,6 +31,18 @@ import { cn } from "@/lib/utils";
 
 type DemoAccount = (typeof DEMO_ACCOUNTS)[number];
 
+interface SendOtpResponse {
+  success: boolean;
+  hasRealSmtp: boolean;
+  isEmailSent: boolean;
+  message: string;
+  simulatedInbox?: {
+    to: string;
+    subject: string;
+    code: string;
+  } | null;
+}
+
 export function LoginForm({
   accounts,
   className,
@@ -43,6 +58,11 @@ export function LoginForm({
   const [otpDigits, setOtpDigits] = useState<string[]>(["", "", "", ""]);
   const [pending, setPending] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Email Inbox Simulation state
+  const [simulatedData, setSimulatedData] = useState<SendOtpResponse["simulatedInbox"]>(null);
+  const [isEmailSentReal, setIsEmailSentReal] = useState<boolean>(false);
+  const [showInboxPreview, setShowInboxPreview] = useState<boolean>(false);
 
   const inputRefs = [
     useRef<HTMLInputElement>(null),
@@ -61,7 +81,7 @@ export function LoginForm({
     setError(null);
 
     try {
-      await apiRequest<{ success: boolean; message: string }>("/api/auth/send-otp", {
+      const res = await apiRequest<SendOtpResponse>("/api/auth/send-otp", {
         method: "POST",
         body: JSON.stringify({ email: targetEmail.trim() }),
       });
@@ -70,10 +90,19 @@ export function LoginForm({
       setOtpDigits(["", "", "", ""]);
       setStep("otp");
       setPending(false);
+      setIsEmailSentReal(res.isEmailSent);
+      setSimulatedData(res.simulatedInbox || null);
+      setShowInboxPreview(false);
 
-      toast.success(`📩 4-Digit OTP sent directly to ${targetEmail.trim()}! Check your email inbox.`, {
-        duration: 8000,
-      });
+      if (res.isEmailSent) {
+        toast.success(`✉️ Real Email Sent to ${targetEmail.trim()}! Please check your Gmail/Email inbox.`, {
+          duration: 9000,
+        });
+      } else {
+        toast.info(`📩 Verification code generated for ${targetEmail.trim()}. Open simulated inbox below.`, {
+          duration: 9000,
+        });
+      }
 
       setTimeout(() => {
         inputRefs[0].current?.focus();
@@ -90,7 +119,6 @@ export function LoginForm({
 
   const handleDigitChange = (index: number, value: string) => {
     if (value.length > 1) {
-      // User pasted code
       const digits = value.slice(0, 4).split("");
       const newDigits = ["", "", "", ""];
       digits.forEach((d, i) => {
@@ -109,12 +137,10 @@ export function LoginForm({
     setOtpDigits(newDigits);
     setError(null);
 
-    // Auto-advance to next input
     if (value && index < 3) {
       inputRefs[index + 1].current?.focus();
     }
 
-    // Auto submit if 4 digits filled
     if (newDigits.every((d) => d !== "") && newDigits.join("").length === 4) {
       void verifyOtp(newDigits.join(""));
     }
@@ -124,6 +150,14 @@ export function LoginForm({
     if (e.key === "Backspace" && !otpDigits[index] && index > 0) {
       inputRefs[index - 1].current?.focus();
     }
+  };
+
+  const autoFillSimulatedCode = () => {
+    if (!simulatedData?.code) return;
+    const digits = simulatedData.code.split("");
+    setOtpDigits(digits);
+    inputRefs[3].current?.focus();
+    void verifyOtp(simulatedData.code);
   };
 
   const verifyOtp = async (codeToTest: string) => {
@@ -207,10 +241,10 @@ export function LoginForm({
             <div>
               <Badge variant="outline" className="mb-1.5 border-primary/30 text-primary">
                 <KeyRound className="size-3" aria-hidden />
-                Email OTP Sent
+                {isEmailSentReal ? "Real Email Sent to Inbox" : "Email Code Generated"}
               </Badge>
               <p className="text-xs text-muted-foreground">
-                4-digit code sent directly to <span className="font-semibold text-foreground">{email}</span>
+                Code sent to <span className="font-semibold text-foreground">{email}</span>
               </p>
             </div>
             <Button
@@ -227,13 +261,58 @@ export function LoginForm({
             </Button>
           </div>
 
-          {/* Email Inbox Instructions */}
-          <div className="rounded-lg border border-primary/20 bg-primary-soft/40 p-3.5 flex items-center gap-3">
-            <Mail className="size-5 shrink-0 text-primary" />
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              Please open your email inbox for <strong className="text-foreground">{email}</strong> and enter the 4-digit code below.
-            </p>
-          </div>
+          {/* Real Email Sent vs Simulated Inbox Banner */}
+          {isEmailSentReal ? (
+            <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-3.5 flex items-center gap-3">
+              <Mail className="size-5 shrink-0 text-emerald-600 animate-pulse" />
+              <p className="text-xs text-emerald-800 dark:text-emerald-200 leading-relaxed font-medium">
+                ✉️ Real email delivered to <strong>{email}</strong>! Please open your Gmail or Email app to get the 4-digit code.
+              </p>
+            </div>
+          ) : (
+            <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 p-3.5 space-y-2">
+              <div className="flex items-center justify-between gap-2">
+                <p className="text-xs font-semibold text-amber-800 dark:text-amber-200 flex items-center gap-1.5">
+                  <Mail className="size-4 text-amber-600" />
+                  Email Dispatch Inbox Simulator
+                </p>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowInboxPreview(!showInboxPreview)}
+                  className="h-6 px-2 text-[11px] text-amber-700 hover:bg-amber-500/20"
+                >
+                  {showInboxPreview ? <EyeOff className="size-3" /> : <Eye className="size-3" />}
+                  {showInboxPreview ? "Hide Email" : "Open Email"}
+                </Button>
+              </div>
+
+              {showInboxPreview && simulatedData ? (
+                <div className="mt-2 rounded-md border border-amber-500/20 bg-background p-3 text-xs space-y-1.5 shadow-inner">
+                  <p className="font-semibold text-foreground border-b pb-1">
+                    📩 {simulatedData.subject}
+                  </p>
+                  <p className="text-muted-foreground">To: {simulatedData.to}</p>
+                  <div className="flex items-center justify-between bg-muted/60 p-2 rounded-md mt-1">
+                    <span>4-Digit OTP: <strong className="text-base font-mono text-primary font-bold">{simulatedData.code}</strong></span>
+                    <Button
+                      type="button"
+                      size="sm"
+                      onClick={autoFillSimulatedCode}
+                      className="h-6 text-[11px] bg-primary text-primary-foreground"
+                    >
+                      <Sparkles className="size-3" /> Auto-fill
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <p className="text-[11px] text-amber-700 dark:text-amber-300">
+                  Click <strong>"Open Email"</strong> above to view the email sent to {email}.
+                </p>
+              )}
+            </div>
+          )}
 
           {/* 4 Digit Input Boxes */}
           <div className="space-y-2">
