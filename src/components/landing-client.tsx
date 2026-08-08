@@ -397,12 +397,43 @@ export function LandingClient({ stats, session, demo }: LandingClientProps) {
         </div>
       </section>
 
+      {/* Video Showcase Section */}
+      <section className="container py-12 sm:py-16 border-t border-border/60">
+        <div className="mx-auto max-w-4xl space-y-4 text-center">
+          <Badge variant="outline" className="px-3 py-1 text-xs border-primary/30 text-primary">
+            <Sparkles className="size-3.5 mr-1" aria-hidden />
+            AI Video Showcase
+          </Badge>
+          <h2 className="text-2xl font-bold tracking-tight sm:text-4xl text-foreground">
+            FoodBridge AI — Real-Time Surplus Food Rescue
+          </h2>
+          <p className="mx-auto max-w-2xl text-sm sm:text-base text-muted-foreground leading-relaxed">
+            Watch how our intelligent AI algorithm matches surplus meals from restaurants & event caterers to verified shelters in real-time across Ahmedabad.
+          </p>
+
+          <div className="relative mt-6 overflow-hidden rounded-2xl border border-primary/20 bg-black/90 shadow-2xl p-2 sm:p-3">
+            <video
+              src="/foodbridge-ai-demo.mp4"
+              controls
+              autoPlay
+              muted
+              loop
+              playsInline
+              className="w-full aspect-video rounded-xl object-cover shadow-inner"
+            >
+              Your browser does not support HTML5 video player.
+            </video>
+          </div>
+        </div>
+      </section>
+
       {/* Feature Cards Section */}
       <section className="container py-12 sm:py-16">
         <div className="max-w-2xl">
           <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
             {t("featuresHeading")}
           </h2>
+
           <p className="mt-2 text-sm sm:text-base text-muted-foreground">
             {t("featuresSub")}
           </p>
